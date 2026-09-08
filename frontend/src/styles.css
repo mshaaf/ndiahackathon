@@ -1,0 +1,44 @@
+:root {
+  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  color: #132b3a;
+  background: #f5f7f9;
+  font-synthesis: none;
+  line-height: 1.5;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1440px; margin: auto; padding: 28px 32px; }
+header, .health, .legend, .legend span { display: flex; align-items: center; }
+header { justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -0.035em; margin: 0; }
+p { margin: 0; }
+.subtitle { color: #4c6272; }
+.simulation { margin: 0; padding: 7px 12px; border: 1px solid #718694; border-radius: 4px; font-size: 0.875rem; white-space: nowrap; }
+.health { flex-wrap: wrap; gap: 12px 32px; margin: 0 0 16px; font-size: 0.875rem; }
+.health p:first-child { font-weight: 700; }
+.health time { font-weight: 600; margin-left: 8px; overflow-wrap: anywhere; }
+.map-panel { position: relative; border: 1px solid #b9c7d1; border-radius: 6px; overflow: hidden; }
+.map { height: min(66vh, 700px); min-height: 350px; background: #e8eef2; }
+.empty { position: absolute; top: 45%; width: 100%; text-align: center; pointer-events: none; color: #4c6272; }
+.legend { position: relative; gap: 10px 24px; flex-wrap: wrap; padding: 14px 18px; background: white; font-size: 0.8125rem; }
+.legend span { gap: 7px; }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.track-details { margin-top: 22px; }
+h2 { font-size: 1rem; margin: 0 0 12px; }
+h2 span { font-weight: 400; color: #4c6272; margin-left: 8px; }
+ul { list-style: none; padding: 0; margin: 0; }
+li { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 8px 20px; padding: 12px 0; border-top: 1px solid #d3dde4; font-size: 0.875rem; }
+li time { overflow-wrap: anywhere; }
+.error { padding: 12px 16px; margin-bottom: 16px; background: #fff0d8; color: #663d00; }
+:focus-visible { outline: 3px solid #1767a6; outline-offset: 3px; }
+
+@media (max-width: 640px) {
+  main { padding: 20px 16px; }
+  header { align-items: flex-start; flex-direction: column; }
+  .health { display: grid; gap: 6px; }
+  .map { height: 52vh; }
+  .legend { gap: 10px 16px; }
+  .legend strong { width: 100%; }
+  li { grid-template-columns: 1fr; }
+}
