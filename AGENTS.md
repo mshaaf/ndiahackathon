@@ -16,7 +16,7 @@ Phase 1 now has frozen Pydantic records, a synthetic golden fixture, truth split
 - Bind approvals to the exact scenario run, state, rules/configuration, and ATC revision shown to the user; reject obsolete plans. Approval records simulated review only.
 - Bind the server to `127.0.0.1` by default. Make LAN access explicit. Package all assets needed for offline judging, including map styles, fonts, and geometry.
 - Do not send sponsor-controlled data, credentials, screenshots, prompts containing restricted content, or raw logs to external AI, cloud services, or repositories without the authorization recorded in [RIGHTS.md](RIGHTS.md). Public availability does not establish redistribution permission.
-- Use reviewed synthetic fixtures in source control. Keep downloaded data and run artifacts in ignored local directories. `.gitignore` helps avoid accidents; it does not grant permission or replace reviewing staged files.
+- Use reviewed synthetic fixtures in source control. Keep run artifacts in ignored local directories. `datasets/` **is** committed by an owner decision recorded in [RIGHTS.md](RIGHTS.md) so the team can clone and run; do not re-add it to `.gitignore`. The sponsor package is the exception and lives in the ignored `datasets/sponsor/`. `.gitignore` helps avoid accidents; it does not grant permission or replace reviewing staged files.
 - Preserve text labels, keyboard operation, and accessible symbols; color alone cannot communicate classification or health.
 
 ## Keep changes small

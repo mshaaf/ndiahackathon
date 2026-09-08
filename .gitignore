@@ -16,10 +16,14 @@ dist/
 .swarm/
 .claude/
 
-# Local datasets and run artifacts; reviewed synthetic fixtures belong in fixtures/synthetic/.
+# Run artifacts and unreviewed downloads; reviewed synthetic fixtures belong in fixtures/synthetic/.
 data/
-datasets/
 artifacts/
+
+# datasets/ IS committed so the team can clone and run without re-downloading.
+# The sponsor package is the exception: it stays local until its handling terms
+# are recorded in RIGHTS.md. Put it here and it will not be committed by accident.
+datasets/sponsor/
 *.sqlite
 *.sqlite3
 *.db

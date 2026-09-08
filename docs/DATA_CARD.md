@@ -15,7 +15,7 @@ What data enters Friendly Filter Plus, how it is transformed, and what it cannot
 
 ## What is actually on disk
 
-Inspected 2026-09-08 in `datasets/` (gitignored). Facts below are measured, not quoted from the source page.
+Measured 2026-09-08 in `datasets/`, which is committed to the repository so collaborators can clone and run without re-downloading. Facts below are measured, not quoted from the source page. The sponsor package is the one exception and belongs in the ignored `datasets/sponsor/`; see [RIGHTS.md](../RIGHTS.md).
 
 ### `DroneFlightData/` — 2.7 MB
 
