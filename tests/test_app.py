@@ -68,5 +68,6 @@ def test_runtime_metadata_and_moving_track(tmp_path):
             second = websocket.receive_json()
 
     assert "truth" not in json.dumps(response.json()).lower()
+    assert first["simulation_time"] == "2026-09-08T12:00:00+00:00"
     assert first["features"][0]["id"] == second["features"][0]["id"] == "track-1"
     assert first["features"][0]["geometry"]["coordinates"] != second["features"][0]["geometry"]["coordinates"]

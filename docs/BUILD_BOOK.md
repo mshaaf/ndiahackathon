@@ -9,7 +9,7 @@ This is the shared status and handoff log. Section 4 of the original [build plan
 | Source build plan | Preserved | [Original file](../ndiahackbuildplan.txt), unchanged |
 | Repository documentation | Complete | [Document index](../README.md#documentation-map) |
 | Phase 0 — Permission and data gate | In progress | Aerial dataset cut (D10); AI-processing permission asserted (D11). Development pathway and named owners still pending in [RIGHTS](../RIGHTS.md). Sponsor package not yet downloaded. |
-| Phase 1 — Contracts and golden scenario | Not started | v1 records in section 3 of the original plan await validation and freeze |
+| Phase 1 — Contracts and golden scenario | Complete | Golden fixture splits truth from runtime; validated observations stream through WebSocket to a local MapLibre browser view |
 | Phase 2 — Replay and track assessment | Not started | Depends on Phase 1 |
 | Phase 3 — COA engine | Not started | Depends on Phase 2 |
 | Phase 4 — ATC/ADOC coordination | Not started | Depends on Phase 3 |
@@ -17,7 +17,7 @@ This is the shared status and handoff log. Section 4 of the original [build plan
 | Phase 6 — Metrics and integration | Not started | Depends on Phase 5 |
 | Phase 7 — SPARC Refinement | Not started | Depends on Phase 6; cannot refine nonexistent code |
 | Phase 8 — Completion and rehearsal | Not started | Depends on Phase 7 |
-| Runtime checks and benchmarks | Not run | No application or evaluation artifacts exist |
+| Runtime checks and benchmarks | Phase 1 checks complete | Python tests, frontend test/build/audit, runtime truth-isolation check, and an in-app browser replay pass; later benchmarks are not run |
 
 Role labels A/B/C are stable responsibilities, not assigned individual names. Hours are relative to the future build start; no calendar deadline or organizer approval is inferred.
 
@@ -44,6 +44,8 @@ Role labels A/B/C are stable responsibilities, not assigned individual names. Ho
 | D14 | Remove the `NON_COOPERATIVE` evidence type from the classification weights. | It scored the *absence* of a transponder return, which is exactly the classification rule 3 violation the project exists to prevent, under a different name. Found during the SPARC refinement audit. Every remaining evidence type is an affirmative observation, so rule 3 now holds by construction. |
 | D13 | Write module pseudocode under [docs/pseudocode/](pseudocode/), one file per phase, each with TDD anchors keyed to the source plan's acceptance scenarios. | SPARC Specification phase. Pins the semantics the reviews flagged as undefined: evidence combination by noisy-OR over distinct types, staleness on both observation and receipt age, swept-disc safety volumes failing closed on missing geometry, deterministic tie-breaks ending in a plan fingerprint, and operational metric definitions. |
 | D12 | Partially reverse D09: write one [ARCHITECTURE](ARCHITECTURE.md) document covering module seams, requirement-to-phase mapping, phase prerequisites and gates, the critical path, and the retrofit-cost table. Still do not write PHASES, CONTRACTS, or VERIFICATION as separate files. | D09 assumed the source plan already carried this. It carries the content but not the dependency structure — what each phase consumes, what it hands forward, and which Phase 1 decisions are expensive to defer. One document, not four. |
+| D20 | Freeze the Phase 1 Python records in `friendly_filter.models`; stream observations as GeoJSON with an ISO UTC `simulation_time`; keep scenario truth behind the separate `scenario_loader` output path. | The integrated golden scenario passed its split, model validation, WebSocket, frontend boundary, and browser-render checks. Changes now require a build-book entry and notification to A, B, and C. |
+| D21 | Pin MapLibre GL JS to 6.8.0, satisfying D18, and bundle its worker through Vite. | A fresh dependency audit found the 5.11.0 pin affected by the MapLibre expression XSS advisory. Version 6.8.0 removes the advisory and the bundled worker preserves offline rendering. |
 
 Unresolved data access, licensing, and organizer-pathway questions belong in [RIGHTS.md](../RIGHTS.md); they are not silently decided by these clarifications. New technical proposals must be validated against the actual sponsor schema in Phase 1.
 
@@ -61,7 +63,43 @@ Unresolved data access, licensing, and organizer-pathway questions belong in [RI
 
 ## Documentation validation
 
-Pending integration review. This section will record the actual documentation checks before publication; it must not be used as evidence for a build-phase exit gate.
+Phase 1 commands and results are recorded in the handoff below. Later-phase documentation is still a plan and is not gate evidence.
+
+### Phase 1 — Contracts and golden scenario — 2026-09-08
+State: PASSED
+
+Gate evidence: `uv run pytest` passed 3 tests; `npm --prefix frontend test` passed 1 test; the production build and dependency audit passed; `git diff --check` passed. The browser received all 12 updates, rendered five reported tracks with bundled MapLibre assets, moved BLUE01, ended at `2026-09-08T14:00:05+00:00`, and closed with `Replay complete` and no browser warnings or errors.
+
+Owner: A — data and interoperability
+1. What changed: Added the D15 golden demonstration fixture, v1 observation/resource validation, and a loader that writes runtime and evaluator truth to separate directories.
+2. How it helps the mission: The main demonstration now starts from a deterministic reviewed scenario without exposing hostile labels to the live system.
+3. Inputs and outputs: `fixtures/synthetic/golden/package.json` produces ignored `artifacts/runtime/golden/runtime.json` and `artifacts/evaluator/golden/truth.json`.
+4. How to run and test: Run the loader command in README, then `uv run pytest`; all 3 tests passed.
+5. Exact demo clicks: No A-specific control; loading happens before launch. Inspect the dashboard only after the split completes.
+6. Known limitations: The fixture is local synthetic ENU data and does not exercise sponsor adapters.
+7. Next owner and next concrete task: A implements deterministic replay controls and provenance in Phase 2.
+
+Owner: B — decision engine
+1. What changed: Froze the Phase 1 Pydantic records and constants transcribed from `docs/pseudocode/phase_1_contracts.md`.
+2. How it helps the mission: Every later assessment and planning module now shares validated version-one inputs and thresholds.
+3. Inputs and outputs: `friendly_filter.config` and `friendly_filter.models`; no assessment or plan output exists yet.
+4. How to run and test: `uv run pytest` passed the import, fixture, and WebSocket checks.
+5. Exact demo clicks: Unavailable until Phase 2 assessment is implemented.
+6. Known limitations: Classification, safety volumes, optimization, and benchmarks remain unimplemented.
+7. Next owner and next concrete task: B implements deterministic evidence aggregation and protected-track assessment in Phase 2.
+
+Owner: C — UX and integration
+1. What changed: Added one FastAPI process, a GeoJSON WebSocket, and a production React/MapLibre view using a blank offline style and bundled worker.
+2. How it helps the mission: A reviewer can watch the five reported tracks, including BLUE01 moving through the golden scenario, without a basemap or network assets.
+3. Inputs and outputs: The server reads runtime JSON and emits version 1.0 GeoJSON snapshots; the browser renders positions, identity labels, sequence, and simulation time.
+4. How to run and test: Follow README; frontend test, production build, audit, and the real browser replay passed.
+5. Exact demo clicks: Open `http://127.0.0.1:8000`; watch `Connected`, update 1 through 12, BLUE01 move, then `Replay complete`. Zoom buttons remain keyboard accessible.
+6. Known limitations: The display uses a local equatorial metres-to-degrees projection; replace it when a real geodetic origin enters scope.
+7. Next owner and next concrete task: C adds Phase 2 replay controls and renders assessed evidence without reading evaluator truth.
+
+Contract changes: Phase 1 freezes `friendly_filter.models`; the stream contract is GeoJSON FeatureCollection schema `1.0` with monotonic `sequence`, ISO UTC `simulation_time`, stable feature IDs, and reported identity only. Producers: scenario loader and FastAPI stream. Consumers: browser stream parser and future replay adapters.
+
+Coordinator review: Coordinator, 2026-09-08 — accepted after integrated automated and browser verification.
 
 ## Handoff template — append after every phase
 

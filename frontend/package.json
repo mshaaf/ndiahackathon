@@ -10,7 +10,7 @@
     "test": "node --experimental-strip-types --test src/stream.test.mjs"
   },
   "dependencies": {
-    "maplibre-gl": "5.11.0",
+    "maplibre-gl": "6.8.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

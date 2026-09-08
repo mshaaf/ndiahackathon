@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import maplibregl from 'maplibre-gl';
+import { LngLatBounds, Map, NavigationControl, setWorkerUrl } from 'maplibre-gl';
 import type { GeoJSONSource } from 'maplibre-gl';
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { parseSnapshot } from './stream';
 import type { Snapshot, TrackProperties } from './stream';
 
@@ -9,6 +10,8 @@ const identities: Record<TrackProperties['identity_kind'], { label: string; colo
   CIVILIAN: { label: 'Civilian identity', color: '#64720f' },
   UNKNOWN: { label: 'Unknown identity', color: '#636d79' },
 };
+
+setWorkerUrl(maplibreWorkerUrl);
 
 export function App() {
   const container = useRef<HTMLDivElement>(null);
@@ -19,25 +22,25 @@ export function App() {
   useEffect(() => {
     let source: GeoJSONSource | undefined;
     let latest: Snapshot | undefined;
-    let centered = false;
-    const map = new maplibregl.Map({
+    let fittedFeatureCount = 0;
+    const map = new Map({
       container: container.current!,
       style: { version: 8, sources: {}, layers: [] },
       center: [0, 0],
       zoom: 2,
       attributionControl: false,
     });
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
     map.on('error', () => setError('Map rendering failed. Track details remain available below.'));
 
     function updateMap() {
       if (!source || !latest) return;
       source.setData(latest);
-      if (!centered && latest.features.length) {
-        const bounds = new maplibregl.LngLatBounds();
+      if (latest.features.length > fittedFeatureCount) {
+        const bounds = new LngLatBounds();
         latest.features.forEach(({ geometry }) => bounds.extend([geometry.coordinates[0], geometry.coordinates[1]]));
         map.fitBounds(bounds, { padding: 90, maxZoom: 16, duration: 0 });
-        centered = true;
+        fittedFeatureCount = latest.features.length;
       }
     }
 
@@ -68,13 +71,13 @@ export function App() {
     url.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const socket = new WebSocket(url);
     socket.onopen = () => setConnection('Connected');
-    socket.onclose = () => setConnection('Disconnected — refresh to reconnect');
+    socket.onclose = ({ wasClean }) => setConnection(wasClean ? 'Replay complete' : 'Disconnected — refresh to reconnect');
     socket.onerror = () => setConnection('Connection unavailable — refresh to reconnect');
     socket.onmessage = ({ data }) => {
       try {
         const incoming = parseSnapshot(data);
         if (latest?.scenario_id === incoming.scenario_id && incoming.sequence <= latest.sequence) return;
-        if (latest && latest.scenario_id !== incoming.scenario_id) centered = false;
+        if (latest && latest.scenario_id !== incoming.scenario_id) fittedFeatureCount = 0;
         latest = incoming;
         setSnapshot(incoming);
         setError('');

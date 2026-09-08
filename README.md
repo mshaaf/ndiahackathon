@@ -2,7 +2,7 @@
 
 A local, simulation-only dashboard that makes aircraft protection, uncertainty, and ATC/ADOC coordination visible while comparing abstract response plans for a synthetic Counter-UAS scenario.
 
-**Status: documentation prepared; application implementation has not started.** No benchmark, safety test, permission gate, or offline demonstration has passed yet. The 24-hour schedule below is a proposed build window, not a record of elapsed work.
+**Status: Phase 1 walking skeleton implemented.** The golden synthetic scenario streams to the local browser; assessment, planning, benchmarks, and later-phase safety claims remain unimplemented.
 
 ## Start here
 
@@ -11,7 +11,27 @@ A local, simulation-only dashboard that makes aircraft protection, uncertainty, 
 3. Freeze the v1 records defined in section 3 of the [original build plan](ndiahackbuildplan.txt) during Phase 1.
 4. Build and verify one phase at a time, recording evidence and the next handoff in the [build book](docs/BUILD_BOOK.md).
 
-There are no application installation or launch commands yet. Phase 1 must add tested setup instructions; Phase 8 must verify the finished package on a clean machine with networking disabled.
+## Run the Phase 1 skeleton
+
+Requires Python 3.11–3.13, [uv](https://docs.astral.sh/uv/), and Node.js.
+
+```sh
+uv sync --all-groups
+npm --prefix frontend ci
+uv run python -m scenario_loader fixtures/synthetic/golden/package.json artifacts/runtime/golden artifacts/evaluator/golden
+npm --prefix frontend run build
+uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
+```
+
+Open `http://127.0.0.1:8000`. The server receives only `artifacts/runtime/golden/runtime.json`; evaluator truth is written separately under `artifacts/evaluator/golden/` and neither artifact is committed.
+
+Run the current checks with:
+
+```sh
+uv run pytest
+npm --prefix frontend test
+npm --prefix frontend run build
+```
 
 ## Documentation map
 
@@ -27,7 +47,7 @@ There are no application installation or launch commands yet. Phase 1 must add t
 | [Rights register](RIGHTS.md) | Dataset permissions, pending approvals, and redistribution decisions |
 | [Pitch](docs/PITCH.md) | Ten-minute presentation, speaker ownership, and offline fallback |
 
-The original plan is historical evidence; explicit clarifications are recorded in the build book. Schema details remain proposals until the Phase 1 gate. Do not infer an implementation from a proposed file path or endpoint.
+The original plan is historical evidence; explicit clarifications are recorded in the build book. Phase 1 records are frozen in `friendly_filter.models`; later-phase schemas remain proposals.
 
 ## Build phases
 
@@ -51,6 +71,6 @@ The original plan is historical evidence; explicit clarifications are recorded i
 - Missing identification never establishes hostility. Protected, unknown, conflicting, and stale tracks cannot receive automated simulated assignments.
 - Scenario ground truth belongs only to the post-run evaluator and must be inaccessible to the decision engine.
 - Judging runs locally on CPU with saved data and bundled map assets. No internet, cloud dependency, GPU, or decision-loop LLM.
-- Sponsor data, credentials, and restricted artifacts require documented permission before transfer or publication. This repository currently contains planning documents only.
+- Sponsor data, credentials, and restricted artifacts require documented permission before transfer or publication. The implemented Phase 1 path uses only the reviewed synthetic fixture.
 
 The proposed stack is Python 3.11, FastAPI/Pydantic, Pandas, scikit-learn, OR-Tools CP-SAT, Shapely/pyproj, SQLite, and React/TypeScript/Vite/MapLibre. It is a plan, not a list of installed dependencies. No database server, message broker, microservices, or additional deployment platform is required.

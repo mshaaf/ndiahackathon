@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from .models import IdentityKind, Observation
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_RUNTIME_PATH = REPOSITORY_ROOT / "artifacts/runtime/golden.json"
+DEFAULT_RUNTIME_PATH = REPOSITORY_ROOT / "artifacts/runtime/golden/runtime.json"
 FRONTEND_DIST = REPOSITORY_ROOT / "frontend/dist"
 DISPLAY_ORIGIN_LONGITUDE = 0.0
 DISPLAY_ORIGIN_LATITUDE = 0.0
@@ -96,13 +96,14 @@ def create_app(runtime_path: str | Path | None = None, speed: float = 1.0) -> Fa
                     "schema_version": "1.0",
                     "scenario_id": runtime["scenario"]["scenario_id"],
                     "sequence": sequence,
-                    "simulation_time": event.at_seconds,
+                    "simulation_time": event.observation.observed_at.isoformat(),
                     "features": [
                         _feature(stream_id, observation)
                         for stream_id, observation in latest.items()
                     ],
                 }
             )
+        await websocket.close(code=1000)
 
     if FRONTEND_DIST.is_dir():
         app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")

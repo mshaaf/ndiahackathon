@@ -4,7 +4,7 @@
 
 Read [README.md](README.md), the latest [build-book entry](docs/BUILD_BOOK.md), and the active phase in section 4 of the original [build plan](ndiahackbuildplan.txt). Read that plan's architecture and public interfaces in section 3 before changing shared behavior. The plan is preserved; do not rewrite it to hide changed requirements.
 
-This is currently a documentation-only repository. Proposed modules, commands, schemas, test cases, and performance targets are not implemented or verified. Do not claim a phase passes without its evidence. The current task authorizes preparing and publishing project documentation; it does not mark the Phase 0 implementation/data permissions complete.
+Phase 1 now has frozen Pydantic records, a synthetic golden fixture, truth splitting, and a local backend-to-browser stream. Later modules, safety behavior, performance targets, and benchmarks remain proposals. Do not claim a later phase passes without its evidence; Phase 0 sponsor-data permissions also remain incomplete.
 
 ## Non-negotiable project rules
 
