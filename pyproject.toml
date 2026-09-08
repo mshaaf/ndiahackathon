@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling==1.32.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "friendly-filter-plus"
+version = "0.1.0"
+description = "Local simulation-only Counter-UAS decision-support dashboard"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "fastapi==0.141.1",
+  "pydantic==2.13.5",
+  "uvicorn==0.52.4",
+]
+
+[dependency-groups]
+dev = [
+  "httpx==0.28.1",
+  "pytest==9.1.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend/friendly_filter"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["backend"]
+addopts = ["--strict-config", "--strict-markers"]

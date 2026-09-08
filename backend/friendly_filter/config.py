@@ -1,0 +1,33 @@
+"""Phase 1 tunables transcribed from the contract pseudocode."""
+
+from typing import Final
+
+MATCH_HORIZONTAL_M: Final = 250
+MATCH_VERTICAL_M: Final = 100
+MATCH_TIME_S: Final = 2.0
+RED_CONFIDENCE_MIN: Final = 0.80
+RED_MIN_EVIDENCE_TYPES: Final = 2
+
+STALE_FLOOR_S: Final = 5.0
+STALE_PERIOD_MULTIPLIER: Final = 3
+
+EVIDENCE_WEIGHT: Final = {
+    "RF_DETECTION": 0.55,
+    "INBOUND_MOTION": 0.45,
+    "SPONSOR_SENSOR": 0.65,
+}
+
+PREDICTION_HORIZON_S: Final = 30
+PREDICTION_SLOT_S: Final = 5
+PROTECTED_BUFFER_BASE_M: Final = 150
+PROTECTED_BUFFER_GROWTH_MPS: Final = 12
+CORRIDOR_BUFFER_M: Final = 75
+
+COVERAGE_FLOOR_FASTEST: Final = 0.90
+COVERAGE_FLOOR_CONSERVE: Final = 0.80
+SOLVER_TIMEOUT_S: Final = 1.5
+ENUM_MAX_COMBINATIONS: Final = 1_000_000
+
+SEED: Final = 7
+RULE_VERSION: Final = "1.0"
+MODEL_VERSION: Final[str | None] = None
