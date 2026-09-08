@@ -1,0 +1,392 @@
+# Friendly Filter Plus — Complete Build Plan
+
+## 1. What We Are Building
+
+Friendly Filter Plus is a local, simulation-only decision-support dashboard for the Counter-UAS track.
+
+It combines aircraft, drone, sensor, airfield, and simulated response-resource data to:
+
+1. Protect friendly and civilian aircraft.
+2. Identify likely hostile drones without treating missing information as proof of hostility.
+3. Block unsafe response options.
+4. Generate up to three safe courses of action in seconds.
+5. Show ATC and ADOC how their decisions affect each other.
+6. Continue operating safely when network data is delayed, missing, or contradictory.
+7. Explain every recommendation in plain English.
+
+Core pitch:
+
+> Friendly Filter Plus turns mixed, imperfect airspace data into explainable, safety-screened simulation plans so ATC and ADOC can compare options in seconds without mistaking missing data for hostile intent.
+
+This is not a replacement for fielded systems such as Anduril Lattice or FAAD C2. The hackathon contribution is a transparent, interoperable safety and COA-evaluation layer built around the event’s synthetic scenario.
+
+### Non-negotiable boundaries
+
+- No real weapon control or real-world targeting.
+- “Effectors” are abstract simulated response resources supplied by the scenario.
+- No external actuation endpoint.
+- Ground truth remains hidden from the decision engine and is used only after a run to score results.
+- Missing ADS-B or identification data never makes something hostile.
+- Unknown, conflicting, friendly, civilian, and stale tracks cannot receive automated resource assignments.
+- The Flipper Zero is excluded from the core build. Its radios do not provide the RF measurements used by DroneRF, and forcing it into the demonstration would be a gimmick rather than mission value.
+- The judged demonstration must run locally without internet, cloud services, APIs, or a GPU.
+
+### Why every part helps
+
+| Project step | What it does | Why it matters |
+|---|---|---|
+| Normalize incoming data | Converts different formats, times, coordinates, and units into one format | Prevents bad recommendations caused by mismatched data |
+| Match cooperative aircraft | Compares sponsor/UDL identities and ADS-B tracks with sensor tracks | Protects Blue and civilian aircraft |
+| Add RF and motion evidence | Uses DroneRF results and trajectory behavior as supporting evidence | Helps distinguish likely drones from ordinary or uncertain tracks |
+| Preserve uncertainty | Marks weak or contradictory evidence as unknown | Prevents false confidence and simulated fratricide |
+| Build moving safety zones | Predicts where protected aircraft will be during each response window | Blocks options that may intersect Blue or civilian movement |
+| Generate several COAs | Compares speed, expected effectiveness, and resource use | Gives humans choices instead of one unexplained answer |
+| Connect ATC and ADOC | Recalculates COAs when ATC chooses launch, hold, taxi, or reroute | Demonstrates the central coordination problem |
+| Inject network faults | Delays or drops scenario messages | Proves the system remains safe outside a perfect network |
+| Measure results | Compares Friendly Filter Plus against a simple baseline | Gives judges evidence that it works |
+| Export results | Publishes tracks, advisories, and COAs as JSON and CoT | Supports the interoperability bonus |
+
+---
+
+## 2. SPARC Specification
+
+### Functional requirements
+
+- **FR1 — Scenario replay:** Load, pause, reset, and deterministically replay sponsor or locally prepared scenarios.
+- **FR2 — Data ingestion:** Accept sponsor scenario records, ADS-B records, UDL/ARQ records when available, RF results, trajectory samples, and resource status.
+- **FR3 — Normalization:** Convert timestamps to UTC, external positions to WGS84, and calculations to a local east/north/up coordinate system in meters.
+- **FR4 — Track assessment:** Produce one assessed track containing classification, confidence, evidence, staleness, and predicted movement.
+- **FR5 — Protected-aircraft filtering:** Identify Blue and civilian tracks using affirmative identity and space-time matching.
+- **FR6 — Safety enforcement:** Reject every candidate response that conflicts with protected airspace, stale data, unavailable resources, or scenario rules.
+- **FR7 — COA generation:** Return up to three distinct feasible plans: Balanced, Fastest Safe, and Conserve Resources. If no safe plan exists, clearly return `NO SAFE COA`.
+- **FR8 — ATC/ADOC coordination:** Recalculate plans after ATC selects `CONTINUE`, `HOLD`, `TAXI_CLEAR`, or `REROUTE`.
+- **FR9 — Explainability:** Show why a track was classified, why a COA scored well, and why alternatives were rejected.
+- **FR10 — Degraded-network demonstration:** Reproduce latency, packet loss, feed outage, duplicates, and out-of-order messages.
+- **FR11 — Evaluation:** Compute simulated Red stopped, protected entities selected or lost, wasted resource uses, unresolved tracks, and decision time.
+- **FR12 — Interoperability:** Import documented JSON observations and export assessed tracks, airspace advisories, and COAs as JSON and Cursor-on-Target.
+- **FR13 — Human approval:** Allow a user to approve a simulated plan while recording who approved it and which data version was visible.
+- **FR14 — Auditability:** Save every scenario seed, input reference, rule version, classification explanation, candidate plan, rejection reason, and outcome.
+
+### Classification rules
+
+Every track receives one of these labels:
+
+- `BLUE_PROTECTED`
+- `CIVILIAN_PROTECTED`
+- `LIKELY_RED`
+- `UNKNOWN`
+- `CONFLICTING`
+
+Rules:
+
+1. A valid sponsor/UDL Blue identity matched in location and time becomes `BLUE_PROTECTED`.
+2. A valid civilian identity or ADS-B match becomes `CIVILIAN_PROTECTED`.
+3. Missing ADS-B is not evidence of hostility.
+4. `LIKELY_RED` requires a confidence of at least 0.80 and two independent positive evidence types, such as RF evidence plus inbound motion or sponsor sensor evidence.
+5. Contradictory identification becomes `CONFLICTING`.
+6. Everything else remains `UNKNOWN`.
+7. Only `LIKELY_RED` tracks may enter COA generation.
+8. Default matching tolerances are 250 meters horizontally, 100 meters vertically, and ±2 seconds. Sponsor-provided uncertainty values override these defaults.
+9. A source becomes stale after five seconds or three expected update periods, whichever is longer. This remains configurable because event feeds may update at different rates.
+
+### COA generation
+
+Use OR-Tools CP-SAT with abstract scenario resources. Each resource has:
+
+- Identifier and position
+- Availability
+- Allowed simulated range
+- Time to effect
+- Cooldown
+- Capacity
+- Synthetic success probability
+- Scenario safety radius
+- Sponsor-provided doctrine restrictions
+
+Plan over a 30-second horizon in five-second slots.
+
+Before optimization, apply hard constraints:
+
+- No protected, unknown, conflicting, or stale target.
+- No unavailable or stale resource.
+- No candidate intersecting a predicted protected-aircraft safety volume.
+- No violation of synthetic range, capacity, timing, cooldown, or sponsor rules.
+
+After the hard safety gate:
+
+- **Balanced:** Maximize expected weighted Red coverage; break ties by using fewer resources and responding sooner.
+- **Fastest Safe:** Preserve at least 90% of Balanced’s expected coverage, then minimize response time.
+- **Conserve Resources:** Preserve at least 80% of Balanced’s expected coverage, then minimize resource usage.
+- Do not fabricate three alternatives when fewer than three genuinely different safe plans exist.
+
+A simple baseline will assign the nearest eligible resource to the highest-confidence inbound track. Both systems use the same safety constraints so the comparison is fair.
+
+### ATC coordination
+
+For each ATC option, predict the protected aircraft’s future route volume and rerun the solver.
+
+The demonstration’s visual centerpiece will be:
+
+1. Friendly Filter Plus initially recommends Plan A.
+2. ATC changes a Blue aircraft from `HOLD` to `TAXI_CLEAR`.
+3. Its predicted path crosses Plan A’s safety area.
+4. Plan A visibly becomes invalid.
+5. The system generates a safer alternative in under two seconds and explains the change.
+
+Dynamic routing will use a small sponsor-derived taxiway/waypoint graph with A* routing. It will not attempt certified 3D flight planning.
+
+### Non-functional requirements
+
+- Operate with 20–40 simultaneous tracks and 3–5 simulated resources.
+- COA generation p95 latency below two seconds on a MacBook CPU.
+- UI updates within 500 milliseconds of receiving new state.
+- Deterministic output for the same scenario seed and configuration.
+- No internet or GPU required during judging.
+- No LLM in classification, safety enforcement, scoring, or optimization.
+- At least 80% coverage for new backend decision logic.
+- Accessible map symbols and labels; color cannot be the only indicator.
+- Default server binding is `127.0.0.1`; LAN access requires an explicit option.
+- Secrets come from environment variables and never enter logs or source control.
+- Input size, schema, timestamp, enum, and coordinate validation at every ingestion boundary.
+
+### Judging alignment
+
+| Category | Demonstrated proof |
+|---|---|
+| Mission impact — 30% | More simulated Red stopped, zero protected assignments, fewer wasted actions, faster coordination |
+| Technical execution — 25% | Data fusion, hard safety constraints, optimization, deterministic fault injection |
+| Usability — 20% | One-screen map, three understandable choices, rejection explanations, clear network-health status |
+| Security and sustainability — 15% | Local/offline operation, no decision-loop LLM, data lineage, secrets handling, documented interfaces |
+| Team — 10% | Three stable owners, phase gates, continuous handoffs, three-speaker presentation |
+| Interoperability bonus | JSON/CoT exports plus another team or second client consuming or contributing data |
+
+The target and deliverables follow the live [Counter-UAS use case](https://hackathon.ndia.org/event/ndia-global-defense-hackathon-outstation-afcent/use-cases).
+
+---
+
+## 3. Dataset and Technical Plan
+
+### Selected datasets
+
+| Priority | Source | Exactly how it is used | How it helps | Limitation |
+|---|---|---|---|---|
+| 1 | Sponsor Counter-UAS scenario package | Supplies base geometry, Red swarm plans, Blue/civilian movement, sensors, resource status, and scenario truth | Directly satisfies the challenge and powers the complete demo | Must be obtained and its handling rules confirmed |
+| 2 | [ADS-B.lol](https://www.adsb.lol/docs/open-data/api/) | Save a public snapshot before judging; adapt aircraft identity, position, altitude, speed, heading, freshness, and quality fields | Adds a real cooperative-air data source and helps protect civilians | ADS-B is an assertion, can be stale or false, and is never sufficient by itself |
+| 3 | [DroneRF](https://data.mendeley.com/datasets/f4c2b4n755/1) | Train a small binary model for `drone_present` versus background; replay its probability as one synthetic sensor observation | Adds real RF-based drone evidence to the fusion pipeline | Only 227 segments and three drones; no live location; cannot support broad identification claims |
+| 4 | [Drone Trajectory Data](https://www.kaggle.com/datasets/shawnwuplus/drone-trajectory-data) | Normalize, translate, rotate, and resample recorded flight paths into the notional base | Provides realistic motion shapes and predicted positions for timing calculations | Contains no hostile/friendly labels; redistribution rights are unclear |
+| 5 | Aerial Object Detection from the [event dataset catalog](https://hackathon.ndia.org/event/ndia-global-defense-hackathon-outstation-afcent/datasets) | Optional visual corroboration only | Could add a visible camera-confidence layer | Public catalog currently lacks enough schema, label, viewpoint, and license information |
+| 6 | [MITRE Cursor-on-Target](https://quicksearch.dla.mil/qsDocDetails.aspx?ident_number=284928) | Encode assessed tracks and airspace advisories for export | Provides a recognized interoperability format | It is an interchange format, not a detection dataset |
+| 7 | [BlueSTAQ UDL SDK](https://github.com/Bluestaq/udl-python-sdk) and ARQ | Optional live adapter for aircraft, air events, sensors, RF/radar observations, and generated scenarios | Makes the demo compatible with sponsor systems | Access and exact event permissions are currently unconfirmed |
+
+### Dataset transformations
+
+- **Sponsor package:** Convert all scenario entities into the internal schema. Keep scenario truth in a separate evaluator store that the planner cannot access.
+- **ADS-B:** Use `hex`, `flight`, latitude, longitude, barometric/geometric altitude, groundspeed, track, vertical rate, quality indicators, `seen`, and `seen_pos`. Translate a saved public track into the notional scenario only when necessary, and record that transformation.
+- **DroneRF:** Split training and testing by original recording segment—not random windows—to prevent data leakage. Extract approximately 64 log-power spectral bins plus energy, entropy, and peak-to-average features. Train a scikit-learn Random Forest and export the probability and model version.
+- **Trajectory data:** Use the verified fields for date, time, latitude, longitude, altitude, gyro, acceleration, north/east/down position, orientation, wind speed, and wind direction. Motion paths may be transformed into the scenario, but must never be described as real attack traces.
+- **CoT:** Export assessed location, identity, confidence, timestamp, staleness, and track category. JSON remains the primary two-way team interface.
+- **UDL/ARQ:** Create an adapter behind the same internal observation contract. Failure or lack of credentials must automatically fall back to saved replay data.
+
+### Aerial Object Detection decision gate
+
+Include the vision module only if, during Phase 0:
+
+- Files and annotations are available.
+- A real drone class exists.
+- Images represent a useful ground/surface detection viewpoint.
+- Training and event use are permitted.
+- A simple model can train and validate within 90 minutes.
+- Validation reaches at least 0.50 mAP@0.5.
+
+If any condition fails, remove vision completely. Do not replace it with HIT-UAV: that dataset contains downward-looking thermal images of people, cars, bicycles, and other vehicles—not images of drones being detected. This is confirmed by the [HIT-UAV paper](https://arxiv.org/abs/2204.03245).
+
+### Architecture
+
+```text
+Sponsor replay / UDL / ADS-B / RF result / team JSON
+                         ↓
+              Validation + normalization
+                         ↓
+        Assessed tracks + evidence + staleness
+                         ↓
+     Protected routes and moving safety volumes
+                         ↓
+              Hard safety constraint gate
+                         ↓
+         COA optimizer + simple baseline engine
+                         ↓
+ Dashboard / metrics / audit / JSON and CoT exports
+```
+
+Minimum stack:
+
+- Python 3.11
+- FastAPI and Pydantic
+- Pandas
+- scikit-learn for the DroneRF model
+- OR-Tools CP-SAT
+- Shapely and pyproj
+- SQLite
+- React, TypeScript, Vite, and MapLibre GL JS
+- WebSocket updates between backend and dashboard
+
+Do not add a database server, message broker, Kubernetes, authentication platform, 3D rendering engine, or microservices.
+
+### Public interfaces
+
+Core records use schema version `1.0`, UUID identifiers, ISO-8601 UTC timestamps, WGS84 externally, and local east/north/up meters internally.
+
+- `Observation`: source, modality, position, velocity, timestamp, receipt time, source identity, confidence, uncertainty, raw-record reference.
+- `AssessedTrack`: category, probability, predicted path, staleness, matching evidence, conflicting evidence, explanation.
+- `ResourceStatus`: abstract capability, position, availability, capacity, timing, and sponsor rules.
+- `SafetyVolume`: protected entity, predicted time window, geometry, uncertainty buffer.
+- `CourseOfAction`: ATC option, simulated assignments, timing, predicted metrics, rejection reasons, and rank.
+- `EvidencePacket`: source references, transformations, confidence, rule/model version, timestamps, and human-review status.
+
+Endpoints:
+
+- `POST /api/v1/observations`
+- `GET /api/v1/scenarios`
+- `POST /api/v1/scenarios/{id}/start`
+- `PUT /api/v1/fault-profile`
+- `GET /api/v1/tracks`
+- `POST /api/v1/coas:generate`
+- `POST /api/v1/coas/{id}:approve`
+- `GET /api/v1/metrics`
+- `GET /api/v1/export?format=json|cot`
+- `WS /api/v1/stream`
+
+There will be no endpoint that executes a real response.
+
+---
+
+## 4. Phased Three-Person Build
+
+Stable ownership:
+
+- **Person A — Data and interoperability:** datasets, replay, adapters, RF preprocessing, UDL/CoT, provenance.
+- **Person B — Decision engine:** classification rules, safety volumes, optimizer, baseline, evaluation.
+- **Person C — User experience and integration:** dashboard, map, ATC interactions, network-health display, pitch and demo flow.
+
+All three are responsible for integration tests and the final presentation.
+
+| Phase | Time | Person A | Person B | Person C | Exit gate |
+|---|---:|---|---|---|---|
+| 0. Permission and data gate | 0–1h | Obtain sponsor package; record licenses and permitted environments; test UDL credentials | Inspect scenario resource and doctrine fields | Convert the problem into the one-screen demo storyboard | Development pathway approved; Aerial dataset accepted or cut; `RIGHTS.md` started |
+| 1. Contracts and golden scenario | 1–3h | Build one normalized scenario fixture | Define records, safety rules, configuration, and score outputs | Build dashboard shell and map | One scenario streams end-to-end using frozen version-1 contracts |
+| 2. Replay and track assessment | 3–7h | Implement deterministic replay, ADS-B/trajectory adapters, and DroneRF preparation | Implement matching, classifications, evidence, prediction, and staleness | Display tracks, evidence, uncertainty, and protected routes | Evidence toggles visibly change track assessments; safety tests pass |
+| 3. COA engine | 7–11h | Adapt sponsor resource data and create ground-truth evaluator | Build hard constraints, CP-SAT profiles, baseline, and explanations | Build COA cards and rejection drawer | Safe COAs or explicit `NO SAFE COA`; protected-track assignment test remains zero |
+| 4. ATC/ADOC coordination | 11–14h | Add scenario event timing | Add ATC future routes, safety volumes, and simple A* taxi reroute | Add ATC controls and animated recomputation | Blue movement invalidates an unsafe plan and produces a new result in under two seconds |
+| 5. Resilience and interoperability | 14–17h | Add latency/drop/outage replay and JSON/CoT export; add UDL adapter only if ready | Enforce stale-data behavior and tune solver performance | Add fault controls, data-health status, and stale warnings | System stays safe at 40% loss and during a feed outage; second client consumes output |
+| 6. Metrics and integration | 17–20h | Prepare 20 seeded scenarios and finish data provenance | Run baseline comparison and correct failures | Polish the full demo path and judge-facing metrics | Benchmark targets achieved; no broken primary demo path |
+| 7. SPARC Refinement | 20–22h | Review adapters, licenses, and reproducibility | Review traceability, tests, performance, and safety invariants | Review usability, accessibility, and pitch clarity | Acceptance matrix passes; no critical/high finding; feature freeze |
+| 8. Completion and rehearsal | 22–24h | Prepare saved replay and offline package | Run clean-machine regression and verify deterministic output | Lead two timed rehearsals and prepare screenshots/video fallback | Complete ten-minute presentation works twice without live internet |
+
+### Mandatory handoff after every phase
+
+Each owner updates one shared `docs/BUILD_BOOK.md` entry containing:
+
+1. What changed.
+2. How it helps the mission.
+3. Inputs and outputs.
+4. How to run and test it.
+5. Exact demo clicks.
+6. Known limitations.
+7. The next owner and next concrete task.
+
+Supporting documents are limited to:
+
+- `README.md`
+- `docs/BUILD_BOOK.md`
+- `docs/DATA_CARD.md`
+- `docs/PITCH.md`
+- `RIGHTS.md`
+
+Contracts freeze after Phase 1. Any contract change must be written in the build book and immediately communicated to the other two members.
+
+### Cut order if time slips
+
+Cut these in order:
+
+1. Aerial vision module.
+2. Live UDL connection; keep the replay adapter.
+3. Inbound CoT support; keep JSON input and CoT export.
+4. Visual animation polish.
+5. Alternate reroutes beyond one simple taxi route.
+
+Never cut the sponsor scenario, protected-track rules, safety constraints, coupled ATC decision, COA comparison, degraded-network demonstration, metrics, or local replay.
+
+---
+
+## 5. Refinement, Testing, and Presentation
+
+### SPARC Refinement criteria
+
+SPARC Refinement requires working code, so it occurs in Phases 7–8 rather than being falsely declared complete before implementation. The refinement pass must verify:
+
+- Every functional requirement maps to at least one automated or scripted test.
+- The planner never sees scenario ground truth.
+- Every result can be reproduced from a scenario seed.
+- No protected, unknown, conflicting, or stale track can receive an assignment.
+- Every rejected plan includes a human-readable reason.
+- Every dataset and model has source, license, transformation, and limitation records.
+- No credentials, raw sponsor data, screenshots, prompts, or logs are sent to an external AI, cloud deployment, personal repository, or account without authorization.
+- The demonstration launches from a fresh machine and continues with the network disabled.
+
+### Acceptance scenarios
+
+1. A valid Blue identity and matching position always produces `BLUE_PROTECTED`.
+2. A civilian ADS-B track remains protected even when another sensor reports uncertainty.
+3. Removing ADS-B never changes a track to `LIKELY_RED` by itself.
+4. Conflicting identity evidence produces `CONFLICTING` and blocks assignment.
+5. The engine returns up to three genuinely different safe COAs or clearly explains why fewer exist.
+6. Changing a Blue aircraft from hold to taxi invalidates intersecting candidates and recomputes within two seconds.
+7. Five-second-old critical data is visibly marked stale and cannot support a new assignment.
+8. Duplicate and out-of-order messages do not rewind the state.
+9. At 20% and 40% packet loss, the UI remains usable and safety constraints remain active.
+10. A complete feed outage produces a safe degraded state rather than confident recommendations.
+11. JSON import/export round-trips without losing required fields.
+12. CoT export contains correct identity, location, time, category, and staleness.
+13. Restarting the same seeded replay produces identical COAs and metrics.
+14. The complete presentation works from saved local data with no internet.
+
+### Benchmark target
+
+Across 20 deterministic scenarios:
+
+- Zero protected, civilian, unknown, or conflicting assignments.
+- Balanced COA stops at least as many simulated Red threats as the baseline in at least 16 scenarios.
+- Balanced COA uses no more wasted simulated actions than the baseline in at least 16 scenarios.
+- COA generation p95 remains below two seconds.
+- Every result contains an evidence and rejection trail.
+
+If those targets are not met, the dashboard must not claim improvement.
+
+### Ten-minute presentation
+
+- **0:00–0:45 — Problem:** One person cannot safely coordinate a fast swarm, friendly aircraft, civilian traffic, and limited resources.
+- **0:45–1:30 — Solution:** Explain Friendly Filter Plus in one sentence and show the dashboard.
+- **1:30–2:15 — Honest differentiation:** It does not replace fielded C2; it makes safety logic, uncertainty, and ATC/ADOC tradeoffs visible and testable.
+- **2:15–3:00 — Data:** Show exactly where sponsor data, ADS-B, DroneRF, trajectory data, and UDL/CoT enter.
+- **3:00–6:30 — Main demonstration:** Run the swarm, show three COAs, change the Blue aircraft’s taxi decision, and show the unsafe plan being rejected and replaced.
+- **6:30–7:30 — Degraded network:** Inject packet loss and a feed outage; show stale warnings and safe blocking.
+- **7:30–8:30 — Evidence:** Compare results with the baseline.
+- **8:30–9:15 — Interoperability:** Export a track/advisory and show another client consuming it.
+- **9:15–10:00 — Close:** Map the results directly to mission impact, technical execution, usability, security, teamwork, and interoperability.
+
+Speaker split:
+
+- Person C: problem, interface, and ATC action.
+- Person B: safety rules, optimizer, and metrics.
+- Person A: datasets, degraded conditions, and interoperability.
+
+### Assumptions and deployment policy
+
+- The primary deployment is local on one MacBook, with the other computers connecting through browsers on the approved local network.
+- Public cloud deployment is optional and may contain only sanitized synthetic/public data after organizer approval.
+- Sponsor-controlled or government-controlled data will not be uploaded to Replit, AWS, external AI services, GitHub, or public hosting without explicit authorization.
+- The team must confirm its approved development pathway before substantive coding; the event [terms document](https://hackathon.ndia.org/api/events/6/legal-document/terms/?v=1.1) makes this a Phase 0 requirement.
+- UDL/ARQ access is an enhancement, not a dependency.
+- DroneRF model training uses only the public CC BY 4.0 dataset unless the event explicitly authorizes training on event data.
+- The unresolved Aerial Object Detection source is governed by the pass/fail gate above.
+- Saved replay data is the judged source of truth, ensuring the demonstration works even when live services fail.
