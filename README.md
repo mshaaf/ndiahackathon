@@ -41,6 +41,7 @@ npm --prefix frontend run build
 | [Architecture and build sequence](docs/ARCHITECTURE.md) | Modules and seams, requirement-to-phase mapping, phase prerequisites and gates, critical path |
 | [Pseudocode](docs/pseudocode/) | Module-level algorithms and TDD anchors, one file per phase |
 | [Testing](docs/TESTING.md) | Invariants, metamorphic relations, adversarial fixtures, mutation set, self-application |
+| [Project handoff](docs/HANDOFF.md) | Verified Phase 1 baseline, current limits, setup commands, and ordered Steps 4–11 |
 | [Agent instructions](AGENTS.md) | Repository rules, bounded parallel work, review, and handoffs |
 | [Build book](docs/BUILD_BOOK.md) | Current status, decisions, evidence, and owner handoffs |
 | [Data card](docs/DATA_CARD.md) | Sources, transformations, limitations, and attribution |

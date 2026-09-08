@@ -10,7 +10,7 @@ This is the shared status and handoff log. Section 4 of the original [build plan
 | Repository documentation | Complete | [Document index](../README.md#documentation-map) |
 | Phase 0 — Permission and data gate | In progress | Aerial dataset cut (D10); AI-processing permission asserted (D11). Development pathway and named owners still pending in [RIGHTS](../RIGHTS.md). Sponsor package not yet downloaded. |
 | Phase 1 — Contracts and golden scenario | Complete | Golden fixture splits truth from runtime; validated observations stream through WebSocket to a local MapLibre browser view |
-| Phase 2 — Replay and track assessment | Not started | Depends on Phase 1 |
+| Phase 2 — Replay and track assessment | Ready — next | Execute Steps 4–6 in the [project handoff](HANDOFF.md); Replay and Assessment may start in parallel against the frozen records |
 | Phase 3 — COA engine | Not started | Depends on Phase 2 |
 | Phase 4 — ATC/ADOC coordination | Not started | Depends on Phase 3 |
 | Phase 5 — Resilience and interoperability | Not started | Depends on Phase 4 |
@@ -46,6 +46,7 @@ Role labels A/B/C are stable responsibilities, not assigned individual names. Ho
 | D12 | Partially reverse D09: write one [ARCHITECTURE](ARCHITECTURE.md) document covering module seams, requirement-to-phase mapping, phase prerequisites and gates, the critical path, and the retrofit-cost table. Still do not write PHASES, CONTRACTS, or VERIFICATION as separate files. | D09 assumed the source plan already carried this. It carries the content but not the dependency structure — what each phase consumes, what it hands forward, and which Phase 1 decisions are expensive to defer. One document, not four. |
 | D20 | Freeze the Phase 1 Python records in `friendly_filter.models`; stream observations as GeoJSON with an ISO UTC `simulation_time`; keep scenario truth behind the separate `scenario_loader` output path. | The integrated golden scenario passed its split, model validation, WebSocket, frontend boundary, and browser-render checks. Changes now require a build-book entry and notification to A, B, and C. |
 | D21 | Pin MapLibre GL JS to 6.8.0, satisfying D18, and bundle its worker through Vite. | A fresh dependency audit found the 5.11.0 pin affected by the MapLibre expression XSS advisory. Version 6.8.0 removes the advisory and the bundled worker preserves offline rendering. |
+| D22 | Use Steps 4–11 in [HANDOFF](HANDOFF.md) as the next execution order: Replay, Assessment, early ATC routes, Planning plus immediate three-seed smoke, Invalidation, Resilience/Export, Evaluation, then Freeze/Package. | Project-owner handoff direction on 2026-09-08; it preserves the architecture's critical path and completes D15's route-rendering half during Phase 2. |
 
 Unresolved data access, licensing, and organizer-pathway questions belong in [RIGHTS.md](../RIGHTS.md); they are not silently decided by these clarifications. New technical proposals must be validated against the actual sponsor schema in Phase 1.
 
