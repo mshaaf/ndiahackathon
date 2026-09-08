@@ -1,0 +1,23 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.venv/
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+node_modules/
+dist/
+.worktrees/
+.claude-flow/
+.swarm/
+
+# Local datasets and run artifacts; reviewed synthetic fixtures belong in fixtures/synthetic/.
+data/
+artifacts/
+*.sqlite
+*.sqlite3
+*.db
