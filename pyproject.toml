@@ -20,7 +20,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["backend/friendly_filter"]
+packages = ["backend/friendly_filter", "backend/scenario_loader"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

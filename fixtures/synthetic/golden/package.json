@@ -1,0 +1,352 @@
+{
+  "scenario": {
+    "scenario_id": "golden-demo-v1",
+    "schema_version": "1.0",
+    "name": "Golden taxi crossing demonstration",
+    "seed": 20260908,
+    "duration_seconds": 20,
+    "origin": {
+      "latitude": 38.8895,
+      "longitude": -77.0353,
+      "altitude_m": 0.0
+    }
+  },
+  "atc": {
+    "revision": 0,
+    "aircraft_stream_id": "s-7f3a2c91",
+    "routes": {
+      "HOLD": [
+        {"east_m": 0.0, "north_m": -600.0, "up_m": 30.0},
+        {"east_m": 60.0, "north_m": -660.0, "up_m": 30.0},
+        {"east_m": -60.0, "north_m": -660.0, "up_m": 30.0},
+        {"east_m": 0.0, "north_m": -600.0, "up_m": 30.0}
+      ],
+      "TAXI_CLEAR": [
+        {"east_m": 0.0, "north_m": -600.0, "up_m": 30.0},
+        {"east_m": 0.0, "north_m": 600.0, "up_m": 30.0}
+      ]
+    }
+  },
+  "resources": [
+    {
+      "schema_version": "1.0",
+      "resource_id": "resource-01",
+      "position": {"east_m": -1000.0, "north_m": 0.0, "up_m": 0.0},
+      "available": true,
+      "range_m": 2500.0,
+      "time_to_effect_s": 8.0,
+      "cooldown_s": 12.0,
+      "capacity": 1,
+      "p_success": 0.8,
+      "safety_radius_m": 75.0,
+      "doctrine_rules": ["SIMULATION_ONLY", "NO_PROTECTED_ASSIGNMENTS"],
+      "last_used_at": null,
+      "last_received_at": "2026-09-08T14:00:00Z"
+    },
+    {
+      "schema_version": "1.0",
+      "resource_id": "resource-02",
+      "position": {"east_m": -800.0, "north_m": -900.0, "up_m": 0.0},
+      "available": true,
+      "range_m": 2200.0,
+      "time_to_effect_s": 12.0,
+      "cooldown_s": 18.0,
+      "capacity": 2,
+      "p_success": 0.7,
+      "safety_radius_m": 90.0,
+      "doctrine_rules": ["SIMULATION_ONLY", "NO_PROTECTED_ASSIGNMENTS"],
+      "last_used_at": null,
+      "last_received_at": "2026-09-08T14:00:00Z"
+    },
+    {
+      "schema_version": "1.0",
+      "resource_id": "resource-03",
+      "position": {"east_m": 850.0, "north_m": 900.0, "up_m": 0.0},
+      "available": true,
+      "range_m": 1800.0,
+      "time_to_effect_s": 5.0,
+      "cooldown_s": 10.0,
+      "capacity": 1,
+      "p_success": 0.65,
+      "safety_radius_m": 60.0,
+      "doctrine_rules": ["SIMULATION_ONLY", "NO_PROTECTED_ASSIGNMENTS"],
+      "last_used_at": null,
+      "last_received_at": "2026-09-08T14:00:00Z"
+    }
+  ],
+  "events": [
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-7f3a2c91",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b80c7a0f-a65b-43bb-b54c-e28469e9d101",
+        "source_id": "adsb-replay",
+        "source_seq": 1,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00Z",
+        "position": {"east_m": 0.0, "north_m": -600.0, "up_m": 30.0},
+        "velocity": {"east_m": 0.0, "north_m": 0.0, "up_m": 0.0},
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "package.json#/events/0"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-62b184de",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "8fb09d72-ec9d-448a-adad-2039e982d102",
+        "source_id": "adsb-replay",
+        "source_seq": 2,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00Z",
+        "position": {"east_m": -600.0, "north_m": 700.0, "up_m": 250.0},
+        "velocity": {"east_m": 10.0, "north_m": 0.0, "up_m": 0.0},
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "package.json#/events/1"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-a091d4b7",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "55b1363a-37a4-4ca6-94c1-aae7dfe4d103",
+        "source_id": "rf-replay",
+        "source_seq": 1,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.050000Z",
+        "position": {"east_m": 1000.0, "north_m": 0.0, "up_m": 100.0},
+        "velocity": {"east_m": -20.0, "north_m": 0.0, "up_m": 0.0},
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "package.json#/events/2"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-c3e85f20",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2456bac1-136e-46d8-b074-989f79ca3104",
+        "source_id": "rf-replay",
+        "source_seq": 2,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.070000Z",
+        "position": {"east_m": 700.0, "north_m": 400.0, "up_m": 120.0},
+        "velocity": {"east_m": -15.0, "north_m": -10.0, "up_m": 0.0},
+        "claimed_identity": null,
+        "strength": 0.88,
+        "uncertainty_m": 40.0,
+        "raw_ref": "package.json#/events/3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-f4d62a89",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "7c47fc15-1bee-4dd7-8eae-e7136acd4105",
+        "source_id": "sponsor-replay",
+        "source_seq": 1,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.020000Z",
+        "position": {"east_m": 600.0, "north_m": -700.0, "up_m": 120.0},
+        "velocity": {"east_m": -5.0, "north_m": 4.0, "up_m": 0.0},
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "package.json#/events/4"
+      }
+    },
+    {
+      "at_seconds": 0.1,
+      "stream_id": "s-f4d62a89",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d3dc334c-df03-455e-8b3f-e411ecb3d106",
+        "source_id": "adsb-replay",
+        "source_seq": 3,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:00.100000Z",
+        "received_at": "2026-09-08T14:00:00.130000Z",
+        "position": {"east_m": 600.0, "north_m": -700.0, "up_m": 120.0},
+        "velocity": {"east_m": -5.0, "north_m": 4.0, "up_m": 0.0},
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "package.json#/events/5"
+      }
+    },
+    {
+      "at_seconds": 0.2,
+      "stream_id": "s-a091d4b7",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "960452a7-a974-44f2-a39f-c0d129b3d107",
+        "source_id": "sponsor-replay",
+        "source_seq": 2,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:00.200000Z",
+        "received_at": "2026-09-08T14:00:00.240000Z",
+        "position": {"east_m": 996.0, "north_m": 0.0, "up_m": 100.0},
+        "velocity": {"east_m": -20.0, "north_m": 0.0, "up_m": 0.0},
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 20.0,
+        "raw_ref": "package.json#/events/6"
+      }
+    },
+    {
+      "at_seconds": 0.2,
+      "stream_id": "s-c3e85f20",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "c5712991-20c9-4173-9811-1342918a0108",
+        "source_id": "sponsor-replay",
+        "source_seq": 3,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:00.200000Z",
+        "received_at": "2026-09-08T14:00:00.250000Z",
+        "position": {"east_m": 697.0, "north_m": 398.0, "up_m": 120.0},
+        "velocity": {"east_m": -15.0, "north_m": -10.0, "up_m": 0.0},
+        "claimed_identity": null,
+        "strength": 0.93,
+        "uncertainty_m": 22.0,
+        "raw_ref": "package.json#/events/7"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-7f3a2c91",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "97a97bdf-adcc-46f7-bf15-a8fa16a83109",
+        "source_id": "adsb-replay",
+        "source_seq": 4,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05Z",
+        "position": {"east_m": 0.0, "north_m": -600.0, "up_m": 30.0},
+        "velocity": {"east_m": 0.0, "north_m": 0.0, "up_m": 0.0},
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "package.json#/events/8"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-62b184de",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "80b1ef01-0b32-4b45-a51f-b7a97fb2d110",
+        "source_id": "adsb-replay",
+        "source_seq": 5,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05Z",
+        "position": {"east_m": -550.0, "north_m": 700.0, "up_m": 250.0},
+        "velocity": {"east_m": 10.0, "north_m": 0.0, "up_m": 0.0},
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "package.json#/events/9"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-a091d4b7",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f1ed2941-32bf-42bf-be2c-a84a88998111",
+        "source_id": "trajectory-replay",
+        "source_seq": 1,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.040000Z",
+        "position": {"east_m": 900.0, "north_m": 0.0, "up_m": 100.0},
+        "velocity": {"east_m": -20.0, "north_m": 0.0, "up_m": 0.0},
+        "claimed_identity": null,
+        "strength": 0.96,
+        "uncertainty_m": 18.0,
+        "raw_ref": "package.json#/events/10"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-c3e85f20",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a36eff63-ef56-49b7-90ca-10a8e4623112",
+        "source_id": "trajectory-replay",
+        "source_seq": 2,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.050000Z",
+        "position": {"east_m": 625.0, "north_m": 350.0, "up_m": 120.0},
+        "velocity": {"east_m": -15.0, "north_m": -10.0, "up_m": 0.0},
+        "claimed_identity": null,
+        "strength": 0.94,
+        "uncertainty_m": 20.0,
+        "raw_ref": "package.json#/events/11"
+      }
+    }
+  ],
+  "truth": {
+    "entities": [
+      {"stream_id": "s-7f3a2c91", "classification": "BLUE", "outcome": "PROTECTED"},
+      {"stream_id": "s-62b184de", "classification": "CIVILIAN", "outcome": "PROTECTED"},
+      {"stream_id": "s-a091d4b7", "classification": "HOSTILE", "outcome": "ACTIVE"},
+      {"stream_id": "s-c3e85f20", "classification": "HOSTILE", "outcome": "ACTIVE"},
+      {"stream_id": "s-f4d62a89", "classification": "CONFLICTING", "outcome": "UNRESOLVED"}
+    ]
+  }
+}
