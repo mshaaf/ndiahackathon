@@ -17,6 +17,7 @@ dist/
 
 # Local datasets and run artifacts; reviewed synthetic fixtures belong in fixtures/synthetic/.
 data/
+datasets/
 artifacts/
 *.sqlite
 *.sqlite3

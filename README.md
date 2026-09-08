@@ -6,9 +6,10 @@ A local, simulation-only dashboard that makes aircraft protection, uncertainty, 
 
 ## Start here
 
-1. Read the [phased build plan](docs/PHASES.md) and complete Phase 0's data and development-pathway gate.
-2. Agree on the [architecture](docs/ARCHITECTURE.md) and freeze the [proposed contracts](docs/CONTRACTS.md) during Phase 1.
-3. Build and verify one phase at a time, recording evidence and the next handoff in the [build book](docs/BUILD_BOOK.md).
+1. Read the [architecture and build sequence](docs/ARCHITECTURE.md) for modules, phase prerequisites, and the critical path.
+2. Complete Phase 0's data and development-pathway gate; record the outcome in [RIGHTS.md](RIGHTS.md).
+3. Freeze the v1 records defined in section 3 of the [original build plan](ndiahackbuildplan.txt) during Phase 1.
+4. Build and verify one phase at a time, recording evidence and the next handoff in the [build book](docs/BUILD_BOOK.md).
 
 There are no application installation or launch commands yet. Phase 1 must add tested setup instructions; Phase 8 must verify the finished package on a clean machine with networking disabled.
 
@@ -16,18 +17,17 @@ There are no application installation or launch commands yet. Phase 1 must add t
 
 | Document | Purpose |
 |---|---|
-| [Original build plan](ndiahackbuildplan.txt) | Unchanged source supplied by the project owner |
-| [Phases](docs/PHASES.md) | Nine phases, owners, dependencies, work items, exit gates, and cut order |
-| [Architecture](docs/ARCHITECTURE.md) | Proposed components, data flow, trust boundaries, and offline design |
-| [Contracts](docs/CONTRACTS.md) | Proposed v1 records, HTTP/stream interfaces, validation, and approval behavior |
+| [Original build plan](ndiahackbuildplan.txt) | Unchanged source supplied by the project owner. Field-level record definitions, acceptance scenarios, and benchmark targets live here. |
+| [Architecture and build sequence](docs/ARCHITECTURE.md) | Modules and seams, requirement-to-phase mapping, phase prerequisites and gates, critical path |
+| [Pseudocode](docs/pseudocode/) | Module-level algorithms and TDD anchors, one file per phase |
+| [Testing](docs/TESTING.md) | Invariants, metamorphic relations, adversarial fixtures, mutation set, self-application |
 | [Agent instructions](AGENTS.md) | Repository rules, bounded parallel work, review, and handoffs |
 | [Build book](docs/BUILD_BOOK.md) | Current status, decisions, evidence, and owner handoffs |
-| [Data card](docs/DATA_CARD.md) | Sources, transformations, model limitations, and provenance |
+| [Data card](docs/DATA_CARD.md) | Sources, transformations, limitations, and attribution |
 | [Rights register](RIGHTS.md) | Dataset permissions, pending approvals, and redistribution decisions |
-| [Verification](docs/VERIFICATION.md) | Requirement traceability, acceptance scenarios, and benchmark protocol |
 | [Pitch](docs/PITCH.md) | Ten-minute presentation, speaker ownership, and offline fallback |
 
-The original plan is historical evidence. These linked documents organize its requirements; explicit clarifications are recorded in the build book. New schema details remain proposals until the Phase 1 gate. Do not infer an implementation from a proposed file path or endpoint.
+The original plan is historical evidence; explicit clarifications are recorded in the build book. Schema details remain proposals until the Phase 1 gate. Do not infer an implementation from a proposed file path or endpoint.
 
 ## Build phases
 

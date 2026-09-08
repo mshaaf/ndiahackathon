@@ -2,7 +2,7 @@
 
 ## Read before working
 
-Read [README.md](README.md), the active phase in [docs/PHASES.md](docs/PHASES.md), and the latest [build-book entry](docs/BUILD_BOOK.md). Read [architecture](docs/ARCHITECTURE.md) and [contracts](docs/CONTRACTS.md) before changing shared behavior. The original [build plan](ndiahackbuildplan.txt) is preserved; do not rewrite it to hide changed requirements.
+Read [README.md](README.md), the latest [build-book entry](docs/BUILD_BOOK.md), and the active phase in section 4 of the original [build plan](ndiahackbuildplan.txt). Read that plan's architecture and public interfaces in section 3 before changing shared behavior. The plan is preserved; do not rewrite it to hide changed requirements.
 
 This is currently a documentation-only repository. Proposed modules, commands, schemas, test cases, and performance targets are not implemented or verified. Do not claim a phase passes without its evidence. The current task authorizes preparing and publishing project documentation; it does not mark the Phase 0 implementation/data permissions complete.
 
