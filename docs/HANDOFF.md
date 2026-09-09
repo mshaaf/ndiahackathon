@@ -1,10 +1,10 @@
 # Project handoff
 
-**Current continuation point:** [Phase 2 implementation and recovery handoff](PHASE_2_HANDOFF.md). Replay/fault infrastructure, reported identity/freshness display and early synthetic ATC previews are implemented and verified there. Full assessment and the Phase 2 gate remain incomplete. The content below preserves the earlier Phase 1 snapshot and original execution plan; its “does not exist yet” list describes that historical baseline.
+**Current continuation point:** Phase 4 invalidation in Step 8 below. Phases 2 and 3 are implemented and verified on `codex/phase2-complete`; [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md) records the completed assessment gate and [BUILD_BOOK](BUILD_BOOK.md) records the Phase 3 gate and smoke benchmark. The ordered execution plan remains authoritative for later work.
 
-Status snapshot: 2026-09-08
+Status snapshot: 2026-09-09
 
-Implementation baseline: `0e0fa0b`
+Implementation branch: `codex/phase2-complete`
 
 Repository: [mshaaf/ndiahackathon](https://github.com/mshaaf/ndiahackathon)
 
@@ -16,8 +16,9 @@ This is the starting point for the next contributor. The original [build plan](.
 |---|---|---|
 | 0 — Permission and data gate | In progress | Synthetic work may continue. Sponsor package access, exact grant text, development pathway, and named owners remain open in [RIGHTS](../RIGHTS.md). |
 | 1 — Contracts and golden scenario | Passed | Frozen v1 Pydantic records, truth split, golden demo fixture, and browser stream passed the recorded gate. |
-| 2 — Replay and assessment | Next | Specifications and tests are written; implementation has not started. |
-| 3–8 | Not started | Depend on the gates below. |
+| 2 — Replay and assessment | Passed | 69 pre-planner backend tests, assessment coverage, frontend build, and the visible evidence-toggle gate passed. |
+| 3 — Safety gate and COA engine | Passed | Shared hard gate, geometry fixtures, property test, CP-SAT guard, plan UI, browser check, and three-seed smoke passed. |
+| 4–8 | Not started | Phase 4 invalidation and approval binding are next. |
 
 ### What works now
 
@@ -27,16 +28,18 @@ This is the starting point for the next contributor. The original [build plan](.
 - FastAPI serves scenario metadata and emits 12 ordered GeoJSON snapshots over `/api/v1/stream`.
 - The React/MapLibre page uses a blank style with no basemap, glyph server, or sprite. It renders five reported tracks and shows BLUE01 moving.
 - MapLibre GL JS is pinned to 6.8.0 and its worker is bundled by Vite. The dependency audit reports zero vulnerabilities.
+- Deterministic replay/faults, spatial association, affirmative-evidence noisy-OR, classification precedence, two-age staleness, prediction, and rule-derived explanations produce frozen `AssessedTrack` 1.0 records.
+- Shapely builds protected swept volumes and response corridors; one shared hard gate rejects protected, unknown, conflicting, stale, unavailable, out-of-range, capacity, cooldown, doctrine, and intersecting candidates.
+- Enumeration selects distinct Balanced/Fastest Safe/Conserve plans below the `10^6` ceiling; pinned OR-Tools CP-SAT handles larger spaces. The same gate constrains the baseline.
+- Schema 1.3 WebSocket snapshots bind plan cards to the displayed run/state/config/ATC revision and include an accessible rejection drawer.
 
 ### What does not exist yet
 
-- The current stream sleeps between fixture events, but it is not the Phase 2 replay engine. It has no scenario clock, pause/reset/rate control, seeded fault profile, source health window, or reusable idempotency seam.
-- The browser shows reported identities only. Association, evidence, classification, staleness, prediction, and rule-derived explanations are unimplemented.
-- ATC controls and route/safety-volume layers are unimplemented.
-- There is no safety gate, planner, baseline, invalidation, approval binding, export, evaluator, benchmark, offline package, or backup video.
-- No later-phase safety or performance target has passed.
+- Phase 4 does not yet replace the Blue prediction with the selected authored ATC route, revalidate old plans, or expose simulated approval records.
+- Export, the independent consumer, evaluator, twenty-seed benchmark, mutation/soak set, clean-machine offline package, and backup video remain later phases.
+- The golden scenario currently yields two genuinely distinct optimized plans because Fastest Safe duplicates Balanced and is correctly suppressed; the UI does not fabricate a third card.
 
-## Reproduce the Phase 1 baseline
+## Reproduce the current local build
 
 Prerequisites: Python 3.11–3.13, `uv`, and Node.js. The repository owner must grant GitHub access before transfer if the repository remains private.
 
@@ -47,13 +50,14 @@ uv sync --all-groups
 npm --prefix frontend ci
 uv run python -m scenario_loader fixtures/synthetic/golden/package.json artifacts/runtime/golden artifacts/evaluator/golden
 uv run pytest
+uv run python -m friendly_filter.phase3_smoke artifacts/runtime/golden/runtime.json
 npm --prefix frontend test
 npm --prefix frontend run build
 npm --prefix frontend audit
 uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 ```
 
-Open `http://127.0.0.1:8000`. Expected result: the status changes from `Connected` to `Replay complete`, sequence reaches 12, five tracks remain visible, and BLUE01 changes position. The last verified baseline produced 3 passing Python tests, 1 passing frontend test, a successful production build, and 0 audit vulnerabilities.
+Open `http://127.0.0.1:8000`. Pause near 2.1 scenario seconds to inspect two `LIKELY_RED` assessments, protected/conflicting tracks, safe plan cards, the same-gate baseline, and rejection reasons. Select **Hide one sponsor packet** and **Apply and restart** to see one assessment lose eligibility. The latest recorded evidence is in BUILD_BOOK rather than this command synopsis.
 
 Generated runtime and truth files live under `artifacts/` and are ignored. Regenerate them after a fresh clone. The runtime server receives only `artifacts/runtime/golden/runtime.json`; do not pass it the evaluator path.
 

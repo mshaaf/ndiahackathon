@@ -1,12 +1,50 @@
 import type { FeatureCollection, Point, LineString, Polygon } from 'geojson';
 
 export type AtcOption = 'CONTINUE' | 'HOLD' | 'TAXI_CLEAR';
+export type StateBinding = {
+  schema_version?: '1.0'; run_id: string; state_version: number;
+  config_fingerprint: string; atc_revision: number;
+};
+export type EvidencePacket = {
+  schema_version: '1.0'; evidence_type: string; origin_kind: 'LOCAL_SENSOR' | 'EXTERNAL_IMPORT';
+  strength: number; source_id: string; raw_ref: string; rule_version: string;
+  model_version: string | null; observed_at: string;
+};
+export type AssessedTrack = {
+  schema_version: '1.0'; track_id: string;
+  category: 'BLUE_PROTECTED' | 'CIVILIAN_PROTECTED' | 'LIKELY_RED' | 'UNKNOWN' | 'CONFLICTING';
+  red_probability: number; evidence_for: EvidencePacket[]; evidence_against: EvidencePacket[];
+  last_observed_at: string; last_received_at: string; is_stale: boolean;
+  predicted_path: { at: string; position: { east_m: number; north_m: number; up_m: number }; radius_m: number }[];
+  explanation: string;
+};
+export type Assignment = {
+  schema_version: '1.0'; resource_id: string; track_id: string; slot_index: number;
+  start_at: string; effect_at: string;
+};
+export type CourseOfAction = {
+  schema_version: '1.0'; coa_id: string;
+  profile: 'BALANCED' | 'FASTEST_SAFE' | 'CONSERVE' | 'BASELINE'; atc_option: AtcOption;
+  assignments: Assignment[]; expected_coverage: number; completion_at: string;
+  resources_used: number; rank: number; fingerprint: string; bound_state: StateBinding;
+};
+export type PlanningResult = {
+  schema_version: '1.0'; status: 'OK' | 'NO_SAFE_COA' | 'PARTIAL' | 'TIMEOUT';
+  coas: CourseOfAction[]; baseline: CourseOfAction | null;
+  safety_volumes: { schema_version: '1.0'; entity_track_id: string; window_start: string;
+    window_end: string; geometry: { coordinates: { east_m: number; north_m: number; up_m: number }[] };
+    reason: string }[];
+  rejections: { schema_version: '1.0'; assignments: Assignment[]; reason_code: string; reason_text: string }[];
+  combination_count: number; method: 'ENUMERATION' | 'CP_SAT'; timed_out: boolean;
+  elapsed_ms: number; explanation: string;
+};
 export type TrackProperties = {
   stream_id: string; label: string; modality: string; observed_at: string; received_at: string;
   identity_kind: 'BLUE' | 'CIVILIAN' | 'UNKNOWN' | 'CONFLICTING';
   source_id: string; raw_ref: string; is_stale: boolean; explanation: string;
   age_observed_s: number; age_received_s: number; stale_threshold_s: number;
   identity_claims: { kind: string; source_id: string; observed_at: string; raw_ref: string }[];
+  assessed_track_id: string | null;
 };
 export type Health = {
   received: number; dropped: number; duplicated: number; late: number; rejected: number;
@@ -18,10 +56,12 @@ export type FaultProfile = {
   latency_jitter_s?: number; outage_windows?: [number, number][]; affected_sources?: string[] | null;
 };
 export type Snapshot = FeatureCollection<Point, TrackProperties> & {
-  schema_version: '1.1'; scenario_id: string; sequence: number; simulation_time: string;
-  binding: { run_id: string; state_version: number; config_fingerprint: string; atc_revision: number };
+  schema_version: '1.3'; scenario_id: string; sequence: number; simulation_time: string;
+  binding: StateBinding;
   clock: { seconds: number; rate: number; complete: boolean; duration_s: number };
   health: Record<string, Health>; seed: number; fault_profile: FaultProfile; command_error?: string;
+  assessed_tracks: AssessedTrack[];
+  planning: PlanningResult;
   atc: { aircraft_stream_id: string | null; option: AtcOption; revision: number;
     preview: FeatureCollection<LineString | Polygon, { kind: 'route' | 'uncertainty' }> };
 };
@@ -30,6 +70,13 @@ export type Command = { action: 'pause' | 'resume' | 'reset' } | { action: 'rate
   | { action: 'faults'; seed: number; profile: FaultProfile };
 
 const options = ['CONTINUE', 'HOLD', 'TAXI_CLEAR'];
+const categories = ['BLUE_PROTECTED', 'CIVILIAN_PROTECTED', 'LIKELY_RED', 'UNKNOWN', 'CONFLICTING'];
+const evidenceTypes = ['RF_DETECTION', 'INBOUND_MOTION', 'SPONSOR_SENSOR', 'BLUE_IDENTITY', 'CIVILIAN_IDENTITY'];
+const profiles = ['BALANCED', 'FASTEST_SAFE', 'CONSERVE', 'BASELINE'];
+const rejectionReasons = ['PROTECTED_TARGET', 'UNKNOWN_TARGET', 'CONFLICTING_TARGET', 'STALE_TARGET',
+  'STALE_RESOURCE', 'RESOURCE_UNAVAILABLE', 'OUT_OF_RANGE', 'CAPACITY', 'COOLDOWN', 'DOCTRINE',
+  'INTERSECTS_PROTECTED', 'MISSING_GEOMETRY'];
+const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function text(value: unknown): value is string { return typeof value === 'string' && !!value.trim() && value.length <= 2048; }
 function nonnegative(value: unknown): value is number { return typeof value === 'number' && Number.isFinite(value) && value >= 0; }
 function integer(value: unknown): value is number { return nonnegative(value) && Number.isSafeInteger(value); }
@@ -40,6 +87,71 @@ function position(value: unknown): value is number[] {
   return Array.isArray(value) && value.length >= 2 && value.length <= 3 && value.every(Number.isFinite)
     && Math.abs(value[0]) <= 180 && Math.abs(value[1]) <= 90;
 }
+function enu(value: unknown): value is { east_m: number; north_m: number; up_m: number } {
+  const vector = value as Record<string, unknown>;
+  return !!vector && ['east_m', 'north_m', 'up_m'].every((key) =>
+    typeof vector[key] === 'number' && Number.isFinite(vector[key]));
+}
+function evidence(value: unknown): value is EvidencePacket {
+  const packet = value as EvidencePacket;
+  return !!packet && packet.schema_version === '1.0' && evidenceTypes.includes(packet.evidence_type)
+    && ['LOCAL_SENSOR', 'EXTERNAL_IMPORT'].includes(packet.origin_kind)
+    && nonnegative(packet.strength) && packet.strength <= 1 && text(packet.source_id)
+    && text(packet.raw_ref) && text(packet.rule_version)
+    && (packet.model_version === null || text(packet.model_version)) && isUtc(packet.observed_at);
+}
+function assessedTrack(value: unknown): value is AssessedTrack {
+  const track = value as AssessedTrack;
+  return !!track && track.schema_version === '1.0' && uuid.test(track.track_id)
+    && categories.includes(track.category) && nonnegative(track.red_probability) && track.red_probability <= 1
+    && Array.isArray(track.evidence_for) && track.evidence_for.every(evidence)
+    && Array.isArray(track.evidence_against) && track.evidence_against.every(evidence)
+    && isUtc(track.last_observed_at) && isUtc(track.last_received_at) && typeof track.is_stale === 'boolean'
+    && Array.isArray(track.predicted_path) && track.predicted_path.every((point) => point && isUtc(point.at)
+      && enu(point.position) && nonnegative(point.radius_m)) && text(track.explanation);
+}
+function stateBinding(value: unknown): value is StateBinding {
+  const binding = value as StateBinding;
+  return !!binding && uuid.test(binding.run_id) && integer(binding.state_version)
+    && /^[0-9a-f]{64}$/.test(binding.config_fingerprint) && integer(binding.atc_revision)
+    && (binding.schema_version === undefined || binding.schema_version === '1.0');
+}
+function assignment(value: unknown): value is Assignment {
+  const item = value as Assignment;
+  return !!item && item.schema_version === '1.0' && text(item.resource_id) && uuid.test(item.track_id)
+    && integer(item.slot_index) && isUtc(item.start_at) && isUtc(item.effect_at)
+    && Date.parse(item.start_at) <= Date.parse(item.effect_at);
+}
+function course(value: unknown): value is CourseOfAction {
+  const coa = value as CourseOfAction;
+  return !!coa && coa.schema_version === '1.0' && uuid.test(coa.coa_id) && profiles.includes(coa.profile)
+    && options.includes(coa.atc_option) && Array.isArray(coa.assignments) && coa.assignments.every(assignment)
+    && nonnegative(coa.expected_coverage) && coa.expected_coverage <= 1 && isUtc(coa.completion_at)
+    && integer(coa.resources_used) && integer(coa.rank) && coa.rank >= 1
+    && coa.resources_used === new Set(coa.assignments.map((item) => item.resource_id)).size
+    && coa.assignments.every((item) => Date.parse(item.effect_at) <= Date.parse(coa.completion_at))
+    && /^[0-9a-f]{64}$/.test(coa.fingerprint) && stateBinding(coa.bound_state);
+}
+function planningResult(value: unknown): value is PlanningResult {
+  const planning = value as PlanningResult;
+  return !!planning && planning.schema_version === '1.0'
+    && ['OK', 'NO_SAFE_COA', 'PARTIAL', 'TIMEOUT'].includes(planning.status)
+    && Array.isArray(planning.coas) && planning.coas.length <= 3 && planning.coas.every(course)
+    && (planning.baseline === null || course(planning.baseline))
+    && Array.isArray(planning.safety_volumes) && planning.safety_volumes.every((volume) => volume
+      && volume.schema_version === '1.0' && uuid.test(volume.entity_track_id)
+      && isUtc(volume.window_start) && isUtc(volume.window_end)
+      && Date.parse(volume.window_start) <= Date.parse(volume.window_end) && text(volume.reason)
+      && volume.geometry && Array.isArray(volume.geometry.coordinates)
+      && volume.geometry.coordinates.length >= 4 && volume.geometry.coordinates.every(enu)
+      && JSON.stringify(volume.geometry.coordinates[0]) === JSON.stringify(volume.geometry.coordinates.at(-1)))
+    && Array.isArray(planning.rejections) && planning.rejections.every((rejection) => rejection
+      && rejection.schema_version === '1.0' && Array.isArray(rejection.assignments)
+      && rejection.assignments.length > 0 && rejection.assignments.every(assignment)
+      && rejectionReasons.includes(rejection.reason_code) && text(rejection.reason_text))
+    && integer(planning.combination_count) && ['ENUMERATION', 'CP_SAT'].includes(planning.method)
+    && typeof planning.timed_out === 'boolean' && nonnegative(planning.elapsed_ms) && text(planning.explanation);
+}
 
 export function shouldAcceptSnapshot(previous: Snapshot | undefined, incoming: Snapshot): boolean {
   return !previous || previous.scenario_id !== incoming.scenario_id || incoming.sequence > previous.sequence;
@@ -48,12 +160,12 @@ export function shouldAcceptSnapshot(previous: Snapshot | undefined, incoming: S
 export function parseSnapshot(message: string): Snapshot {
   if (message.length > 1_048_576) throw new Error('Scenario update is too large.');
   const value = JSON.parse(message) as Snapshot;
-  if (!value || value.type !== 'FeatureCollection' || value.schema_version !== '1.1' ||
+  const assessed = Array.isArray(value?.assessed_tracks) ? value.assessed_tracks : [];
+  const assessedIds = new Set(assessed.map((track) => track?.track_id));
+  const assessedById = new globalThis.Map(assessed.map((track) => [track?.track_id, track]));
+  if (!value || value.type !== 'FeatureCollection' || value.schema_version !== '1.3' ||
       !text(value.scenario_id) || !integer(value.sequence) || !isUtc(value.simulation_time) ||
-      !integer(value.seed) || !value.binding ||
-      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value.binding.run_id) ||
-      !/^[0-9a-f]{64}$/.test(value.binding.config_fingerprint) ||
-      !integer(value.binding.state_version) || !integer(value.binding.atc_revision) ||
+      !integer(value.seed) || !stateBinding(value.binding) ||
       !value.clock || !nonnegative(value.clock.seconds) || !nonnegative(value.clock.duration_s) ||
       value.clock.seconds > value.clock.duration_s || !nonnegative(value.clock.rate) || value.clock.rate > 16 ||
       typeof value.clock.complete !== 'boolean' ||
@@ -62,6 +174,19 @@ export function parseSnapshot(message: string): Snapshot {
         ['received', 'dropped', 'duplicated', 'late', 'rejected'].every((key) => integer(h[key as keyof Health])) &&
         [h.age_s, h.last_received_at_s, h.observed_period_s].every((n) => n === null || nonnegative(n)) &&
         nonnegative(h.stale_threshold_s) && ['OK', 'STALE', 'SILENT'].includes(h.status)) ||
+      !Array.isArray(value.assessed_tracks) || !value.assessed_tracks.every(assessedTrack) ||
+      !planningResult(value.planning) ||
+      ((value.planning.status === 'OK' || value.planning.status === 'PARTIAL') !== (value.planning.coas.length > 0)) ||
+      new Set(value.planning.coas.map((coa) => coa.fingerprint)).size !== value.planning.coas.length ||
+      ![...value.planning.coas, ...(value.planning.baseline ? [value.planning.baseline] : [])]
+        .every((coa) => coa.bound_state.run_id === value.binding.run_id
+          && coa.bound_state.state_version === value.binding.state_version
+          && coa.bound_state.config_fingerprint === value.binding.config_fingerprint
+          && coa.bound_state.atc_revision === value.binding.atc_revision
+          && coa.assignments.every((item) => {
+            const target = assessedById.get(item.track_id);
+            return target?.category === 'LIKELY_RED' && target.is_stale === false;
+          })) ||
       !Array.isArray(value.features) || !value.features.every((feature) => {
         const p = feature?.properties;
         return feature?.type === 'Feature' && feature.geometry?.type === 'Point' && position(feature.geometry.coordinates)
@@ -71,7 +196,9 @@ export function parseSnapshot(message: string): Snapshot {
           && [p.age_observed_s, p.age_received_s, p.stale_threshold_s].every(nonnegative)
           && Array.isArray(p.identity_claims) && p.identity_claims.length <= 3
           && p.identity_claims.every((c) => c && ['BLUE', 'CIVILIAN'].includes(c.kind)
-            && text(c.source_id) && isUtc(c.observed_at) && text(c.raw_ref));
+            && text(c.source_id) && isUtc(c.observed_at) && text(c.raw_ref))
+          && (p.assessed_track_id === null || (typeof p.assessed_track_id === 'string'
+            && uuid.test(p.assessed_track_id) && assessedIds.has(p.assessed_track_id)));
       }) || !value.atc || !options.includes(value.atc.option) || !integer(value.atc.revision) ||
       !(value.atc.aircraft_stream_id === null || text(value.atc.aircraft_stream_id)) ||
       value.atc.preview?.type !== 'FeatureCollection' || !Array.isArray(value.atc.preview.features) ||

@@ -25,6 +25,23 @@ p { margin: 0; }
 .legend span { gap: 7px; }
 .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
 .track-details { margin-top: 22px; }
+.planning { margin-top: 22px; padding: 18px; border: 1px solid #b9c7d1; border-radius: 6px; background: white; }
+.planning-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.planning-heading h2 { margin: 0; }
+.planning-status { padding: 4px 8px; border: 1px solid #718694; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+.status-ok { background: #e3f3e7; color: #245b31; }
+.status-no_safe_coa, .status-timeout { background: #fff0d8; color: #663d00; }
+.status-partial { background: #e7edf4; color: #334b5c; }
+.plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 14px; }
+.plan-card { display: flex; flex-direction: column; gap: 6px; padding: 14px; border: 1px solid #b9c7d1; border-left: 5px solid #1767a6; border-radius: 5px; }
+.plan-card.baseline { border-left-color: #636d79; background: #f5f7f9; }
+.plan-card h3 { margin: 0; font-size: 0.9rem; }
+.plan-card span, .plan-card code { font-size: 0.78rem; overflow-wrap: anywhere; }
+.plan-card code { padding-top: 5px; border-top: 1px solid #d3dde4; font-family: ui-monospace, "SFMono-Regular", monospace; }
+.no-safe { margin-top: 14px; padding: 10px; background: #fff0d8; font-weight: 700; }
+.rejections { margin-top: 14px; }
+.rejections summary { cursor: pointer; font-weight: 700; }
+.rejections p { margin-top: 8px; font-size: 0.8125rem; }
 h2 { font-size: 1rem; margin: 0 0 12px; }
 h2 span { font-weight: 400; color: #4c6272; margin-left: 8px; }
 ul { list-style: none; padding: 0; margin: 0; }

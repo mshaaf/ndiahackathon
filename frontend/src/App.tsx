@@ -14,6 +14,7 @@ const identities: Record<TrackProperties['identity_kind'], { label: string; colo
 
 const faultPresets: Record<string, FaultProfile> = {
   Nominal: {}, '20% loss': { loss_probability: 0.2 }, '40% loss': { loss_probability: 0.4 },
+  'Hide one sponsor packet': { outage_windows: [[0.23, 0.245]], affected_sources: ['sponsor-replay'] },
   'Outage 3–10s': { outage_windows: [[3, 10]] },
   'Duplicate storm': { duplicate_probability: 1 },
   'Latency and jitter': { latency_mean_s: 2, latency_jitter_s: 1 },
@@ -30,6 +31,13 @@ export function App() {
   const [selected, setSelected] = useState('');
   const [preset, setPreset] = useState('Nominal');
   const [seed, setSeed] = useState('20260908');
+  const assessed = Object.fromEntries((snapshot?.assessed_tracks ?? []).map((track) => [track.track_id, track]));
+  const rejectionCounts = Object.entries((snapshot?.planning.rejections ?? []).reduce<Record<string, number>>((counts, rejection) => {
+    counts[rejection.reason_code] = (counts[rejection.reason_code] ?? 0) + 1;
+    return counts;
+  }, {}));
+  const rejectionExamples = [...new globalThis.Map((snapshot?.planning.rejections ?? [])
+    .map((rejection) => [rejection.reason_code, rejection] as const)).values()];
 
   function send(command: Command) {
     if (socketRef.current?.readyState !== WebSocket.OPEN) return;
@@ -191,20 +199,60 @@ export function App() {
           <span>Dashed line: Blue route · shaded circles: sampled uncertainty</span>
         </div>
       </section>
+      <section className="planning" aria-labelledby="planning-heading">
+        <div className="planning-heading">
+          <h2 id="planning-heading">Safe simulated plans <span>{snapshot?.planning.coas.length ?? 0} distinct</span></h2>
+          {snapshot && <span className={`planning-status status-${snapshot.planning.status.toLowerCase()}`}>
+            {snapshot.planning.status.replaceAll('_', ' ')}</span>}
+        </div>
+        {snapshot ? <>
+          <p>{snapshot.planning.explanation} Search: {snapshot.planning.method.replace('_', '-')} · {snapshot.planning.combination_count.toLocaleString()} combinations · {snapshot.planning.elapsed_ms.toFixed(1)}ms.</p>
+          <div className="plan-grid">
+            {snapshot.planning.coas.map((coa) => <article className="plan-card" key={coa.coa_id}>
+              <h3>{coa.profile.replaceAll('_', ' ')}</h3>
+              <strong>{(coa.expected_coverage * 100).toFixed(1)}% weighted coverage</strong>
+              <span>{coa.resources_used} resource{coa.resources_used === 1 ? '' : 's'} · completes <time dateTime={coa.completion_at}>{new Date(coa.completion_at).toLocaleTimeString()}</time></span>
+              <span>ATC option {coa.atc_option.replace('_', ' ')} · rank {coa.rank}</span>
+              {coa.assignments.map((item) => <code key={`${item.resource_id}-${item.track_id}-${item.slot_index}`}>
+                {item.resource_id} → {item.track_id.slice(0, 8)} · slot {item.slot_index}</code>)}
+            </article>)}
+            {snapshot.planning.baseline && <article className="plan-card baseline">
+              <h3>Baseline comparison</h3>
+              <strong>{(snapshot.planning.baseline.expected_coverage * 100).toFixed(1)}% weighted coverage</strong>
+              <span>{snapshot.planning.baseline.resources_used} resource{snapshot.planning.baseline.resources_used === 1 ? '' : 's'} · same hard safety gate</span>
+            </article>}
+          </div>
+          {!snapshot.planning.coas.length && <p className="no-safe">No simulated assignment passed every hard constraint.</p>}
+          <details className="rejections">
+            <summary>Candidate rejection drawer · {snapshot.planning.rejections.length} checks blocked</summary>
+            <p>{rejectionCounts.map(([reason, count]) => `${reason.replaceAll('_', ' ')}: ${count}`).join(' · ') || 'No rejected candidates.'}</p>
+            {rejectionExamples.map((rejection) => <p key={rejection.reason_code}>
+              <strong>{rejection.reason_code.replaceAll('_', ' ')}</strong> — {rejection.reason_text}</p>)}
+          </details>
+        </> : <p>Waiting for assessed state.</p>}
+      </section>
       <section className="track-details" aria-labelledby="tracks-heading">
         <h2 id="tracks-heading">Reported tracks <span>{snapshot?.features.length ?? 0}</span></h2>
         <ul>
-          {snapshot?.features.map(({ properties }) => (
-            <li key={properties.stream_id}>
+          {snapshot?.features.map(({ properties }) => {
+            const assessment = properties.assessed_track_id ? assessed[properties.assessed_track_id] : undefined;
+            return <li key={properties.stream_id}>
               <strong>{properties.label}</strong>
               <span>{identities[properties.identity_kind].label} · {properties.is_stale ? 'STALE' : 'Fresh'}</span>
+              {assessment ? <>
+                <span><strong>Assessment: {assessment.category.replaceAll('_', ' ')}</strong> · {(assessment.red_probability * 100).toFixed(1)}% red evidence · {assessment.is_stale ? 'STALE' : 'Fresh'}</span>
+                <span>{assessment.explanation}<br />
+                  {assessment.evidence_for.map((evidence) => <span className="claim" key={`${evidence.evidence_type}-${evidence.source_id}-${evidence.raw_ref}`}>
+                    {evidence.evidence_type}: {evidence.source_id} · {evidence.raw_ref}</span>)}
+                </span>
+              </> : <span>Assessment withheld: no unambiguous position association.</span>}
               <span>{properties.explanation}<br />Observation age {properties.age_observed_s.toFixed(1)}s · receipt age {properties.age_received_s.toFixed(1)}s<br />
                 Source: {properties.source_id}<br />
                 {properties.identity_claims.map((claim) => <span className="claim" key={claim.kind}>
                   {claim.kind}: {claim.source_id} · {claim.raw_ref}</span>)}
               </span>
-            </li>
-          ))}
+            </li>;
+          })}
         </ul>
       </section>
       <section className="source-health" aria-labelledby="sources-heading">

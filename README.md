@@ -2,7 +2,7 @@
 
 A local, simulation-only dashboard that makes aircraft protection, uncertainty, and ATC/ADOC coordination visible while comparing abstract response plans for a synthetic Counter-UAS scenario.
 
-**Status: Phase 2 infrastructure implemented; full Phase 2 gate incomplete.** Deterministic replay, seeded faults, feed health, reported identity/freshness, and synthetic Blue ATC previews work. Hostile-target scoring, threat prediction, the assessment decision engine, planning and benchmarks are not implemented. See the [Phase 2 recovery handoff](docs/PHASE_2_HANDOFF.md) for the scope, checkpoints and verification evidence.
+**Status: Phases 2 and 3 implemented and verified on the synthetic golden scenario.** Deterministic replay, assessment, protected-track filtering, prediction, hard safety geometry, distinct plan selection, the shared baseline gate, source health, and Blue ATC previews work. The browser envelope is schema 1.3; frozen Python records remain 1.0. Phase 4 plan invalidation and simulated approval are next. See the [Phase 2 handoff](docs/PHASE_2_HANDOFF.md) and [build book](docs/BUILD_BOOK.md) for measured evidence and limitations.
 
 ## Start here
 
@@ -25,18 +25,19 @@ uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 
 Open `http://127.0.0.1:8000`. The server receives only `artifacts/runtime/golden/runtime.json`; evaluator truth is written separately under `artifacts/evaluator/golden/` and neither artifact is committed.
 
-Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Select **BLUE01**, then **HOLD** or **TAXI CLEAR**, to preview the authored route and sampled uncertainty areas. Fault presets and the seed apply with **Apply and restart**. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
+Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Select **BLUE01**, then **HOLD** or **TAXI CLEAR**, to preview the authored route and sampled uncertainty areas. Fault presets and the seed apply with **Apply and restart**. Safe simulated plan cards, the same-gate baseline, and a rejection drawer update from the assessed state. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
 
 Paused and completed sessions keep their time, update number and state version fixed until something changes. Controls remain available; an invalid command returns feedback without changing the state version.
 
-The dashboard reports source identity claims, including retained contradictions; it does not generate an assessed hostile category. The route areas are illustrative samples, not a continuous safety gate or an operational clearance.
+The dashboard keeps source claims separate from rule-derived assessment. Only fresh `LIKELY_RED` tracks can enter the simulation planner; protected, unknown, conflicting, and stale tracks are rejected before optimization. Map route circles are illustrative ATC previews; Phase 3 safety volumes use continuous swept Shapely geometry. Nothing is an operational clearance and no actuation endpoint exists.
 
 Run the current checks with:
 
 ```sh
 uv run pytest
-uv run coverage run --branch --source=friendly_filter.replay,friendly_filter.display,friendly_filter.app -m pytest -q
+uv run coverage run --branch --source=friendly_filter.replay,friendly_filter.display,friendly_filter.assessment,friendly_filter.planning,friendly_filter.app -m pytest -q
 uv run coverage report -m --fail-under=80
+uv run python -m friendly_filter.phase3_smoke artifacts/runtime/golden/runtime.json
 npm --prefix frontend test
 npm --prefix frontend run build
 ```
@@ -50,7 +51,7 @@ npm --prefix frontend run build
 | [Pseudocode](docs/pseudocode/) | Module-level algorithms and TDD anchors, one file per phase |
 | [Testing](docs/TESTING.md) | Invariants, metamorphic relations, adversarial fixtures, mutation set, self-application |
 | [Project handoff](docs/HANDOFF.md) | Verified Phase 1 baseline, current limits, setup commands, and ordered Steps 4–11 |
-| [Phase 2 recovery handoff](docs/PHASE_2_HANDOFF.md) | Current implementation, saved checkpoints, exact controls/API, measured checks, and remaining scope |
+| [Phase 2 handoff](docs/PHASE_2_HANDOFF.md) | Completed replay/assessment checkpoints, exact controls/API, measured checks, and remaining limits |
 | [Agent instructions](AGENTS.md) | Repository rules, bounded parallel work, review, and handoffs |
 | [Build book](docs/BUILD_BOOK.md) | Current status, decisions, evidence, and owner handoffs |
 | [Data card](docs/DATA_CARD.md) | Sources, transformations, limitations, and attribution |
@@ -83,4 +84,4 @@ The original plan is historical evidence; explicit clarifications are recorded i
 - Judging runs locally on CPU with saved data and bundled map assets. No internet, cloud dependency, GPU, or decision-loop LLM.
 - Sponsor data, credentials, and restricted artifacts require documented permission before transfer or publication. The implemented Phase 1 path uses only the reviewed synthetic fixture.
 
-The proposed stack is Python 3.11, FastAPI/Pydantic, Pandas, scikit-learn, OR-Tools CP-SAT, Shapely/pyproj, SQLite, and React/TypeScript/Vite/MapLibre. It is a plan, not a list of installed dependencies. No database server, message broker, microservices, or additional deployment platform is required.
+The current runtime uses Python 3.11–3.13, FastAPI/Pydantic, pinned Shapely and OR-Tools CP-SAT, and React/TypeScript/Vite/MapLibre. Pandas, scikit-learn, pyproj, and SQLite remain later-path proposals, not installed requirements. No database server, message broker, microservices, or additional deployment platform is required.

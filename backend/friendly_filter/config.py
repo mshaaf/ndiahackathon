@@ -8,6 +8,12 @@ MATCH_TIME_S: Final = 2.0
 RED_CONFIDENCE_MIN: Final = 0.80
 RED_MIN_EVIDENCE_TYPES: Final = 2
 
+# Synthetic assessment defaults; tune against validated scenario uncertainty.
+AMBIGUITY_MARGIN_M: Final = 25.0  # Within 10% of the default horizontal gate, withhold the match.
+RF_MIN_STRENGTH: Final = 0.5  # Below the binary sensor's midpoint, do not assert a detection.
+INBOUND_REFERENCE_MPS: Final = 30.0  # Closing speed that saturates the synthetic motion score.
+STALE_UNCERTAINTY_MULTIPLIER: Final = 2.0  # Double the prediction envelope when supporting data expires.
+
 STALE_FLOOR_S: Final = 5.0
 STALE_PERIOD_MULTIPLIER: Final = 3
 
@@ -22,6 +28,9 @@ PREDICTION_SLOT_S: Final = 5
 PROTECTED_BUFFER_BASE_M: Final = 150
 PROTECTED_BUFFER_GROWTH_MPS: Final = 12
 CORRIDOR_BUFFER_M: Final = 75
+RESOURCE_STALE_S: Final = 30.0
+PLANNING_DOMAIN_LIMIT_M: Final = 100_000.0
+GEOMETRY_QUAD_SEGMENTS: Final = 8
 
 COVERAGE_FLOOR_FASTEST: Final = 0.90
 COVERAGE_FLOOR_CONSERVE: Final = 0.80
@@ -40,6 +49,6 @@ MAX_RUNTIME_BYTES: Final = 8_388_608
 MAX_RUNTIME_EVENTS: Final = 10_000
 MAX_COMMAND_BYTES: Final = 4096
 MAX_FAULT_DELAY_S: Final = 3600.0
-DISPLAY_ENU_LIMIT_M: Final = 100_000.0
+DISPLAY_ENU_LIMIT_M: Final = PLANNING_DOMAIN_LIMIT_M
 STALE_DISPLAY_MULTIPLIER: Final = 2.0
 DISPLAY_CIRCLE_SEGMENTS: Final = 32

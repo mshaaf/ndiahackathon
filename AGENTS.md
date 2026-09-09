@@ -6,7 +6,7 @@ Read [README.md](README.md), the latest [build-book entry](docs/BUILD_BOOK.md), 
 
 Phase 1 now has frozen Pydantic records, a synthetic golden fixture, truth splitting, and a local backend-to-browser stream. Later modules, safety behavior, performance targets, and benchmarks remain proposals. Do not claim a later phase passes without its evidence; Phase 0 sponsor-data permissions also remain incomplete.
 
-Phase 2 infrastructure is implemented on the current working branch: deterministic replay/faults, source health, reported identity/freshness display, and synthetic Blue route previews. Read [PHASE_2_HANDOFF](docs/PHASE_2_HANDOFF.md) before continuing. This is not a completed assessment module: no hostile-target scoring, threat prediction, `AssessedTrack` producer, planning, or full Phase 2 gate is claimed. The browser envelope is schema 1.1; frozen Python records remain 1.0.
+Phases 2 and 3 are implemented on `codex/phase2-complete`: deterministic replay/faults, assessment, source health, protected-route previews, swept safety volumes, the shared hard gate, enumeration with a CP-SAT guard, distinct profiles, baseline, and plan/rejection UI. Read [PHASE_2_HANDOFF](docs/PHASE_2_HANDOFF.md) and the latest [BUILD_BOOK](docs/BUILD_BOOK.md) entries before continuing. The browser envelope is schema 1.3; frozen Python records remain 1.0. Phase 4 ATC-driven invalidation and simulated approval are not implemented.
 
 ## Non-negotiable project rules
 

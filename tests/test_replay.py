@@ -61,6 +61,16 @@ def test_late_packets_and_cross_source_ties_cannot_rewind(event_factory):
     finish(tied)
     assert [e.observation.source_id for e in tied.delivered] == ["a", "b"]
 
+    # Equal observation time is not older. Even when transport latency makes
+    # the lexically later source arrive first, both independent packets apply.
+    equal_time = Replay([
+        event_factory(source="b", received=0),
+        event_factory(source="a", seq=2, received=1),
+    ])
+    finish(equal_time)
+    assert [e.observation.source_id for e in equal_time.delivered] == ["b", "a"]
+    assert sum(state["late"] for state in equal_time.health_snapshot().values()) == 0
+
 
 @pytest.mark.parametrize("loss", [0.2, 0.4, 1.0])
 def test_loss_and_outage_delivery_boundaries(event_factory, loss):

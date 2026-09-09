@@ -1,0 +1,39 @@
+{
+  "name": "identity_flip",
+  "protected_assets": [],
+  "now": "2026-09-08T12:00:01Z",
+  "source_periods": {"udl": null, "adsb": null},
+  "expected_category": "CONFLICTING",
+  "observations": [
+    {
+      "schema_version": "1.0",
+      "observation_id": "00000000-0000-4000-8000-000000000201",
+      "source_id": "udl",
+      "source_seq": 1,
+      "modality": "TEAM_JSON",
+      "observed_at": "2026-09-08T12:00:00Z",
+      "received_at": "2026-09-08T12:00:00Z",
+      "position": {"east_m": 100, "north_m": 100, "up_m": 10},
+      "velocity": {"east_m": 0, "north_m": 0, "up_m": 0},
+      "claimed_identity": {"schema_version": "1.0", "kind": "BLUE", "callsign": "BLUE02", "icao_hex": "ABC002", "authority": "SPONSOR_UDL"},
+      "strength": 1,
+      "uncertainty_m": 20,
+      "raw_ref": "identity_flip.json#/observations/0"
+    },
+    {
+      "schema_version": "1.0",
+      "observation_id": "00000000-0000-4000-8000-000000000202",
+      "source_id": "adsb",
+      "source_seq": 1,
+      "modality": "ADSB",
+      "observed_at": "2026-09-08T12:00:01Z",
+      "received_at": "2026-09-08T12:00:01Z",
+      "position": {"east_m": 100, "north_m": 100, "up_m": 10},
+      "velocity": {"east_m": 0, "north_m": 0, "up_m": 0},
+      "claimed_identity": {"schema_version": "1.0", "kind": "CIVILIAN", "callsign": "CIV002", "icao_hex": "C1A002", "authority": "ADSB"},
+      "strength": 1,
+      "uncertainty_m": 20,
+      "raw_ref": "identity_flip.json#/observations/1"
+    }
+  ]
+}
