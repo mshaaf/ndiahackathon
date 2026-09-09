@@ -18,9 +18,18 @@ case "$scenario" in
   *) echo "unknown scenario: $scenario (expected golden or flight)" >&2; exit 2 ;;
 esac
 
+port=${PORT:-8000}
+# A rehearsal server left running binds the port and the failure only shows up after
+# the build, which is the worst moment to read it. Say so before doing the work.
+if holder=$(lsof -ti "tcp:$port" 2>/dev/null) && [ -n "$holder" ]; then
+  echo "port $port is already in use by pid $(echo "$holder" | tr '\n' ' ')" >&2
+  echo "stop it, or rerun as: PORT=8001 $0 $scenario" >&2
+  exit 3
+fi
+
 [ -d frontend/dist ] || npm --prefix frontend run build
 uv run python -m scenario_loader "$package" "artifacts/runtime/$scenario" "artifacts/evaluator/$scenario"
 
-echo "Serving $scenario on http://127.0.0.1:8000 — evaluator truth stays in artifacts/evaluator/$scenario"
+echo "Serving $scenario on http://127.0.0.1:$port — evaluator truth stays in artifacts/evaluator/$scenario"
 FRIENDLY_FILTER_SCENARIO="artifacts/runtime/$scenario/runtime.json" \
-  exec uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
+  exec uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port "$port"
