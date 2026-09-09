@@ -1,29 +1,68 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { parseSnapshot } from './stream.ts';
+import { parseSnapshot, shouldAcceptSnapshot } from './stream.ts';
 
-test('accepts streamed points and rejects malformed state before map updates', () => {
-  const snapshot = {
-    type: 'FeatureCollection', schema_version: '1.0', scenario_id: 'golden',
-    sequence: 0, simulation_time: '2026-09-08T12:00:00Z',
-    features: [{
-      type: 'Feature', geometry: { type: 'Point', coordinates: [-77, 38, 10] },
-      properties: {
-        stream_id: 'blue-1', label: 'Blue 1', modality: 'TEAM_JSON',
-        observed_at: '2026-09-08T12:00:00+00:00', identity_kind: 'BLUE',
-      },
-    }],
+function fixture() {
+  return {
+    type: 'FeatureCollection', schema_version: '1.1', scenario_id: 'golden', sequence: 1,
+    simulation_time: '2026-09-08T12:00:00Z', seed: 7, fault_profile: {},
+    binding: { run_id: '00000000-0000-4000-8000-000000000001', state_version: 1,
+      config_fingerprint: 'a'.repeat(64), atc_revision: 0 },
+    clock: { seconds: 0, rate: 1, complete: false, duration_s: 20 },
+    health: { sensor: { received: 1, dropped: 0, duplicated: 0, late: 0, rejected: 0,
+      last_received_at_s: 0, age_s: 0, observed_period_s: null, stale_threshold_s: 5, status: 'OK' } },
+    atc: { aircraft_stream_id: 'blue-1', option: 'CONTINUE', revision: 0,
+      preview: { type: 'FeatureCollection', features: [] } },
+    features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: [-77, 38, 10] },
+      properties: { stream_id: 'blue-1', label: 'Blue 1', modality: 'TEAM_JSON',
+        observed_at: '2026-09-08T12:00:00Z', received_at: '2026-09-08T12:00:00Z', identity_kind: 'BLUE',
+        source_id: 'sensor', raw_ref: 'synthetic#1', is_stale: false, explanation: 'Reported Blue identity.',
+        age_observed_s: 0, age_received_s: 0, stale_threshold_s: 5, identity_claims: [] } }],
   };
-  const decoded = parseSnapshot(JSON.stringify(snapshot));
-  assert.equal(decoded.features[0].properties.label, 'Blue 1');
-  assert.deepEqual(decoded.features[0].geometry.coordinates, [-77, 38, 10]);
+}
+
+test('accepts versioned replay and retains conflict and stale labels', () => {
+  const value = fixture();
+  assert.equal(parseSnapshot(JSON.stringify(value)).features[0].properties.label, 'Blue 1');
+  value.features[0].properties.identity_kind = 'CONFLICTING';
+  value.features[0].properties.is_stale = true;
+  assert.equal(parseSnapshot(JSON.stringify(value)).features[0].properties.identity_kind, 'CONFLICTING');
+});
+
+test('rejects malformed clock, health, provenance and transport binding', () => {
+  const mutations = [v => v.sequence = -1, v => v.simulation_time = 'yesterday',
+    v => v.schema_version = '1.0', v => v.binding.run_id = 'bad',
+    v => v.binding.state_version = 1.5, v => v.clock.seconds = -1,
+    v => v.clock.rate = 17, v => v.health.sensor.received = -1,
+    v => v.health.sensor.status = 'GREAT', v => v.features[0].geometry.coordinates[1] = 100,
+    v => v.features[0].properties.identity_kind = 'LIKELY_RED',
+    v => v.features[0].properties.age_observed_s = null,
+    v => v.features[0].properties.raw_ref = '', v => v.atc.option = 'REROUTE'];
+  for (const mutate of mutations) {
+    const value = fixture(); mutate(value);
+    assert.throws(() => parseSnapshot(JSON.stringify(value)));
+  }
   assert.throws(() => parseSnapshot('{'));
-  assert.throws(() => parseSnapshot(JSON.stringify({ ...snapshot, sequence: -1 })));
-  assert.throws(() => parseSnapshot(JSON.stringify({ ...snapshot, simulation_time: 'yesterday' })));
-  snapshot.features[0].geometry.coordinates[1] = 100;
-  assert.throws(() => parseSnapshot(JSON.stringify(snapshot)));
-  snapshot.features[0].geometry.coordinates[1] = 38;
-  snapshot.features[0].properties.identity_kind = 'LIKELY_RED';
-  assert.throws(() => parseSnapshot(JSON.stringify(snapshot)));
   assert.throws(() => parseSnapshot(' '.repeat(1_048_577)));
+});
+
+test('validates route and closed polygon coordinates before map updates', () => {
+  const value = fixture();
+  value.atc.preview.features = [{ type: 'Feature', geometry: { type: 'LineString', coordinates: [[0, 0], [0, 1]] },
+    properties: { kind: 'route' } },
+    { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[0, 0], [0, 1], [1, 1], [0, 0]]] },
+      properties: { kind: 'uncertainty' } }];
+  assert.equal(parseSnapshot(JSON.stringify(value)).atc.preview.features.length, 2);
+  value.atc.preview.features[1].geometry.coordinates[0][3] = [1, 0];
+  assert.throws(() => parseSnapshot(JSON.stringify(value)));
+});
+
+test('reset accepts a new run with monotonic sequence and ignores old snapshots', () => {
+  const before = fixture();
+  const reset = fixture();
+  reset.sequence = 10;
+  reset.binding.run_id = '00000000-0000-4000-8000-000000000002';
+  assert.equal(shouldAcceptSnapshot(before, reset), true);
+  assert.equal(shouldAcceptSnapshot(reset, before), false);
+  assert.equal(shouldAcceptSnapshot(reset, reset), false);
 });

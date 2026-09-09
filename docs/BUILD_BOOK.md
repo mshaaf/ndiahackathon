@@ -10,7 +10,7 @@ This is the shared status and handoff log. Section 4 of the original [build plan
 | Repository documentation | Complete | [Document index](../README.md#documentation-map) |
 | Phase 0 — Permission and data gate | In progress | Aerial dataset cut (D10); AI-processing permission asserted (D11). Development pathway and named owners still pending in [RIGHTS](../RIGHTS.md). Sponsor package not yet downloaded. |
 | Phase 1 — Contracts and golden scenario | Complete | Golden fixture splits truth from runtime; validated observations stream through WebSocket to a local MapLibre browser view |
-| Phase 2 — Replay and track assessment | Ready — next | Execute Steps 4–6 in the [project handoff](HANDOFF.md); Replay and Assessment may start in parallel against the frozen records |
+| Phase 2 — Replay and track assessment | Partial — infrastructure verified | Replay, faults, health, reported identities/freshness and Blue ATC previews implemented; full assessment gate incomplete. Resume from [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md). |
 | Phase 3 — COA engine | Not started | Depends on Phase 2 |
 | Phase 4 — ATC/ADOC coordination | Not started | Depends on Phase 3 |
 | Phase 5 — Resilience and interoperability | Not started | Depends on Phase 4 |
@@ -51,6 +51,12 @@ Role labels A/B/C are stable responsibilities, not assigned individual names. Ho
 Unresolved data access, licensing, and organizer-pathway questions belong in [RIGHTS.md](../RIGHTS.md); they are not silently decided by these clarifications. New technical proposals must be validated against the actual sponsor schema in Phase 1.
 
 ## Documentation preparation — 2026-09-08
+
+Phase 2 decisions added on 2026-09-08:
+
+- D23: Preserve frozen Python records at 1.0; version the browser envelope as 1.1 for clock, run binding, health, reported identity history and ATC preview. The producer (`app.py`), consumer (`stream.ts`/`App.tsx`) and contract checks change together. This entry is the shared A/B/C contract notice; no external message was sent.
+- D24: Implement generic synthetic replay and display only in this session. Exclude hostile-target scoring/prediction for counter-UAS response selection. The display is not an `AssessedTrack` producer and cannot close the full Phase 2 gate. Route circles are sampled visual uncertainty, not continuous planner safety volumes.
+- D25: Preserve fixture receipt latency before adding seeded faults. Outages apply to delivery time in half-open windows. Use explicit fixture stream IDs for display monotonicity, accepted positive arrival intervals for source cadence, and a connection-local run. Reset changes run ID but retains monotonic transport sequence.
 
 **Owner:** Coordinator, with phase/verification, architecture/contracts, and data/demo workers.
 
@@ -125,3 +131,42 @@ Coordinator review: <reviewer, date, and disposition>
 ```
 
 Record a failed gate with its next action instead of advancing the status table. SPARC Refinement and Completion require working code and actual verification in Phases 7–8.
+
+### Phase 2 — Replay and synthetic display — 2026-09-08
+
+State: PARTIAL — infrastructure checks passed; full assessment gate incomplete.
+
+Baseline: `7a53d19`; working branch `codex/phase-2-replay-atc`. Changes saved in the working tree, not committed or pushed. See [recovery handoff](PHASE_2_HANDOFF.md) for commands, interfaces and checkpoints.
+
+Gate evidence: 28 Python tests passed; branch-enabled coverage of new replay/display/app code was 95%; 4 frontend tests and the TypeScript/Vite production build passed. Browser checks confirmed five streams, retained identity conflict and provenance, pause freezing time, reset, and Blue HOLD → TAXI CLEAR visibly redrawing the route/uncertainty and incrementing revision. Duplicate injection increased source counters while preserving five displayed streams. This is infrastructure evidence, not the original assessment/classification gate.
+
+Owner: A — data and interoperability (implemented serially in this session)
+1. What changed: Added deterministic replay with explicit clock, seeded loss/latency/duplicates/outages, stable ordering, duplicate/late guards, bounded input validation, source health and reset hash checks.
+2. How it helps the mission: The local synthetic demo can reproduce transport faults and distinguish stale data from live transport without exposing evaluator truth.
+3. Inputs and outputs: Split runtime events and a fixed seed/profile produce accepted observations, scenario time, source counters and a delivered hash. Original receipt delay is preserved.
+4. How to run and test: README commands; `pytest` and coverage commands in PHASE_2_HANDOFF passed. Coverage tool pinned to 7.10.6 in pyproject/uv.lock.
+5. Exact demo clicks: Select a fault preset and seed, click Apply and restart, then inspect Source health. Pause/Resume and Reset replay control the scenario clock.
+6. Known limitations: Uses explicit display stream IDs, not spatial association. MR3/MR5 tests cover transport relations only. No sponsor/ADS-B/real trajectory adapter was added.
+7. Next owner and next concrete task: A reviews replay interfaces and can extend non-targeting fixture validation; do not treat the transport tests as assessment or benchmark evidence.
+
+Owner: B — decision engine
+1. What changed: No assessment engine was implemented. Identity history is display-only and never emits `AssessedTrack`.
+2. How it helps the mission: The completion status keeps downstream consumers from depending on an absent decision-engine contract.
+3. Inputs and outputs: No new decision-engine inputs or outputs.
+4. How to run and test: Full classification/evidence/association gate is unrun and incomplete.
+5. Exact demo clicks: No evidence-scoring toggle exists. Identity claims and conflicts are visible in the reported-track list.
+6. Known limitations: Hostile-target scoring and prediction intended for response selection are excluded. No planner assignment safety claim is made.
+7. Next owner and next concrete task: Agree a non-targeting assessment requirement before extending this implementation; preserve the incomplete Phase 2 gate.
+
+Owner: C — UX and integration (implemented serially in this session)
+1. What changed: Added persistent per-connection WebSocket sessions, versioned state, replay/fault controls, provenance and two-age freshness display, health table, and synthetic Blue ATC previews.
+2. How it helps the mission: The existing offline map now makes timing, identity contradictions and route changes inspectable.
+3. Inputs and outputs: Schema 1.1 browser snapshots contain reported features, clock, source health, binding and ATC preview; JSON-text commands affect only the sending connection.
+4. How to run and test: Frontend test/build passed; browser exercised pause/reset, route selection and duplicate injection. Backend WebSocket tests cover independent sessions, invalid commands and reset binding.
+5. Exact demo clicks: Reset replay → Pause; select BLUE01 → HOLD → TAXI CLEAR. Revision advances and the dashed route and sampled uncertainty circles change. Resume advances time again.
+6. Known limitations: Blue routes use authored synthetic geometry translated to the displayed position; no continuous swept volume, planning or invalidation. MapLibre bundle-size and existing test-client deprecation warnings remain. Clean-machine offline and full greyscale/keyboard audit are unrun.
+7. Next owner and next concrete task: C can run the clean-machine offline/accessibility checks using the documented demo clicks; rebuild/reload after edits.
+
+Contract changes: D23–D25 above; no frozen `models.py` edit. The stream no longer closes at the last packet; it remains connected at the declared scenario end so reset is usable. A new run gets a new run ID, reset state/ATC revision, and the same seed/profile unless explicitly changed.
+
+Coordinator review: Local automated and browser checks verify only the implemented infrastructure. Full Phase 2 remains incomplete; no approval for Phase 3 readiness or benchmark claims.
