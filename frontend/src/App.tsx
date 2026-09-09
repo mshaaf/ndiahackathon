@@ -14,6 +14,7 @@ const identities: Record<TrackProperties['identity_kind'], { label: string; colo
 
 const faultPresets: Record<string, FaultProfile> = {
   Nominal: {}, '20% loss': { loss_probability: 0.2 }, '40% loss': { loss_probability: 0.4 },
+  'Hide one sponsor packet': { outage_windows: [[0.23, 0.245]], affected_sources: ['sponsor-replay'] },
   'Outage 3–10s': { outage_windows: [[3, 10]] },
   'Duplicate storm': { duplicate_probability: 1 },
   'Latency and jitter': { latency_mean_s: 2, latency_jitter_s: 1 },
@@ -30,6 +31,7 @@ export function App() {
   const [selected, setSelected] = useState('');
   const [preset, setPreset] = useState('Nominal');
   const [seed, setSeed] = useState('20260908');
+  const assessed = Object.fromEntries((snapshot?.assessed_tracks ?? []).map((track) => [track.track_id, track]));
 
   function send(command: Command) {
     if (socketRef.current?.readyState !== WebSocket.OPEN) return;
@@ -194,17 +196,25 @@ export function App() {
       <section className="track-details" aria-labelledby="tracks-heading">
         <h2 id="tracks-heading">Reported tracks <span>{snapshot?.features.length ?? 0}</span></h2>
         <ul>
-          {snapshot?.features.map(({ properties }) => (
-            <li key={properties.stream_id}>
+          {snapshot?.features.map(({ properties }) => {
+            const assessment = properties.assessed_track_id ? assessed[properties.assessed_track_id] : undefined;
+            return <li key={properties.stream_id}>
               <strong>{properties.label}</strong>
               <span>{identities[properties.identity_kind].label} · {properties.is_stale ? 'STALE' : 'Fresh'}</span>
+              {assessment ? <>
+                <span><strong>Assessment: {assessment.category.replaceAll('_', ' ')}</strong> · {(assessment.red_probability * 100).toFixed(1)}% red evidence · {assessment.is_stale ? 'STALE' : 'Fresh'}</span>
+                <span>{assessment.explanation}<br />
+                  {assessment.evidence_for.map((evidence) => <span className="claim" key={`${evidence.evidence_type}-${evidence.source_id}-${evidence.raw_ref}`}>
+                    {evidence.evidence_type}: {evidence.source_id} · {evidence.raw_ref}</span>)}
+                </span>
+              </> : <span>Assessment withheld: no unambiguous position association.</span>}
               <span>{properties.explanation}<br />Observation age {properties.age_observed_s.toFixed(1)}s · receipt age {properties.age_received_s.toFixed(1)}s<br />
                 Source: {properties.source_id}<br />
                 {properties.identity_claims.map((claim) => <span className="claim" key={claim.kind}>
                   {claim.kind}: {claim.source_id} · {claim.raw_ref}</span>)}
               </span>
-            </li>
-          ))}
+            </li>;
+          })}
         </ul>
       </section>
       <section className="source-health" aria-labelledby="sources-heading">

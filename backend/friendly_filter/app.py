@@ -14,6 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import Field, model_validator
 
 from . import config
+from .assessment import Assessment
 from .display import ReportedDisplay, route_preview
 from .models import ENU, ResourceStatus
 from .replay import FaultProfile, Replay, ReplayRecord
@@ -104,6 +105,9 @@ class Session:
         self.replay = Replay(self.runtime.events, seed=self.seed, profile=self.profile,
                              duration_s=self.runtime.scenario.duration_seconds)
         self.display = ReportedDisplay()
+        route = self.runtime.atc.routes.get("HOLD", []) if self.runtime.atc else []
+        self.assessment = Assessment(route[:1])
+        self.stream_tracks = {}
         self.run_id = str(uuid4())
         self.state_version = 0
         self._snapshot_content: dict | None = None
@@ -116,10 +120,14 @@ class Session:
                                                     separators=(",", ":")).encode()).hexdigest()
         self.advance(0)
 
-    def advance(self, elapsed_s: float):
+    def advance(self, elapsed_s: float) -> None:
         previous_time = self.replay.clock.scenario_t
         events = self.replay.advance(elapsed_s)
         self.display.apply(events)
+        for event in events:
+            track_id = self.assessment.apply(event.observation)
+            if track_id is not None:
+                self.stream_tracks[event.stream_id] = track_id
         if self._snapshot_content is None or events or previous_time != self.replay.clock.scenario_t:
             self._refresh_state()
 
@@ -161,12 +169,19 @@ class Session:
         """Version changes in displayed content, never snapshot reads or send attempts."""
         health = self.replay.health_snapshot()
         features = self.display.features(self.replay, health)
+        assessed = self.assessment.snapshot(
+            self.replay.now, {source: value["observed_period_s"] for source, value in health.items()})
+        assessed_ids = {track.track_id for track in assessed}
+        for feature in features:
+            track_id = self.stream_tracks.get(feature["id"])
+            feature["properties"]["assessed_track_id"] = str(track_id) if track_id in assessed_ids else None
         atc = self.runtime.atc
         selected = next((f for f in features if atc and f["id"] == atc.aircraft_stream_id), None)
         content = {
-            "type": "FeatureCollection", "schema_version": "1.1",
+            "type": "FeatureCollection", "schema_version": "1.2",
             "scenario_id": self.runtime.scenario.scenario_id,
             "simulation_time": self.replay.now.isoformat(), "features": features,
+            "assessed_tracks": [track.model_dump(mode="json") for track in assessed],
             "clock": {"seconds": self.replay.clock.scenario_t, "rate": self.replay.clock.rate,
                       "complete": self.replay.complete, "duration_s": self.replay.end_s},
             "health": health, "seed": self.seed, "fault_profile": self.profile.model_dump(mode="json"),
