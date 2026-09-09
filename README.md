@@ -25,6 +25,16 @@ uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 
 Open `http://127.0.0.1:8000`. The server receives only `artifacts/runtime/golden/runtime.json`; evaluator truth is written separately under `artifacts/evaluator/golden/` and neither artifact is committed.
 
+To run the same demonstration on recorded motion instead of authored motion, regenerate the flight-derived package and point the loader at it:
+
+```sh
+uv run python -m scenario_loader.from_flight datasets/DroneFlightData fixtures/real/flight_derived/package.json
+uv run python -m scenario_loader fixtures/real/flight_derived/package.json artifacts/runtime/flight artifacts/evaluator/flight
+FRIENDLY_FILTER_SCENARIO=artifacts/runtime/flight/runtime.json uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
+```
+
+Every position in that package is interpolated from `datasets/DroneFlightData`, and each observation's `raw_ref` names the recording and the rows it came from. Roles and the truth block remain authored: the recordings carry no friendly or hostile labels, and a transformed trajectory is a motion shape, never observed hostile behaviour.
+
 Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Pause near 2.1 seconds, select **BLUE01**, choose **HOLD**, then **TAXI CLEAR**. The old plan is visibly invalidated, a safe alternative appears with measured replan time, and **Approve simulation** records a review bound to the displayed state. Fault presets and the seed apply with **Apply and restart**. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
 
 The network strip reports global state, recent loss, stale tracks, and blocked checks using words and symbols. At `DEGRADED`, safe plans remain available with a visible warning; at `BLACKOUT`, all plans are withheld. **Download JSON** and **Download CoT** export the current state. `POST /api/v1/import` validates and reassesses JSON evidence without trusting its category assertion. Read a saved JSON file independently with `uv run python -m interop_consumer export.json`.
