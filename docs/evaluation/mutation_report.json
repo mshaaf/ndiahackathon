@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "mutants": 10,
+  "killed": 10,
+  "survivors": [],
+  "all_killed": true,
+  "results": [
+    {
+      "id": "M1",
+      "description": "Red confidence floor 0.80 -> 0.50",
+      "file": "backend/friendly_filter/config.py",
+      "survived": false,
+      "suite_result": "1 failed, 10 passed, 2 warnings in 0.54s",
+      "seconds": 1.9
+    },
+    {
+      "id": "M2",
+      "description": "Independent evidence types 2 -> 1",
+      "file": "backend/friendly_filter/config.py",
+      "survived": false,
+      "suite_result": "1 failed, 11 passed, 2 warnings in 0.48s",
+      "seconds": 1.4
+    },
+    {
+      "id": "M3",
+      "description": "Classify on > the floor instead of >=",
+      "file": "backend/friendly_filter/assessment.py",
+      "survived": false,
+      "suite_result": "1 failed, 11 passed, 2 warnings in 0.44s",
+      "seconds": 1.4
+    },
+    {
+      "id": "M4",
+      "description": "Staleness needs both ages, not either",
+      "file": "backend/friendly_filter/assessment.py",
+      "survived": false,
+      "suite_result": "1 failed, 21 passed, 2 warnings in 0.45s",
+      "seconds": 1.3
+    },
+    {
+      "id": "M5",
+      "description": "check_candidate stops rejecting CONFLICTING targets",
+      "file": "backend/friendly_filter/planning.py",
+      "survived": false,
+      "suite_result": "1 failed, 72 passed, 2 warnings in 11.78s",
+      "seconds": 12.7
+    },
+    {
+      "id": "M6",
+      "description": "Missing prediction protects nothing instead of the domain",
+      "file": "backend/friendly_filter/planning.py",
+      "survived": false,
+      "suite_result": "1 failed, 65 passed, 2 warnings in 11.72s",
+      "seconds": 12.7
+    },
+    {
+      "id": "M7",
+      "description": "Noisy-OR counts every packet, not the strongest per type",
+      "file": "backend/friendly_filter/assessment.py",
+      "survived": false,
+      "suite_result": "1 failed, 10 passed, 2 warnings in 0.45s",
+      "seconds": 1.4
+    },
+    {
+      "id": "M8",
+      "description": "Time windows always overlap",
+      "file": "backend/friendly_filter/planning.py",
+      "survived": false,
+      "suite_result": "1 failed, 48 passed, 2 warnings in 10.38s",
+      "seconds": 11.3
+    },
+    {
+      "id": "M9",
+      "description": "check_candidate accepts every assignment",
+      "file": "backend/friendly_filter/planning.py",
+      "survived": false,
+      "suite_result": "suite did not finish within 120s",
+      "seconds": 120.0
+    },
+    {
+      "id": "M10",
+      "description": "Response corridor loses the resource safety radius",
+      "file": "backend/friendly_filter/planning.py",
+      "survived": false,
+      "suite_result": "1 failed, 48 passed, 2 warnings in 12.32s",
+      "seconds": 13.3
+    }
+  ]
+}

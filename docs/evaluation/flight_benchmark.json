@@ -1,0 +1,446 @@
+{
+  "schema_version": "1.0",
+  "seed_count": 20,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "warm_up_discarded": true,
+  "hardware": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "processor": "arm",
+    "python": "3.12.8"
+  },
+  "config_fingerprints": [
+    "07901456f9a6c36a5a4f4fb17a1c094ba8883e24d23e88741fc88ba676685ce7",
+    "10271cd9e1679464179cedfbfeb50579829a1ad2a522b4384ca9865eaffd0cc6",
+    "2e82ceba14c94fa7c35c759fe30011efd98aebf6913e9e242bc28c302963c4dc",
+    "3cda3a8ba8f5569cd4fbb1d6106c73e3589d042ff42662bae27147ef55869b67",
+    "4f1605ca97aa66dc50781507ec33bee754695a57b5ecdacbb054d204dcc64591",
+    "5550e13f1c968c086e5888b29fda3d6e19a94e386a71fc0828f5e71e02b297f5",
+    "55bf4d2b44028e82b2d2fdcb8127e558cb5bf8da560ba4d41c9b48340fed0a26",
+    "562736f1701dfc9f84957d59f9cd0221cb4a99162ab66b2c5be53e93d6aa45ac",
+    "6e157684cfcb2971fd7b4b698c5db2cfa9a580ff6736ad7032d863caac7eb771",
+    "87b1ff38fe4d278b1718dd1cc9d310f3357d8e9d8508e9ce0673b3b39cef9e1e",
+    "98e2cff6b07b61363fd1277296c04bd994f9deb987ececb85a162720c63ecd1b",
+    "b5f6a2ad63ad7625a65eb9f33e574bb6644ba24c7dd557ed7e51a415d257fb74",
+    "c862136b72919e042666644130d08caccb7a99e090e393762de18ed4ec5290dd",
+    "d4d7bf18996e652172a12375408f272167e56e83fe8fa0abdacac94e5a2a9868",
+    "d4e09cabf58a834d2ae447d3e888bd09a24e1faa2ed1ff3f7125d84dbe75af21",
+    "d601d86cfa063dce6bae6995a9f0e23aa421ad695833e6c26c452d909c4ce5c9",
+    "d8412c84bb71bf48d39b3f19f8bfb0df1b6282fb932fb4b8896843351556bcca",
+    "d933599ddf794e1ba709db573734296a0e98b1daaf9d37747b3d9ce8f29480d5",
+    "dcf1c8fcff524ef57e606837c6ccdd55bbb83ca0c8d8686530d3e375d1ed89d2",
+    "e521e9452458a38d2197c03a417fba6af76ca0732087e040142c8a3e9e468f86"
+  ],
+  "rule_version": "1.0",
+  "model_version": null,
+  "protected_assigned_total": 0,
+  "red_stopped_wins": 17,
+  "wasted_wins": 20,
+  "p95_latency_ms": 200.0,
+  "evidence_complete": true,
+  "results": [
+    {
+      "seed": 1,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 2,
+      "optimizer": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 3,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 4,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 5,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 6,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 7,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 8,
+      "optimizer": {
+        "red_stopped": 0,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 9,
+      "optimizer": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 10,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 11,
+      "optimizer": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 12,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 13,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 14,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 15,
+      "optimizer": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 16,
+      "optimizer": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 17,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 18,
+      "optimizer": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 2,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 19,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    },
+    {
+      "seed": 20,
+      "optimizer": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      },
+      "baseline": {
+        "red_stopped": 1,
+        "protected_assigned": 0,
+        "wasted_actions": 0,
+        "unresolved": 0,
+        "decision_latency_p95_ms": 200.0,
+        "passed": true
+      }
+    }
+  ],
+  "targets_met": true,
+  "improvement_claim": "Balanced stopped at least as many Red tracks and wasted no more actions than the baseline in 17/20 seeded runs."
+}

@@ -1,19 +1,18 @@
 # Two-person parallel work plan
 
-Current verified `main`: `5d22a66` (PR #1 merged)
+Current verified remote `main`: `b8fe0e3` (PR #4 merged)
 
-Use this document for the next two workstreams. [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md) remains the detailed reference for the replay and ATC infrastructure already delivered.
+Use this document for the next two workstreams. Phase 4 is complete on `work/phase4-invalidation`; [PHASE_4_HANDOFF](PHASE_4_HANDOFF.md) records its gate. Older Phase 2 allocation notes below remain as history.
 
 ## Current condition
 
 | Area | State |
 |---|---|
-| Phase 1 contracts and golden fixture | Passed and frozen |
-| Replay clock, ordering, seeded faults, idempotency, and source health | Implemented |
-| Replay controls and reported-track display | Implemented |
-| Blue `CONTINUE` / `HOLD` / `TAXI_CLEAR` previews | Implemented as display geometry |
-| Assessment engine | Missing; this is the critical Phase 2 gap |
-| Safety gate, planner, and baseline | Missing |
+| Phases 1–3 | Passed on remote `main` |
+| Phase 4 route coupling, invalidation, and approval | Passed on `work/phase4-invalidation`; PR pending |
+| Phase 5 resilience and interoperability | Not started; next parallel wave |
+| Phase 6 evaluator and twenty-seed benchmark | Blocked on Phase 5 gate |
+| Phases 7–8 refinement and package | Not started |
 | Invalidation, approval binding, export, evaluation, and packaging | Missing |
 
 Fresh verification on 2026-09-08:
@@ -184,11 +183,11 @@ uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 
 ## Next parallel wave
 
-After Assessment and planner core merge:
+After the Phase 4 PR merges:
 
 | You | Friend |
 |---|---|
-| Integrate plans, COA/rejection UI, Phase 4 invalidation, and approval binding | Extend existing faults into Phase 5 degraded/blackout policy; build JSON/CoT export and the independent consumer |
-| Implement the truth-isolated evaluator and run the 20-seed benchmark | Run evidence-laundering/export-fixpoint checks, then mutation, soak, accessibility, and clean-machine offline packaging |
+| Implement Phase 5 degraded/blackout state plus JSON/CoT export and its browser controls | Build the independent saved-file consumer and Phase 5 export-fixpoint/evidence-laundering tests |
+| After the Phase 5 gate, implement the truth-isolated evaluator and run the 20-seed benchmark | After the Phase 5 gate, prepare mutation, soak, accessibility, and clean-machine packaging checks |
 
 Integration still happens gate by gate. Do not let parallel branches claim Phase 4, 5, or 6 before their shared prerequisites and browser checks pass.

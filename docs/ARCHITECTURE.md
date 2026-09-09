@@ -28,6 +28,8 @@ Four deep modules behind small interfaces. Everything else is an adapter at a se
        ┌──────▼──────┐
        │  DASHBOARD  │  map, plan cards, ATC controls, health
        └─────────────┘
+              │ JSON / CoT
+       independent consumer
 
   run log ──┐
             ├──►  EVALUATION  ──►  metrics
@@ -39,6 +41,8 @@ Four deep modules behind small interfaces. Everything else is an adapter at a se
 | Replay | Scenario fixture, fault profile, seed | Ordered `Observation` stream on scenario time | Event ordering, fault injection, determinism |
 | Assessment | `Observation`, scenario time | Versioned `AssessedTrack` snapshot | Association, evidence weights, classification, prediction, staleness |
 | Planning | Assessed snapshot, `ResourceStatus`, ATC decision | Ranked `CourseOfAction[]`, rejection reasons | `SafetyVolume` geometry, hard safety gate, solver, baseline |
+| Interoperability | Displayed snapshot, scenario origin/geoid separation | Validated JSON, CoT, reassessed imported evidence | Root-source deduplication, coordinate/export validation |
+| Run log | Runtime path, configuration, seed, planner choice | Truth-free snapshots, plans, health, approvals, latency | Reconstructable decision record; never reads truth |
 | Evaluation | Completed run log, truth file | Metrics | Scoring. **The only module permitted to read ground truth.** |
 
 Adapters at the seams, none of them load-bearing: FastAPI and WebSocket, SQLite, sponsor loader, ADS-B loader, JSON and CoT export, the browser.

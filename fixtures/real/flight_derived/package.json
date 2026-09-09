@@ -1,0 +1,6328 @@
+{
+  "scenario": {
+    "scenario_id": "flight-derived-v1",
+    "schema_version": "1.0",
+    "name": "Recorded-motion taxi crossing demonstration",
+    "seed": 20260909,
+    "duration_seconds": 20.0,
+    "origin": {
+      "latitude": 38.8895,
+      "longitude": -77.0353,
+      "altitude_m": 0.0,
+      "geoid_separation_m": -33.5
+    }
+  },
+  "atc": {
+    "revision": 0,
+    "aircraft_stream_id": "s-blue01",
+    "routes": {
+      "HOLD": [
+        {
+          "east_m": 0.0,
+          "north_m": -600.0,
+          "up_m": 30.0
+        },
+        {
+          "east_m": 1.141,
+          "north_m": -611.888,
+          "up_m": 30.432
+        },
+        {
+          "east_m": 2.641,
+          "north_m": -623.973,
+          "up_m": 30.412
+        }
+      ],
+      "TAXI_CLEAR": [
+        {
+          "east_m": 0.0,
+          "north_m": -600.0,
+          "up_m": 30.0
+        },
+        {
+          "east_m": 600.0,
+          "north_m": -300.0,
+          "up_m": 30.0
+        }
+      ]
+    }
+  },
+  "resources": [
+    {
+      "schema_version": "1.0",
+      "resource_id": "resource-01",
+      "position": {
+        "east_m": -1000.0,
+        "north_m": 0.0,
+        "up_m": 0.0
+      },
+      "available": true,
+      "range_m": 2500.0,
+      "time_to_effect_s": 8.0,
+      "cooldown_s": 12.0,
+      "capacity": 1,
+      "p_success": 0.8,
+      "safety_radius_m": 75.0,
+      "doctrine_rules": [
+        "SIMULATION_ONLY",
+        "NO_PROTECTED_ASSIGNMENTS"
+      ],
+      "last_used_at": null,
+      "last_received_at": "2026-09-08T14:00:00Z"
+    },
+    {
+      "schema_version": "1.0",
+      "resource_id": "resource-02",
+      "position": {
+        "east_m": -800.0,
+        "north_m": -900.0,
+        "up_m": 0.0
+      },
+      "available": true,
+      "range_m": 2200.0,
+      "time_to_effect_s": 12.0,
+      "cooldown_s": 18.0,
+      "capacity": 2,
+      "p_success": 0.7,
+      "safety_radius_m": 90.0,
+      "doctrine_rules": [
+        "SIMULATION_ONLY",
+        "NO_PROTECTED_ASSIGNMENTS"
+      ],
+      "last_used_at": null,
+      "last_received_at": "2026-09-08T14:00:00Z"
+    },
+    {
+      "schema_version": "1.0",
+      "resource_id": "resource-03",
+      "position": {
+        "east_m": 850.0,
+        "north_m": 900.0,
+        "up_m": 0.0
+      },
+      "available": true,
+      "range_m": 1800.0,
+      "time_to_effect_s": 5.0,
+      "cooldown_s": 10.0,
+      "capacity": 1,
+      "p_success": 0.65,
+      "safety_radius_m": 60.0,
+      "doctrine_rules": [
+        "SIMULATION_ONLY",
+        "NO_PROTECTED_ASSIGNMENTS"
+      ],
+      "last_used_at": null,
+      "last_received_at": "2026-09-08T14:00:00Z"
+    }
+  ],
+  "events": [
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e6decbca-72b8-58dc-a4ba-e9f1f7df020e",
+        "source_id": "adsb-replay",
+        "source_seq": 43,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.030000Z",
+        "position": {
+          "east_m": 620.0,
+          "north_m": -920.0,
+          "up_m": 120.0
+        },
+        "velocity": {
+          "east_m": -0.064,
+          "north_m": -0.509,
+          "up_m": -0.028
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b18a7c34-e6d3-589c-a654-ed93d7a64513",
+        "source_id": "sponsor-replay",
+        "source_seq": 43,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.020000Z",
+        "position": {
+          "east_m": 620.0,
+          "north_m": -920.0,
+          "up_m": 120.0
+        },
+        "velocity": {
+          "east_m": -0.064,
+          "north_m": -0.509,
+          "up_m": -0.028
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2014b0c7-5b44-501c-a8ce-41e256d3b274",
+        "source_id": "adsb-replay",
+        "source_seq": 1,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00Z",
+        "position": {
+          "east_m": 0.0,
+          "north_m": -600.0,
+          "up_m": 30.0
+        },
+        "velocity": {
+          "east_m": 0.115,
+          "north_m": -1.264,
+          "up_m": 0.131
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "db88b43d-d48b-54f2-9279-7677317401e9",
+        "source_id": "adsb-replay",
+        "source_seq": 22,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00Z",
+        "position": {
+          "east_m": -900.0,
+          "north_m": 700.0,
+          "up_m": 250.0
+        },
+        "velocity": {
+          "east_m": 4.364,
+          "north_m": -0.095,
+          "up_m": 0.716
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "8ff5c0cf-9443-5f47-89da-287ea1802ee2",
+        "source_id": "rf-replay",
+        "source_seq": 1,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.050000Z",
+        "position": {
+          "east_m": 700.0,
+          "north_m": -180.0,
+          "up_m": 110.0
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3db7da16-c535-5bdf-a572-6bfdd785969c",
+        "source_id": "sponsor-replay",
+        "source_seq": 1,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.020000Z",
+        "position": {
+          "east_m": 700.0,
+          "north_m": -180.0,
+          "up_m": 110.0
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "51708287-9024-5ba3-a964-23bd790eb597",
+        "source_id": "trajectory-replay",
+        "source_seq": 1,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.040000Z",
+        "position": {
+          "east_m": 700.0,
+          "north_m": -180.0,
+          "up_m": 110.0
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "bb423435-dd76-54fc-bdcf-c68cfec71fab",
+        "source_id": "rf-replay",
+        "source_seq": 22,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.050000Z",
+        "position": {
+          "east_m": 520.0,
+          "north_m": 430.0,
+          "up_m": 140.0
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "08d8bf93-aba1-53d8-9d62-e47cd17a84a2",
+        "source_id": "sponsor-replay",
+        "source_seq": 22,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.020000Z",
+        "position": {
+          "east_m": 520.0,
+          "north_m": 430.0,
+          "up_m": 140.0
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 0.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "400db23b-3ca7-5866-893a-7296ab08ff08",
+        "source_id": "trajectory-replay",
+        "source_seq": 22,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:00Z",
+        "received_at": "2026-09-08T14:00:00.040000Z",
+        "position": {
+          "east_m": 520.0,
+          "north_m": 430.0,
+          "up_m": 140.0
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a6332639-f901-591c-96ee-999151bfba27",
+        "source_id": "adsb-replay",
+        "source_seq": 44,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01.030000Z",
+        "position": {
+          "east_m": 619.936,
+          "north_m": -920.509,
+          "up_m": 119.972
+        },
+        "velocity": {
+          "east_m": -0.064,
+          "north_m": -0.509,
+          "up_m": -0.028
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "6373bcb1-2806-5ce4-a3de-e1c2a43731f4",
+        "source_id": "sponsor-replay",
+        "source_seq": 44,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01.020000Z",
+        "position": {
+          "east_m": 619.936,
+          "north_m": -920.509,
+          "up_m": 119.972
+        },
+        "velocity": {
+          "east_m": -0.064,
+          "north_m": -0.509,
+          "up_m": -0.028
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "9e12b23f-6ec2-553d-a4e9-a0a768d0e161",
+        "source_id": "adsb-replay",
+        "source_seq": 2,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01Z",
+        "position": {
+          "east_m": 0.115,
+          "north_m": -601.264,
+          "up_m": 30.131
+        },
+        "velocity": {
+          "east_m": 0.115,
+          "north_m": -1.264,
+          "up_m": 0.131
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ff5ccb03-7e39-5fa1-9887-ac9a6264b951",
+        "source_id": "adsb-replay",
+        "source_seq": 23,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01Z",
+        "position": {
+          "east_m": -895.636,
+          "north_m": 699.905,
+          "up_m": 250.716
+        },
+        "velocity": {
+          "east_m": 4.364,
+          "north_m": -0.095,
+          "up_m": 0.716
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "297847f2-0ad6-55d6-a545-37182a6d42d8",
+        "source_id": "rf-replay",
+        "source_seq": 2,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01.050000Z",
+        "position": {
+          "east_m": 697.765,
+          "north_m": -181.654,
+          "up_m": 111.228
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "9e4622bd-3457-5179-88c2-89a21ec92905",
+        "source_id": "sponsor-replay",
+        "source_seq": 2,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01.020000Z",
+        "position": {
+          "east_m": 697.765,
+          "north_m": -181.654,
+          "up_m": 111.228
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "13f73a7e-ab26-54d5-ab73-e57d87b3083c",
+        "source_id": "trajectory-replay",
+        "source_seq": 2,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01.040000Z",
+        "position": {
+          "east_m": 697.765,
+          "north_m": -181.654,
+          "up_m": 111.228
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "1b432273-7372-5041-9035-17e95d8c7053",
+        "source_id": "rf-replay",
+        "source_seq": 23,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01.050000Z",
+        "position": {
+          "east_m": 507.531,
+          "north_m": 395.732,
+          "up_m": 140.002
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a2010ae9-c8b5-5cbf-83b4-e3558a04df4a",
+        "source_id": "sponsor-replay",
+        "source_seq": 23,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01.020000Z",
+        "position": {
+          "east_m": 507.531,
+          "north_m": 395.732,
+          "up_m": 140.002
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 1.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ca5f4238-8ddd-5bc5-ba66-cc44e77b2cff",
+        "source_id": "trajectory-replay",
+        "source_seq": 23,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:01Z",
+        "received_at": "2026-09-08T14:00:01.040000Z",
+        "position": {
+          "east_m": 507.531,
+          "north_m": 395.732,
+          "up_m": 140.002
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "c43b41e2-8e39-5ecf-aa0e-dbca1893af58",
+        "source_id": "adsb-replay",
+        "source_seq": 45,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.030000Z",
+        "position": {
+          "east_m": 619.871,
+          "north_m": -921.019,
+          "up_m": 119.944
+        },
+        "velocity": {
+          "east_m": -0.064,
+          "north_m": -0.509,
+          "up_m": -0.028
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3011d6ab-d5d0-5cf2-83e8-6927f7ba8563",
+        "source_id": "sponsor-replay",
+        "source_seq": 45,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.020000Z",
+        "position": {
+          "east_m": 619.871,
+          "north_m": -921.019,
+          "up_m": 119.944
+        },
+        "velocity": {
+          "east_m": -0.064,
+          "north_m": -0.509,
+          "up_m": -0.028
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "63c0ec4b-bdd1-5af6-afc5-4784f1ee1bef",
+        "source_id": "adsb-replay",
+        "source_seq": 3,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02Z",
+        "position": {
+          "east_m": 0.229,
+          "north_m": -602.528,
+          "up_m": 30.263
+        },
+        "velocity": {
+          "east_m": 0.115,
+          "north_m": -1.264,
+          "up_m": 0.131
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "038815d0-429b-5f62-acac-494f1fdde3d3",
+        "source_id": "adsb-replay",
+        "source_seq": 24,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02Z",
+        "position": {
+          "east_m": -891.271,
+          "north_m": 699.811,
+          "up_m": 251.433
+        },
+        "velocity": {
+          "east_m": 4.364,
+          "north_m": -0.095,
+          "up_m": 0.716
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3825291e-c725-5dcd-963b-c3bcf8412ab1",
+        "source_id": "rf-replay",
+        "source_seq": 3,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.050000Z",
+        "position": {
+          "east_m": 695.531,
+          "north_m": -183.309,
+          "up_m": 112.455
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "075e4a27-d09e-5c40-8120-0573ad1c20f0",
+        "source_id": "sponsor-replay",
+        "source_seq": 3,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.020000Z",
+        "position": {
+          "east_m": 695.531,
+          "north_m": -183.309,
+          "up_m": 112.455
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "86cff032-e540-5ba4-9264-3df9d55ac625",
+        "source_id": "trajectory-replay",
+        "source_seq": 3,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.040000Z",
+        "position": {
+          "east_m": 695.531,
+          "north_m": -183.309,
+          "up_m": 112.455
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=2-3"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "867e2fa6-21f6-5609-8e8c-603f433b594f",
+        "source_id": "rf-replay",
+        "source_seq": 24,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.050000Z",
+        "position": {
+          "east_m": 495.063,
+          "north_m": 361.464,
+          "up_m": 140.004
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "6eb3fe63-cf83-5f04-bec6-c72ae85add41",
+        "source_id": "sponsor-replay",
+        "source_seq": 24,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.020000Z",
+        "position": {
+          "east_m": 495.063,
+          "north_m": 361.464,
+          "up_m": 140.004
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 2.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "4e54739c-6523-5833-a7cb-83675b9c190d",
+        "source_id": "trajectory-replay",
+        "source_seq": 24,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.040000Z",
+        "position": {
+          "east_m": 495.063,
+          "north_m": 361.464,
+          "up_m": 140.004
+        },
+        "velocity": {
+          "east_m": -12.469,
+          "north_m": -34.268,
+          "up_m": 0.002
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d897c61c-7118-5bc3-a565-542fc84797a1",
+        "source_id": "adsb-replay",
+        "source_seq": 46,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03.030000Z",
+        "position": {
+          "east_m": 619.807,
+          "north_m": -921.528,
+          "up_m": 119.915
+        },
+        "velocity": {
+          "east_m": -0.064,
+          "north_m": -0.509,
+          "up_m": -0.028
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2da2a43f-7f0f-57c9-9f55-42e6e5c77267",
+        "source_id": "sponsor-replay",
+        "source_seq": 46,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03.020000Z",
+        "position": {
+          "east_m": 619.807,
+          "north_m": -921.528,
+          "up_m": 119.915
+        },
+        "velocity": {
+          "east_m": -0.064,
+          "north_m": -0.509,
+          "up_m": -0.028
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "bdd82fce-3dda-5186-84a7-f8f7ed48594f",
+        "source_id": "adsb-replay",
+        "source_seq": 4,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03Z",
+        "position": {
+          "east_m": 0.344,
+          "north_m": -603.793,
+          "up_m": 30.394
+        },
+        "velocity": {
+          "east_m": 0.115,
+          "north_m": -1.264,
+          "up_m": 0.131
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b41de62e-c948-5089-b31c-d3af9a70edd1",
+        "source_id": "adsb-replay",
+        "source_seq": 25,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03Z",
+        "position": {
+          "east_m": -886.907,
+          "north_m": 699.716,
+          "up_m": 252.149
+        },
+        "velocity": {
+          "east_m": 4.364,
+          "north_m": -0.095,
+          "up_m": 0.716
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "5b89601c-ab59-54f2-9292-7544d9a87103",
+        "source_id": "rf-replay",
+        "source_seq": 4,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03.050000Z",
+        "position": {
+          "east_m": 693.296,
+          "north_m": -184.963,
+          "up_m": 113.683
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f4bca196-d97f-5db9-bb17-691375a62f7e",
+        "source_id": "sponsor-replay",
+        "source_seq": 4,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03.020000Z",
+        "position": {
+          "east_m": 693.296,
+          "north_m": -184.963,
+          "up_m": 113.683
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e0d96036-18e7-5981-b35e-befc4b76af42",
+        "source_id": "trajectory-replay",
+        "source_seq": 4,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03.040000Z",
+        "position": {
+          "east_m": 693.296,
+          "north_m": -184.963,
+          "up_m": 113.683
+        },
+        "velocity": {
+          "east_m": -2.235,
+          "north_m": -1.654,
+          "up_m": 1.228
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2e9464cc-d87f-5cc2-b29b-171e512270cb",
+        "source_id": "rf-replay",
+        "source_seq": 25,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03.050000Z",
+        "position": {
+          "east_m": 488.506,
+          "north_m": 346.15,
+          "up_m": 139.903
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "27792977-d7e6-5671-930b-dff1a53c26c0",
+        "source_id": "sponsor-replay",
+        "source_seq": 25,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03.020000Z",
+        "position": {
+          "east_m": 488.506,
+          "north_m": 346.15,
+          "up_m": 139.903
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 3.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "1f4ab336-1e35-5484-88d3-497f5eb5325a",
+        "source_id": "trajectory-replay",
+        "source_seq": 25,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:03Z",
+        "received_at": "2026-09-08T14:00:03.040000Z",
+        "position": {
+          "east_m": 488.506,
+          "north_m": 346.15,
+          "up_m": 139.903
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "1dbe942c-9a41-5c18-9609-14d33d03a198",
+        "source_id": "adsb-replay",
+        "source_seq": 47,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04.030000Z",
+        "position": {
+          "east_m": 620.784,
+          "north_m": -923.915,
+          "up_m": 120.318
+        },
+        "velocity": {
+          "east_m": 0.978,
+          "north_m": -2.388,
+          "up_m": 0.403
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "99dd2657-fbbe-5702-9869-7aa5b0690283",
+        "source_id": "sponsor-replay",
+        "source_seq": 47,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04.020000Z",
+        "position": {
+          "east_m": 620.784,
+          "north_m": -923.915,
+          "up_m": 120.318
+        },
+        "velocity": {
+          "east_m": 0.978,
+          "north_m": -2.388,
+          "up_m": 0.403
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "08e7709e-34e9-55c3-9d9a-50ce2e8d48f8",
+        "source_id": "adsb-replay",
+        "source_seq": 5,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04Z",
+        "position": {
+          "east_m": 0.646,
+          "north_m": -606.346,
+          "up_m": 30.44
+        },
+        "velocity": {
+          "east_m": 0.302,
+          "north_m": -2.553,
+          "up_m": 0.046
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "614ea3e7-e9a1-5313-a156-35be025c921c",
+        "source_id": "adsb-replay",
+        "source_seq": 26,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04Z",
+        "position": {
+          "east_m": -867.081,
+          "north_m": 699.913,
+          "up_m": 252.345
+        },
+        "velocity": {
+          "east_m": 19.825,
+          "north_m": 0.197,
+          "up_m": 0.195
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e9133206-22de-521d-b3ae-a9f33a6e3dcc",
+        "source_id": "rf-replay",
+        "source_seq": 5,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04.050000Z",
+        "position": {
+          "east_m": 672.74,
+          "north_m": -196.298,
+          "up_m": 113.949
+        },
+        "velocity": {
+          "east_m": -20.556,
+          "north_m": -11.335,
+          "up_m": 0.265
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f9c60c61-c644-5aac-a886-8d79f55d4193",
+        "source_id": "sponsor-replay",
+        "source_seq": 5,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04.020000Z",
+        "position": {
+          "east_m": 672.74,
+          "north_m": -196.298,
+          "up_m": 113.949
+        },
+        "velocity": {
+          "east_m": -20.556,
+          "north_m": -11.335,
+          "up_m": 0.265
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "4598f5a8-af0f-5cf6-898b-2fcc010c6b7f",
+        "source_id": "trajectory-replay",
+        "source_seq": 5,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04.040000Z",
+        "position": {
+          "east_m": 672.74,
+          "north_m": -196.298,
+          "up_m": 113.949
+        },
+        "velocity": {
+          "east_m": -20.556,
+          "north_m": -11.335,
+          "up_m": 0.265
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b1b3e1c5-7078-5745-8b97-a9c5eb0ccb4e",
+        "source_id": "rf-replay",
+        "source_seq": 26,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04.050000Z",
+        "position": {
+          "east_m": 481.948,
+          "north_m": 330.837,
+          "up_m": 139.803
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "dc3c90fe-0bbc-5f71-8002-af10ccf222c5",
+        "source_id": "sponsor-replay",
+        "source_seq": 26,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04.020000Z",
+        "position": {
+          "east_m": 481.948,
+          "north_m": 330.837,
+          "up_m": 139.803
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 4.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "caed1c8a-5695-54e4-8841-980ac953df56",
+        "source_id": "trajectory-replay",
+        "source_seq": 26,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:04Z",
+        "received_at": "2026-09-08T14:00:04.040000Z",
+        "position": {
+          "east_m": 481.948,
+          "north_m": 330.837,
+          "up_m": 139.803
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "736fc15f-7a16-5f98-8bd8-be2268b8e34c",
+        "source_id": "adsb-replay",
+        "source_seq": 48,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.030000Z",
+        "position": {
+          "east_m": 621.762,
+          "north_m": -926.303,
+          "up_m": 120.721
+        },
+        "velocity": {
+          "east_m": 0.978,
+          "north_m": -2.388,
+          "up_m": 0.403
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "240cdb4a-1168-5fce-84a4-a53484e66ed1",
+        "source_id": "sponsor-replay",
+        "source_seq": 48,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.020000Z",
+        "position": {
+          "east_m": 621.762,
+          "north_m": -926.303,
+          "up_m": 120.721
+        },
+        "velocity": {
+          "east_m": 0.978,
+          "north_m": -2.388,
+          "up_m": 0.403
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=3-4"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2ef07e53-d5ea-50e9-8ac7-18f8fa163afa",
+        "source_id": "adsb-replay",
+        "source_seq": 6,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05Z",
+        "position": {
+          "east_m": 0.948,
+          "north_m": -608.899,
+          "up_m": 30.486
+        },
+        "velocity": {
+          "east_m": 0.302,
+          "north_m": -2.553,
+          "up_m": 0.046
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e9dc6ce7-6d12-5968-b1c4-f3a4f74ccb9d",
+        "source_id": "adsb-replay",
+        "source_seq": 27,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05Z",
+        "position": {
+          "east_m": -847.256,
+          "north_m": 700.11,
+          "up_m": 252.54
+        },
+        "velocity": {
+          "east_m": 19.825,
+          "north_m": 0.197,
+          "up_m": 0.195
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "bf434322-6d6c-5a93-a5ec-db4b58aac40d",
+        "source_id": "rf-replay",
+        "source_seq": 6,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.050000Z",
+        "position": {
+          "east_m": 652.184,
+          "north_m": -207.633,
+          "up_m": 114.214
+        },
+        "velocity": {
+          "east_m": -20.556,
+          "north_m": -11.335,
+          "up_m": 0.265
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "8e86e381-7cf3-5e1a-a5db-9e22913a34f4",
+        "source_id": "sponsor-replay",
+        "source_seq": 6,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.020000Z",
+        "position": {
+          "east_m": 652.184,
+          "north_m": -207.633,
+          "up_m": 114.214
+        },
+        "velocity": {
+          "east_m": -20.556,
+          "north_m": -11.335,
+          "up_m": 0.265
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "7861266d-472a-5139-b599-a56a5c2ea71b",
+        "source_id": "trajectory-replay",
+        "source_seq": 6,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.040000Z",
+        "position": {
+          "east_m": 652.184,
+          "north_m": -207.633,
+          "up_m": 114.214
+        },
+        "velocity": {
+          "east_m": -20.556,
+          "north_m": -11.335,
+          "up_m": 0.265
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d020dada-b3d8-5693-b928-e4af035034e4",
+        "source_id": "rf-replay",
+        "source_seq": 27,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.050000Z",
+        "position": {
+          "east_m": 475.391,
+          "north_m": 315.524,
+          "up_m": 139.702
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ae8c0870-b818-59fc-83a6-6685b4abd887",
+        "source_id": "sponsor-replay",
+        "source_seq": 27,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.020000Z",
+        "position": {
+          "east_m": 475.391,
+          "north_m": 315.524,
+          "up_m": 139.702
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 5.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "06f1a5b4-2971-5b58-9504-225937d71cd3",
+        "source_id": "trajectory-replay",
+        "source_seq": 27,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:05Z",
+        "received_at": "2026-09-08T14:00:05.040000Z",
+        "position": {
+          "east_m": 475.391,
+          "north_m": 315.524,
+          "up_m": 139.702
+        },
+        "velocity": {
+          "east_m": -6.557,
+          "north_m": -15.313,
+          "up_m": -0.101
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "9788cdd9-72c4-5c4e-86e4-feaa1a5c3eee",
+        "source_id": "adsb-replay",
+        "source_seq": 49,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06.030000Z",
+        "position": {
+          "east_m": 622.74,
+          "north_m": -928.69,
+          "up_m": 121.124
+        },
+        "velocity": {
+          "east_m": 0.978,
+          "north_m": -2.388,
+          "up_m": 0.403
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "71406635-2d5f-54d6-ad1d-4584a36e9dde",
+        "source_id": "sponsor-replay",
+        "source_seq": 49,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06.020000Z",
+        "position": {
+          "east_m": 622.74,
+          "north_m": -928.69,
+          "up_m": 121.124
+        },
+        "velocity": {
+          "east_m": 0.978,
+          "north_m": -2.388,
+          "up_m": 0.403
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "5406f0bf-3ed9-516b-8b50-83891447a0b1",
+        "source_id": "adsb-replay",
+        "source_seq": 7,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06Z",
+        "position": {
+          "east_m": 1.045,
+          "north_m": -610.393,
+          "up_m": 30.459
+        },
+        "velocity": {
+          "east_m": 0.096,
+          "north_m": -1.494,
+          "up_m": -0.027
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f435eaf0-cc47-5029-9b11-c9336338ff94",
+        "source_id": "adsb-replay",
+        "source_seq": 28,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06Z",
+        "position": {
+          "east_m": -831.813,
+          "north_m": 700.999,
+          "up_m": 252.528
+        },
+        "velocity": {
+          "east_m": 15.443,
+          "north_m": 0.889,
+          "up_m": -0.012
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "578f0e69-b2d7-5ca8-b3bd-6fbf9156aaef",
+        "source_id": "rf-replay",
+        "source_seq": 7,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06.050000Z",
+        "position": {
+          "east_m": 628.456,
+          "north_m": -221.831,
+          "up_m": 114.262
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e058769e-0e3a-545b-bc27-72e29b8dd24f",
+        "source_id": "sponsor-replay",
+        "source_seq": 7,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06.020000Z",
+        "position": {
+          "east_m": 628.456,
+          "north_m": -221.831,
+          "up_m": 114.262
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ab5a4d3d-c2f9-5128-82ee-457046968428",
+        "source_id": "trajectory-replay",
+        "source_seq": 7,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06.040000Z",
+        "position": {
+          "east_m": 628.456,
+          "north_m": -221.831,
+          "up_m": 114.262
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e2406275-6ef7-55dd-a4a2-ce4a349b66de",
+        "source_id": "rf-replay",
+        "source_seq": 28,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06.050000Z",
+        "position": {
+          "east_m": 458.388,
+          "north_m": 285.621,
+          "up_m": 139.636
+        },
+        "velocity": {
+          "east_m": -17.003,
+          "north_m": -29.902,
+          "up_m": -0.066
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "789bfc01-2a7b-5fb3-88ee-065e870d130d",
+        "source_id": "sponsor-replay",
+        "source_seq": 28,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06.020000Z",
+        "position": {
+          "east_m": 458.388,
+          "north_m": 285.621,
+          "up_m": 139.636
+        },
+        "velocity": {
+          "east_m": -17.003,
+          "north_m": -29.902,
+          "up_m": -0.066
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 6.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e7daf023-a51d-50d2-87d6-c111566e361b",
+        "source_id": "trajectory-replay",
+        "source_seq": 28,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:06Z",
+        "received_at": "2026-09-08T14:00:06.040000Z",
+        "position": {
+          "east_m": 458.388,
+          "north_m": 285.621,
+          "up_m": 139.636
+        },
+        "velocity": {
+          "east_m": -17.003,
+          "north_m": -29.902,
+          "up_m": -0.066
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "bd4d395d-d5d7-5bb4-a61e-e0092e0dcfc3",
+        "source_id": "adsb-replay",
+        "source_seq": 50,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07.030000Z",
+        "position": {
+          "east_m": 622.169,
+          "north_m": -924.832,
+          "up_m": 123.244
+        },
+        "velocity": {
+          "east_m": -0.571,
+          "north_m": 3.859,
+          "up_m": 2.119
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a7addb2b-2b18-5f90-a4e0-ee5250a880a8",
+        "source_id": "sponsor-replay",
+        "source_seq": 50,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07.020000Z",
+        "position": {
+          "east_m": 622.169,
+          "north_m": -924.832,
+          "up_m": 123.244
+        },
+        "velocity": {
+          "east_m": -0.571,
+          "north_m": 3.859,
+          "up_m": 2.119
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "95904ec9-4c8b-5fb3-8273-153aaa06fc8f",
+        "source_id": "adsb-replay",
+        "source_seq": 8,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07Z",
+        "position": {
+          "east_m": 1.141,
+          "north_m": -611.888,
+          "up_m": 30.432
+        },
+        "velocity": {
+          "east_m": 0.096,
+          "north_m": -1.494,
+          "up_m": -0.027
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "7f4cac1c-354c-5279-970d-f3e93534c5ec",
+        "source_id": "adsb-replay",
+        "source_seq": 29,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07Z",
+        "position": {
+          "east_m": -816.369,
+          "north_m": 701.888,
+          "up_m": 252.517
+        },
+        "velocity": {
+          "east_m": 15.443,
+          "north_m": 0.889,
+          "up_m": -0.012
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "193398b7-38c6-5fc2-a538-3f0a1a107668",
+        "source_id": "rf-replay",
+        "source_seq": 8,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07.050000Z",
+        "position": {
+          "east_m": 604.729,
+          "north_m": -236.028,
+          "up_m": 114.309
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3f496ded-77f3-5975-836f-6bb107149474",
+        "source_id": "sponsor-replay",
+        "source_seq": 8,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07.020000Z",
+        "position": {
+          "east_m": 604.729,
+          "north_m": -236.028,
+          "up_m": 114.309
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "c1593a5f-ed9d-590a-a87e-665bc0ca9f24",
+        "source_id": "trajectory-replay",
+        "source_seq": 8,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07.040000Z",
+        "position": {
+          "east_m": 604.729,
+          "north_m": -236.028,
+          "up_m": 114.309
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ac86cc27-8e28-5d70-995f-6197d5766843",
+        "source_id": "rf-replay",
+        "source_seq": 29,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07.050000Z",
+        "position": {
+          "east_m": 441.384,
+          "north_m": 255.719,
+          "up_m": 139.57
+        },
+        "velocity": {
+          "east_m": -17.003,
+          "north_m": -29.902,
+          "up_m": -0.066
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "cf5497a9-7f68-5fb4-b7c3-3756fc905d5a",
+        "source_id": "sponsor-replay",
+        "source_seq": 29,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07.020000Z",
+        "position": {
+          "east_m": 441.384,
+          "north_m": 255.719,
+          "up_m": 139.57
+        },
+        "velocity": {
+          "east_m": -17.003,
+          "north_m": -29.902,
+          "up_m": -0.066
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 7.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "0d151b96-cd3f-5fbe-a741-5f30fdd042d9",
+        "source_id": "trajectory-replay",
+        "source_seq": 29,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:07Z",
+        "received_at": "2026-09-08T14:00:07.040000Z",
+        "position": {
+          "east_m": 441.384,
+          "north_m": 255.719,
+          "up_m": 139.57
+        },
+        "velocity": {
+          "east_m": -17.003,
+          "north_m": -29.902,
+          "up_m": -0.066
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "9225eeda-23e0-5e83-b8d0-cf231d72ad82",
+        "source_id": "adsb-replay",
+        "source_seq": 51,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08.030000Z",
+        "position": {
+          "east_m": 621.598,
+          "north_m": -920.973,
+          "up_m": 125.363
+        },
+        "velocity": {
+          "east_m": -0.571,
+          "north_m": 3.859,
+          "up_m": 2.119
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f05e0980-5fa5-518a-9778-8abd4bf9fd7a",
+        "source_id": "sponsor-replay",
+        "source_seq": 51,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08.020000Z",
+        "position": {
+          "east_m": 621.598,
+          "north_m": -920.973,
+          "up_m": 125.363
+        },
+        "velocity": {
+          "east_m": -0.571,
+          "north_m": 3.859,
+          "up_m": 2.119
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=4-5"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d2376034-0b5e-5020-b11d-13ac326f028a",
+        "source_id": "adsb-replay",
+        "source_seq": 9,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08Z",
+        "position": {
+          "east_m": 1.238,
+          "north_m": -613.382,
+          "up_m": 30.406
+        },
+        "velocity": {
+          "east_m": 0.096,
+          "north_m": -1.494,
+          "up_m": -0.027
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "8cd99fa0-6ba2-506a-950e-688608b59338",
+        "source_id": "adsb-replay",
+        "source_seq": 30,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08Z",
+        "position": {
+          "east_m": -800.926,
+          "north_m": 702.776,
+          "up_m": 252.505
+        },
+        "velocity": {
+          "east_m": 15.443,
+          "north_m": 0.889,
+          "up_m": -0.012
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "8ecdc282-9518-5ed8-be13-90c80e30f15e",
+        "source_id": "rf-replay",
+        "source_seq": 9,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08.050000Z",
+        "position": {
+          "east_m": 581.001,
+          "north_m": -250.225,
+          "up_m": 114.357
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a44290f5-109f-5e00-a666-08a91a861d89",
+        "source_id": "sponsor-replay",
+        "source_seq": 9,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08.020000Z",
+        "position": {
+          "east_m": 581.001,
+          "north_m": -250.225,
+          "up_m": 114.357
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "bd0a3489-cfbd-59c2-9f53-a65cae0e9ecd",
+        "source_id": "trajectory-replay",
+        "source_seq": 9,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08.040000Z",
+        "position": {
+          "east_m": 581.001,
+          "north_m": -250.225,
+          "up_m": 114.357
+        },
+        "velocity": {
+          "east_m": -23.727,
+          "north_m": -14.197,
+          "up_m": 0.048
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e40d7bd8-e7b1-5330-9c2b-39bac074ed71",
+        "source_id": "rf-replay",
+        "source_seq": 30,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08.050000Z",
+        "position": {
+          "east_m": 431.075,
+          "north_m": 235.265,
+          "up_m": 139.61
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "dfe52a48-1a72-5412-af7e-43a7e91073a0",
+        "source_id": "sponsor-replay",
+        "source_seq": 30,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08.020000Z",
+        "position": {
+          "east_m": 431.075,
+          "north_m": 235.265,
+          "up_m": 139.61
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 8.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b044bbf7-09e5-5ab8-be4a-7dc322ba19f7",
+        "source_id": "trajectory-replay",
+        "source_seq": 30,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:08Z",
+        "received_at": "2026-09-08T14:00:08.040000Z",
+        "position": {
+          "east_m": 431.075,
+          "north_m": 235.265,
+          "up_m": 139.61
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3a14b1eb-dbfb-5772-a201-91346cd5e974",
+        "source_id": "adsb-replay",
+        "source_seq": 52,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09.030000Z",
+        "position": {
+          "east_m": 621.027,
+          "north_m": -917.114,
+          "up_m": 127.482
+        },
+        "velocity": {
+          "east_m": -0.571,
+          "north_m": 3.859,
+          "up_m": 2.119
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "6547464b-3a5e-50e0-b772-8eb9ab2cae23",
+        "source_id": "sponsor-replay",
+        "source_seq": 52,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09.020000Z",
+        "position": {
+          "east_m": 621.027,
+          "north_m": -917.114,
+          "up_m": 127.482
+        },
+        "velocity": {
+          "east_m": -0.571,
+          "north_m": 3.859,
+          "up_m": 2.119
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2063cdc0-6b0e-5ce0-a2a0-5154aeddf07f",
+        "source_id": "adsb-replay",
+        "source_seq": 10,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09Z",
+        "position": {
+          "east_m": 1.527,
+          "north_m": -615.518,
+          "up_m": 30.389
+        },
+        "velocity": {
+          "east_m": 0.289,
+          "north_m": -2.135,
+          "up_m": -0.017
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "0a3ee5f3-e06c-51a4-a9ac-58069afcaf73",
+        "source_id": "adsb-replay",
+        "source_seq": 31,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09Z",
+        "position": {
+          "east_m": -779.667,
+          "north_m": 702.575,
+          "up_m": 252.491
+        },
+        "velocity": {
+          "east_m": 21.259,
+          "north_m": -0.201,
+          "up_m": -0.014
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ead30f82-e693-5425-979e-b877f090db80",
+        "source_id": "rf-replay",
+        "source_seq": 10,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09.050000Z",
+        "position": {
+          "east_m": 542.509,
+          "north_m": -273.194,
+          "up_m": 114.208
+        },
+        "velocity": {
+          "east_m": -38.493,
+          "north_m": -22.969,
+          "up_m": -0.149
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "4aa22264-5721-548b-a656-29562f792933",
+        "source_id": "sponsor-replay",
+        "source_seq": 10,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09.020000Z",
+        "position": {
+          "east_m": 542.509,
+          "north_m": -273.194,
+          "up_m": 114.208
+        },
+        "velocity": {
+          "east_m": -38.493,
+          "north_m": -22.969,
+          "up_m": -0.149
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "9a886d9c-41a7-5a34-928f-43c1cc2ada4d",
+        "source_id": "trajectory-replay",
+        "source_seq": 10,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09.040000Z",
+        "position": {
+          "east_m": 542.509,
+          "north_m": -273.194,
+          "up_m": 114.208
+        },
+        "velocity": {
+          "east_m": -38.493,
+          "north_m": -22.969,
+          "up_m": -0.149
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "66454724-06a7-5dfd-a0d8-c76c21711d46",
+        "source_id": "rf-replay",
+        "source_seq": 31,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09.050000Z",
+        "position": {
+          "east_m": 420.766,
+          "north_m": 214.812,
+          "up_m": 139.649
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "feec161b-64b9-52f3-8c83-4b31dc5d3508",
+        "source_id": "sponsor-replay",
+        "source_seq": 31,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09.020000Z",
+        "position": {
+          "east_m": 420.766,
+          "north_m": 214.812,
+          "up_m": 139.649
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 9.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e457c10e-e365-58e4-8253-61399345dd60",
+        "source_id": "trajectory-replay",
+        "source_seq": 31,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:09Z",
+        "received_at": "2026-09-08T14:00:09.040000Z",
+        "position": {
+          "east_m": 420.766,
+          "north_m": 214.812,
+          "up_m": 139.649
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "04bf22e7-83a1-5811-8971-fcad90e2788d",
+        "source_id": "adsb-replay",
+        "source_seq": 53,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10.030000Z",
+        "position": {
+          "east_m": 620.041,
+          "north_m": -917.782,
+          "up_m": 129.678
+        },
+        "velocity": {
+          "east_m": -0.986,
+          "north_m": -0.668,
+          "up_m": 2.196
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d6f11e9c-69c8-5fb1-8f4e-637ae5267c3c",
+        "source_id": "sponsor-replay",
+        "source_seq": 53,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10.020000Z",
+        "position": {
+          "east_m": 620.041,
+          "north_m": -917.782,
+          "up_m": 129.678
+        },
+        "velocity": {
+          "east_m": -0.986,
+          "north_m": -0.668,
+          "up_m": 2.196
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "28940dea-c3c8-5d21-926f-d56953545806",
+        "source_id": "adsb-replay",
+        "source_seq": 11,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10Z",
+        "position": {
+          "east_m": 1.816,
+          "north_m": -617.653,
+          "up_m": 30.372
+        },
+        "velocity": {
+          "east_m": 0.289,
+          "north_m": -2.135,
+          "up_m": -0.017
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ade6fc29-5ccf-59a8-8995-c87fd7a812ea",
+        "source_id": "adsb-replay",
+        "source_seq": 32,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10Z",
+        "position": {
+          "east_m": -758.408,
+          "north_m": 702.373,
+          "up_m": 252.477
+        },
+        "velocity": {
+          "east_m": 21.259,
+          "north_m": -0.201,
+          "up_m": -0.014
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e4e7cc85-0c6a-545d-acf6-f7319c4b2f5b",
+        "source_id": "rf-replay",
+        "source_seq": 11,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10.050000Z",
+        "position": {
+          "east_m": 504.016,
+          "north_m": -296.163,
+          "up_m": 114.059
+        },
+        "velocity": {
+          "east_m": -38.493,
+          "north_m": -22.969,
+          "up_m": -0.149
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "aae9f68d-86df-5b8c-9543-aecd0f2bd2c1",
+        "source_id": "sponsor-replay",
+        "source_seq": 11,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10.020000Z",
+        "position": {
+          "east_m": 504.016,
+          "north_m": -296.163,
+          "up_m": 114.059
+        },
+        "velocity": {
+          "east_m": -38.493,
+          "north_m": -22.969,
+          "up_m": -0.149
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d6d9348e-81b5-53b5-9040-15f241add064",
+        "source_id": "trajectory-replay",
+        "source_seq": 11,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10.040000Z",
+        "position": {
+          "east_m": 504.016,
+          "north_m": -296.163,
+          "up_m": 114.059
+        },
+        "velocity": {
+          "east_m": -38.493,
+          "north_m": -22.969,
+          "up_m": -0.149
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "557ccf3c-08da-5170-a9b2-d03cd1626a8c",
+        "source_id": "rf-replay",
+        "source_seq": 32,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10.050000Z",
+        "position": {
+          "east_m": 410.456,
+          "north_m": 194.358,
+          "up_m": 139.688
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "1d2fd475-4ed7-588f-9fd4-14c89e499f04",
+        "source_id": "sponsor-replay",
+        "source_seq": 32,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10.020000Z",
+        "position": {
+          "east_m": 410.456,
+          "north_m": 194.358,
+          "up_m": 139.688
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 10.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "81e8ff0a-1401-5f46-82cf-3a14fb8cade8",
+        "source_id": "trajectory-replay",
+        "source_seq": 32,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:10Z",
+        "received_at": "2026-09-08T14:00:10.040000Z",
+        "position": {
+          "east_m": 410.456,
+          "north_m": 194.358,
+          "up_m": 139.688
+        },
+        "velocity": {
+          "east_m": -10.309,
+          "north_m": -20.454,
+          "up_m": 0.039
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "1a0045ea-40d8-59b0-89a9-0d9bf345840c",
+        "source_id": "adsb-replay",
+        "source_seq": 54,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11.030000Z",
+        "position": {
+          "east_m": 619.055,
+          "north_m": -918.45,
+          "up_m": 131.874
+        },
+        "velocity": {
+          "east_m": -0.986,
+          "north_m": -0.668,
+          "up_m": 2.196
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "4c2825cd-e560-5bb2-a567-d32cb00deae6",
+        "source_id": "sponsor-replay",
+        "source_seq": 54,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11.020000Z",
+        "position": {
+          "east_m": 619.055,
+          "north_m": -918.45,
+          "up_m": 131.874
+        },
+        "velocity": {
+          "east_m": -0.986,
+          "north_m": -0.668,
+          "up_m": 2.196
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=5-6"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "5a1b7158-4714-5356-a3bf-9ca4f8776a59",
+        "source_id": "adsb-replay",
+        "source_seq": 12,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11Z",
+        "position": {
+          "east_m": 2.02,
+          "north_m": -618.986,
+          "up_m": 30.366
+        },
+        "velocity": {
+          "east_m": 0.203,
+          "north_m": -1.334,
+          "up_m": -0.006
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a3133b71-ee7e-5d43-bc32-9fa90102ae2e",
+        "source_id": "adsb-replay",
+        "source_seq": 33,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11Z",
+        "position": {
+          "east_m": -743.723,
+          "north_m": 702.058,
+          "up_m": 252.51
+        },
+        "velocity": {
+          "east_m": 14.685,
+          "north_m": -0.315,
+          "up_m": 0.033
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2e5c1222-aa3c-5687-baee-12d2d92e8652",
+        "source_id": "rf-replay",
+        "source_seq": 12,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11.050000Z",
+        "position": {
+          "east_m": 485.37,
+          "north_m": -308.212,
+          "up_m": 114.131
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ec4f83e8-f43a-557f-82aa-55c0acb4036b",
+        "source_id": "sponsor-replay",
+        "source_seq": 12,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11.020000Z",
+        "position": {
+          "east_m": 485.37,
+          "north_m": -308.212,
+          "up_m": 114.131
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "34e7a99f-3eae-54ed-855a-e307ea909998",
+        "source_id": "trajectory-replay",
+        "source_seq": 12,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11.040000Z",
+        "position": {
+          "east_m": 485.37,
+          "north_m": -308.212,
+          "up_m": 114.131
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "4ac1adba-a4ef-53aa-8807-d0cbdd856b0e",
+        "source_id": "rf-replay",
+        "source_seq": 33,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11.050000Z",
+        "position": {
+          "east_m": 395.996,
+          "north_m": 172.087,
+          "up_m": 139.825
+        },
+        "velocity": {
+          "east_m": -14.461,
+          "north_m": -22.27,
+          "up_m": 0.137
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d4af90d1-2924-57bf-af7b-f92bf1d0f92a",
+        "source_id": "sponsor-replay",
+        "source_seq": 33,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11.020000Z",
+        "position": {
+          "east_m": 395.996,
+          "north_m": 172.087,
+          "up_m": 139.825
+        },
+        "velocity": {
+          "east_m": -14.461,
+          "north_m": -22.27,
+          "up_m": 0.137
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 11.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "14ae4a02-1742-5578-b9e3-8262b42a1f50",
+        "source_id": "trajectory-replay",
+        "source_seq": 33,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:11Z",
+        "received_at": "2026-09-08T14:00:11.040000Z",
+        "position": {
+          "east_m": 395.996,
+          "north_m": 172.087,
+          "up_m": 139.825
+        },
+        "velocity": {
+          "east_m": -14.461,
+          "north_m": -22.27,
+          "up_m": 0.137
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "005456a7-d03f-5734-8564-c8d27935197c",
+        "source_id": "adsb-replay",
+        "source_seq": 55,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12.030000Z",
+        "position": {
+          "east_m": 618.068,
+          "north_m": -919.117,
+          "up_m": 134.071
+        },
+        "velocity": {
+          "east_m": -0.986,
+          "north_m": -0.668,
+          "up_m": 2.196
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "53026ed7-2993-5afc-9934-259a0a0c9665",
+        "source_id": "sponsor-replay",
+        "source_seq": 55,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12.020000Z",
+        "position": {
+          "east_m": 618.068,
+          "north_m": -919.117,
+          "up_m": 134.071
+        },
+        "velocity": {
+          "east_m": -0.986,
+          "north_m": -0.668,
+          "up_m": 2.196
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e2a544f5-a6b4-5719-970b-192570102d2d",
+        "source_id": "adsb-replay",
+        "source_seq": 13,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12Z",
+        "position": {
+          "east_m": 2.223,
+          "north_m": -620.32,
+          "up_m": 30.361
+        },
+        "velocity": {
+          "east_m": 0.203,
+          "north_m": -1.334,
+          "up_m": -0.006
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "95fe9e27-4135-5906-92e2-41b4db34f177",
+        "source_id": "adsb-replay",
+        "source_seq": 34,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12Z",
+        "position": {
+          "east_m": -729.038,
+          "north_m": 701.743,
+          "up_m": 252.543
+        },
+        "velocity": {
+          "east_m": 14.685,
+          "north_m": -0.315,
+          "up_m": 0.033
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "711c947f-c0c9-572d-a31b-282a0567f7d7",
+        "source_id": "rf-replay",
+        "source_seq": 13,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12.050000Z",
+        "position": {
+          "east_m": 466.725,
+          "north_m": -320.261,
+          "up_m": 114.203
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d3ab7565-6c04-5711-9a95-c39ea28dd815",
+        "source_id": "sponsor-replay",
+        "source_seq": 13,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12.020000Z",
+        "position": {
+          "east_m": 466.725,
+          "north_m": -320.261,
+          "up_m": 114.203
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e2b5f90c-a8f2-5e46-b8c3-199691adc8a4",
+        "source_id": "trajectory-replay",
+        "source_seq": 13,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12.040000Z",
+        "position": {
+          "east_m": 466.725,
+          "north_m": -320.261,
+          "up_m": 114.203
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2b4385b3-45bd-525e-b561-ae9955876d3f",
+        "source_id": "rf-replay",
+        "source_seq": 34,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12.050000Z",
+        "position": {
+          "east_m": 381.535,
+          "north_m": 149.817,
+          "up_m": 139.962
+        },
+        "velocity": {
+          "east_m": -14.461,
+          "north_m": -22.27,
+          "up_m": 0.137
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "fc16a722-b33d-5fe9-a707-eb33daa4ca11",
+        "source_id": "sponsor-replay",
+        "source_seq": 34,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12.020000Z",
+        "position": {
+          "east_m": 381.535,
+          "north_m": 149.817,
+          "up_m": 139.962
+        },
+        "velocity": {
+          "east_m": -14.461,
+          "north_m": -22.27,
+          "up_m": 0.137
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 12.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "229bb3bc-0549-5a7b-8f69-beb8b34e3264",
+        "source_id": "trajectory-replay",
+        "source_seq": 34,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:12Z",
+        "received_at": "2026-09-08T14:00:12.040000Z",
+        "position": {
+          "east_m": 381.535,
+          "north_m": 149.817,
+          "up_m": 139.962
+        },
+        "velocity": {
+          "east_m": -14.461,
+          "north_m": -22.27,
+          "up_m": 0.137
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b38ff892-698f-540a-9b4c-cf7877cf63a4",
+        "source_id": "adsb-replay",
+        "source_seq": 56,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13.030000Z",
+        "position": {
+          "east_m": 616.964,
+          "north_m": -920.245,
+          "up_m": 135.814
+        },
+        "velocity": {
+          "east_m": -1.104,
+          "north_m": -1.127,
+          "up_m": 1.743
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "dd0745e1-5867-536b-8da5-e0003e195bb3",
+        "source_id": "sponsor-replay",
+        "source_seq": 56,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13.020000Z",
+        "position": {
+          "east_m": 616.964,
+          "north_m": -920.245,
+          "up_m": 135.814
+        },
+        "velocity": {
+          "east_m": -1.104,
+          "north_m": -1.127,
+          "up_m": 1.743
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "170a9bbb-5f23-561f-9b14-d5b522cb663b",
+        "source_id": "adsb-replay",
+        "source_seq": 14,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13Z",
+        "position": {
+          "east_m": 2.427,
+          "north_m": -621.654,
+          "up_m": 30.355
+        },
+        "velocity": {
+          "east_m": 0.203,
+          "north_m": -1.334,
+          "up_m": -0.006
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "fe521067-6e14-5c4d-9d49-9e755f409ca6",
+        "source_id": "adsb-replay",
+        "source_seq": 35,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13Z",
+        "position": {
+          "east_m": -714.354,
+          "north_m": 701.428,
+          "up_m": 252.577
+        },
+        "velocity": {
+          "east_m": 14.685,
+          "north_m": -0.315,
+          "up_m": 0.033
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "0ed2f41a-127d-5c56-8034-7af8eb666d35",
+        "source_id": "rf-replay",
+        "source_seq": 14,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13.050000Z",
+        "position": {
+          "east_m": 448.08,
+          "north_m": -332.31,
+          "up_m": 114.275
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "dbb4dffe-339d-5919-87b2-92b4ba28a22d",
+        "source_id": "sponsor-replay",
+        "source_seq": 14,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13.020000Z",
+        "position": {
+          "east_m": 448.08,
+          "north_m": -332.31,
+          "up_m": 114.275
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d1eab1d6-28d6-5aaa-985b-59f4935649a9",
+        "source_id": "trajectory-replay",
+        "source_seq": 14,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13.040000Z",
+        "position": {
+          "east_m": 448.08,
+          "north_m": -332.31,
+          "up_m": 114.275
+        },
+        "velocity": {
+          "east_m": -18.645,
+          "north_m": -12.049,
+          "up_m": 0.072
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2eab2e75-0650-57a7-a3c6-068a94bbbe98",
+        "source_id": "rf-replay",
+        "source_seq": 35,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13.050000Z",
+        "position": {
+          "east_m": 371.515,
+          "north_m": 128.984,
+          "up_m": 139.899
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ed70f31d-1e88-5371-aad4-b65563a9345c",
+        "source_id": "sponsor-replay",
+        "source_seq": 35,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13.020000Z",
+        "position": {
+          "east_m": 371.515,
+          "north_m": 128.984,
+          "up_m": 139.899
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 13.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3e3ed5fb-4dc9-5e77-b713-e6cb67f0f7a7",
+        "source_id": "trajectory-replay",
+        "source_seq": 35,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:13Z",
+        "received_at": "2026-09-08T14:00:13.040000Z",
+        "position": {
+          "east_m": 371.515,
+          "north_m": 128.984,
+          "up_m": 139.899
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "561a1eb2-5708-5dd8-a85f-442597dabf2e",
+        "source_id": "adsb-replay",
+        "source_seq": 57,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14.030000Z",
+        "position": {
+          "east_m": 615.86,
+          "north_m": -921.372,
+          "up_m": 137.556
+        },
+        "velocity": {
+          "east_m": -1.104,
+          "north_m": -1.127,
+          "up_m": 1.743
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "df429c13-7dac-51a7-8398-be03ddff0f6e",
+        "source_id": "sponsor-replay",
+        "source_seq": 57,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14.020000Z",
+        "position": {
+          "east_m": 615.86,
+          "north_m": -921.372,
+          "up_m": 137.556
+        },
+        "velocity": {
+          "east_m": -1.104,
+          "north_m": -1.127,
+          "up_m": 1.743
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=6-7"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "4f4951f2-0909-5312-8fe7-1098c290bad1",
+        "source_id": "adsb-replay",
+        "source_seq": 15,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14Z",
+        "position": {
+          "east_m": 2.641,
+          "north_m": -623.973,
+          "up_m": 30.412
+        },
+        "velocity": {
+          "east_m": 0.215,
+          "north_m": -2.319,
+          "up_m": 0.057
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "03d2e282-18cc-5add-9af5-8a6f8729f612",
+        "source_id": "adsb-replay",
+        "source_seq": 36,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14Z",
+        "position": {
+          "east_m": -690.816,
+          "north_m": 701.167,
+          "up_m": 252.527
+        },
+        "velocity": {
+          "east_m": 23.538,
+          "north_m": -0.262,
+          "up_m": -0.05
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "aaa200aa-6331-5576-a45c-410b2559f85b",
+        "source_id": "rf-replay",
+        "source_seq": 15,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14.050000Z",
+        "position": {
+          "east_m": 411.072,
+          "north_m": -355.11,
+          "up_m": 114.161
+        },
+        "velocity": {
+          "east_m": -37.007,
+          "north_m": -22.8,
+          "up_m": -0.113
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "63a69895-c2fa-564a-995c-4a503e6a14a7",
+        "source_id": "sponsor-replay",
+        "source_seq": 15,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14.020000Z",
+        "position": {
+          "east_m": 411.072,
+          "north_m": -355.11,
+          "up_m": 114.161
+        },
+        "velocity": {
+          "east_m": -37.007,
+          "north_m": -22.8,
+          "up_m": -0.113
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ee720a25-49d2-5892-8c9f-da0b94abaea2",
+        "source_id": "trajectory-replay",
+        "source_seq": 15,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14.040000Z",
+        "position": {
+          "east_m": 411.072,
+          "north_m": -355.11,
+          "up_m": 114.161
+        },
+        "velocity": {
+          "east_m": -37.007,
+          "north_m": -22.8,
+          "up_m": -0.113
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "9aa97cec-5be2-5b83-9c35-2251de62789f",
+        "source_id": "rf-replay",
+        "source_seq": 36,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14.050000Z",
+        "position": {
+          "east_m": 361.496,
+          "north_m": 108.152,
+          "up_m": 139.836
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "49164658-a637-55d0-89ce-25646d412f9c",
+        "source_id": "sponsor-replay",
+        "source_seq": 36,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14.020000Z",
+        "position": {
+          "east_m": 361.496,
+          "north_m": 108.152,
+          "up_m": 139.836
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 14.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ee3c4921-6a66-5778-8b1c-f81e0ff292ea",
+        "source_id": "trajectory-replay",
+        "source_seq": 36,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:14Z",
+        "received_at": "2026-09-08T14:00:14.040000Z",
+        "position": {
+          "east_m": 361.496,
+          "north_m": 108.152,
+          "up_m": 139.836
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "10e97656-85de-55d7-a846-7fce2fafbbfe",
+        "source_id": "adsb-replay",
+        "source_seq": 58,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15.030000Z",
+        "position": {
+          "east_m": 614.755,
+          "north_m": -922.499,
+          "up_m": 139.299
+        },
+        "velocity": {
+          "east_m": -1.104,
+          "north_m": -1.127,
+          "up_m": 1.743
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f4755963-bb13-58f2-95da-1b8f0e6c4692",
+        "source_id": "sponsor-replay",
+        "source_seq": 58,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15.020000Z",
+        "position": {
+          "east_m": 614.755,
+          "north_m": -922.499,
+          "up_m": 139.299
+        },
+        "velocity": {
+          "east_m": -1.104,
+          "north_m": -1.127,
+          "up_m": 1.743
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "63755f2a-5c58-550b-b5e5-79b1f46d93da",
+        "source_id": "adsb-replay",
+        "source_seq": 16,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15Z",
+        "position": {
+          "east_m": 2.856,
+          "north_m": -626.292,
+          "up_m": 30.469
+        },
+        "velocity": {
+          "east_m": 0.215,
+          "north_m": -2.319,
+          "up_m": 0.057
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f4a7ffe2-09a4-5b51-87b8-e0b18e2c9e2a",
+        "source_id": "adsb-replay",
+        "source_seq": 37,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15Z",
+        "position": {
+          "east_m": -667.279,
+          "north_m": 700.905,
+          "up_m": 252.478
+        },
+        "velocity": {
+          "east_m": 23.538,
+          "north_m": -0.262,
+          "up_m": -0.05
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d17dbae8-8619-5e8c-a557-a0e6428e7e2d",
+        "source_id": "rf-replay",
+        "source_seq": 16,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15.050000Z",
+        "position": {
+          "east_m": 374.065,
+          "north_m": -377.909,
+          "up_m": 114.048
+        },
+        "velocity": {
+          "east_m": -37.007,
+          "north_m": -22.8,
+          "up_m": -0.113
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "4a5e4c7b-3991-597b-9637-36c6ac47599c",
+        "source_id": "sponsor-replay",
+        "source_seq": 16,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15.020000Z",
+        "position": {
+          "east_m": 374.065,
+          "north_m": -377.909,
+          "up_m": 114.048
+        },
+        "velocity": {
+          "east_m": -37.007,
+          "north_m": -22.8,
+          "up_m": -0.113
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "244fa9c3-8567-5fd5-9135-ee3c0ba961dd",
+        "source_id": "trajectory-replay",
+        "source_seq": 16,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15.040000Z",
+        "position": {
+          "east_m": 374.065,
+          "north_m": -377.909,
+          "up_m": 114.048
+        },
+        "velocity": {
+          "east_m": -37.007,
+          "north_m": -22.8,
+          "up_m": -0.113
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "6a4f7d85-2e39-587b-9731-97dfbf14afae",
+        "source_id": "rf-replay",
+        "source_seq": 37,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15.050000Z",
+        "position": {
+          "east_m": 351.476,
+          "north_m": 87.32,
+          "up_m": 139.773
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "8efc0a41-ce1a-5398-988e-1018abb5a202",
+        "source_id": "sponsor-replay",
+        "source_seq": 37,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15.020000Z",
+        "position": {
+          "east_m": 351.476,
+          "north_m": 87.32,
+          "up_m": 139.773
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 15.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "7bdbd2ba-d6a2-5abe-99f5-511aa6d17f08",
+        "source_id": "trajectory-replay",
+        "source_seq": 37,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:15Z",
+        "received_at": "2026-09-08T14:00:15.040000Z",
+        "position": {
+          "east_m": 351.476,
+          "north_m": 87.32,
+          "up_m": 139.773
+        },
+        "velocity": {
+          "east_m": -10.02,
+          "north_m": -20.832,
+          "up_m": -0.063
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "4416bffb-816d-57ef-a4f7-8b0c7a6731bd",
+        "source_id": "adsb-replay",
+        "source_seq": 59,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16.030000Z",
+        "position": {
+          "east_m": 594.082,
+          "north_m": -912.45,
+          "up_m": 139.531
+        },
+        "velocity": {
+          "east_m": -20.673,
+          "north_m": 10.049,
+          "up_m": 0.232
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3c646083-0dc2-51a8-b6c5-43d8c5799f33",
+        "source_id": "sponsor-replay",
+        "source_seq": 59,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16.020000Z",
+        "position": {
+          "east_m": 594.082,
+          "north_m": -912.45,
+          "up_m": 139.531
+        },
+        "velocity": {
+          "east_m": -20.673,
+          "north_m": 10.049,
+          "up_m": 0.232
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "21990a91-212a-58c6-b974-b422b7f8fc7f",
+        "source_id": "adsb-replay",
+        "source_seq": 17,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16Z",
+        "position": {
+          "east_m": 2.896,
+          "north_m": -627.68,
+          "up_m": 30.486
+        },
+        "velocity": {
+          "east_m": 0.04,
+          "north_m": -1.388,
+          "up_m": 0.017
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b05ce42b-6a70-5535-8ae4-764df52a014d",
+        "source_id": "adsb-replay",
+        "source_seq": 38,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16Z",
+        "position": {
+          "east_m": -653.06,
+          "north_m": 700.899,
+          "up_m": 252.519
+        },
+        "velocity": {
+          "east_m": 14.219,
+          "north_m": -0.006,
+          "up_m": 0.041
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "7c84a326-03fa-5789-995d-d5cdf8d5c3f3",
+        "source_id": "rf-replay",
+        "source_seq": 17,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16.050000Z",
+        "position": {
+          "east_m": 353.994,
+          "north_m": -389.169,
+          "up_m": 114.114
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a5bb2df4-1e16-5e48-8662-a30f46cd6809",
+        "source_id": "sponsor-replay",
+        "source_seq": 17,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16.020000Z",
+        "position": {
+          "east_m": 353.994,
+          "north_m": -389.169,
+          "up_m": 114.114
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "31d629b9-fcab-5de9-a4c9-855466c17be1",
+        "source_id": "trajectory-replay",
+        "source_seq": 17,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16.040000Z",
+        "position": {
+          "east_m": 353.994,
+          "north_m": -389.169,
+          "up_m": 114.114
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "9c193a44-fa0b-5721-9e65-0323cb7bfe0f",
+        "source_id": "rf-replay",
+        "source_seq": 38,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16.050000Z",
+        "position": {
+          "east_m": 337.448,
+          "north_m": 59.417,
+          "up_m": 139.663
+        },
+        "velocity": {
+          "east_m": -14.028,
+          "north_m": -27.902,
+          "up_m": -0.111
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d919d8fd-1a9f-5fb7-8640-3146153c8158",
+        "source_id": "sponsor-replay",
+        "source_seq": 38,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16.020000Z",
+        "position": {
+          "east_m": 337.448,
+          "north_m": 59.417,
+          "up_m": 139.663
+        },
+        "velocity": {
+          "east_m": -14.028,
+          "north_m": -27.902,
+          "up_m": -0.111
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 16.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b69b941a-e0d1-52f2-85d6-383b56d6076b",
+        "source_id": "trajectory-replay",
+        "source_seq": 38,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:16Z",
+        "received_at": "2026-09-08T14:00:16.040000Z",
+        "position": {
+          "east_m": 337.448,
+          "north_m": 59.417,
+          "up_m": 139.663
+        },
+        "velocity": {
+          "east_m": -14.028,
+          "north_m": -27.902,
+          "up_m": -0.111
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "2a716a49-c09b-526f-a857-b8d0f1d8ab6f",
+        "source_id": "adsb-replay",
+        "source_seq": 60,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17.030000Z",
+        "position": {
+          "east_m": 573.409,
+          "north_m": -902.401,
+          "up_m": 139.763
+        },
+        "velocity": {
+          "east_m": -20.673,
+          "north_m": 10.049,
+          "up_m": 0.232
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ce16eccf-6d62-59ab-9ca9-3a44bd9031e4",
+        "source_id": "sponsor-replay",
+        "source_seq": 60,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17.020000Z",
+        "position": {
+          "east_m": 573.409,
+          "north_m": -902.401,
+          "up_m": 139.763
+        },
+        "velocity": {
+          "east_m": -20.673,
+          "north_m": 10.049,
+          "up_m": 0.232
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=7-8"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "65dfcde4-e740-56a9-8524-3fc0dd11c901",
+        "source_id": "adsb-replay",
+        "source_seq": 18,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17Z",
+        "position": {
+          "east_m": 2.937,
+          "north_m": -629.068,
+          "up_m": 30.503
+        },
+        "velocity": {
+          "east_m": 0.04,
+          "north_m": -1.388,
+          "up_m": 0.017
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "15686563-9dd3-5be9-a6e2-98213a271414",
+        "source_id": "adsb-replay",
+        "source_seq": 39,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17Z",
+        "position": {
+          "east_m": -638.841,
+          "north_m": 700.893,
+          "up_m": 252.561
+        },
+        "velocity": {
+          "east_m": 14.219,
+          "north_m": -0.006,
+          "up_m": 0.041
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a64900d2-0e45-55e9-9ce7-f4d6edc6bd6a",
+        "source_id": "rf-replay",
+        "source_seq": 18,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17.050000Z",
+        "position": {
+          "east_m": 333.923,
+          "north_m": -400.429,
+          "up_m": 114.181
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "0a3e13bf-645b-583f-ad34-d0fab601ee48",
+        "source_id": "sponsor-replay",
+        "source_seq": 18,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17.020000Z",
+        "position": {
+          "east_m": 333.923,
+          "north_m": -400.429,
+          "up_m": 114.181
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "8a83625b-7aea-5954-8460-db9d175a9c91",
+        "source_id": "trajectory-replay",
+        "source_seq": 18,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17.040000Z",
+        "position": {
+          "east_m": 333.923,
+          "north_m": -400.429,
+          "up_m": 114.181
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "8bf2841a-1e53-5c5a-81e3-2b774156df9f",
+        "source_id": "rf-replay",
+        "source_seq": 39,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17.050000Z",
+        "position": {
+          "east_m": 323.42,
+          "north_m": 31.515,
+          "up_m": 139.552
+        },
+        "velocity": {
+          "east_m": -14.028,
+          "north_m": -27.902,
+          "up_m": -0.111
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "1c85d259-0b8d-529e-8977-fc7dee081b99",
+        "source_id": "sponsor-replay",
+        "source_seq": 39,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17.020000Z",
+        "position": {
+          "east_m": 323.42,
+          "north_m": 31.515,
+          "up_m": 139.552
+        },
+        "velocity": {
+          "east_m": -14.028,
+          "north_m": -27.902,
+          "up_m": -0.111
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 17.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "07f5aca4-17d7-531a-a1e7-84ddeb6f1dc6",
+        "source_id": "trajectory-replay",
+        "source_seq": 39,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:17Z",
+        "received_at": "2026-09-08T14:00:17.040000Z",
+        "position": {
+          "east_m": 323.42,
+          "north_m": 31.515,
+          "up_m": 139.552
+        },
+        "velocity": {
+          "east_m": -14.028,
+          "north_m": -27.902,
+          "up_m": -0.111
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "b217f242-050f-5f1c-9478-6a6f6e86120a",
+        "source_id": "adsb-replay",
+        "source_seq": 61,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18.030000Z",
+        "position": {
+          "east_m": 552.735,
+          "north_m": -892.351,
+          "up_m": 139.994
+        },
+        "velocity": {
+          "east_m": -20.673,
+          "north_m": 10.049,
+          "up_m": 0.232
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ad3f661f-0a29-521c-898a-868f06bed8f9",
+        "source_id": "sponsor-replay",
+        "source_seq": 61,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18.020000Z",
+        "position": {
+          "east_m": 552.735,
+          "north_m": -892.351,
+          "up_m": 139.994
+        },
+        "velocity": {
+          "east_m": -20.673,
+          "north_m": 10.049,
+          "up_m": 0.232
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "5d64d62f-e854-5587-b7b0-2a8e03dfb228",
+        "source_id": "adsb-replay",
+        "source_seq": 19,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18Z",
+        "position": {
+          "east_m": 2.977,
+          "north_m": -630.456,
+          "up_m": 30.519
+        },
+        "velocity": {
+          "east_m": 0.04,
+          "north_m": -1.388,
+          "up_m": 0.017
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "81307358-bf3d-53a7-b186-9a2b695b7d36",
+        "source_id": "adsb-replay",
+        "source_seq": 40,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18Z",
+        "position": {
+          "east_m": -624.622,
+          "north_m": 700.887,
+          "up_m": 252.602
+        },
+        "velocity": {
+          "east_m": 14.219,
+          "north_m": -0.006,
+          "up_m": 0.041
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "48704aeb-634d-575f-9c2e-78b89be02247",
+        "source_id": "rf-replay",
+        "source_seq": 19,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18.050000Z",
+        "position": {
+          "east_m": 313.853,
+          "north_m": -411.688,
+          "up_m": 114.248
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "fc016760-150b-58a8-b650-4d705494befa",
+        "source_id": "sponsor-replay",
+        "source_seq": 19,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18.020000Z",
+        "position": {
+          "east_m": 313.853,
+          "north_m": -411.688,
+          "up_m": 114.248
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f548a501-987a-5c41-892e-ba4b007990d0",
+        "source_id": "trajectory-replay",
+        "source_seq": 19,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18.040000Z",
+        "position": {
+          "east_m": 313.853,
+          "north_m": -411.688,
+          "up_m": 114.248
+        },
+        "velocity": {
+          "east_m": -20.071,
+          "north_m": -11.26,
+          "up_m": 0.067
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "02272b4f-eac3-5c83-8770-bc815b42c601",
+        "source_id": "rf-replay",
+        "source_seq": 40,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18.050000Z",
+        "position": {
+          "east_m": 314.01,
+          "north_m": 15.911,
+          "up_m": 139.652
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "f25b5809-b83d-5afb-a01e-6f22d4997e8d",
+        "source_id": "sponsor-replay",
+        "source_seq": 40,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18.020000Z",
+        "position": {
+          "east_m": 314.01,
+          "north_m": 15.911,
+          "up_m": 139.652
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 18.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "d9b2a138-b436-5981-b246-180c203d1244",
+        "source_id": "trajectory-replay",
+        "source_seq": 40,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:18Z",
+        "received_at": "2026-09-08T14:00:18.040000Z",
+        "position": {
+          "east_m": 314.01,
+          "north_m": 15.911,
+          "up_m": 139.652
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ff6619af-aed6-5ab4-b9f3-7ca5ae388f58",
+        "source_id": "adsb-replay",
+        "source_seq": 62,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19.030000Z",
+        "position": {
+          "east_m": 517.961,
+          "north_m": -870.869,
+          "up_m": 139.976
+        },
+        "velocity": {
+          "east_m": -34.775,
+          "north_m": 21.482,
+          "up_m": -0.018
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "aefd2c41-e70f-53ab-84cb-ecddfacc040c",
+        "source_id": "sponsor-replay",
+        "source_seq": 62,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19.020000Z",
+        "position": {
+          "east_m": 517.961,
+          "north_m": -870.869,
+          "up_m": 139.976
+        },
+        "velocity": {
+          "east_m": -34.775,
+          "north_m": 21.482,
+          "up_m": -0.018
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "29b51a02-6602-5d25-a9c4-a98ef6ca0280",
+        "source_id": "adsb-replay",
+        "source_seq": 20,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19Z",
+        "position": {
+          "east_m": 3.16,
+          "north_m": -632.636,
+          "up_m": 30.498
+        },
+        "velocity": {
+          "east_m": 0.182,
+          "north_m": -2.181,
+          "up_m": -0.021
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "df84f74b-2e33-511f-9745-ad157102766e",
+        "source_id": "adsb-replay",
+        "source_seq": 41,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19Z",
+        "position": {
+          "east_m": -602.364,
+          "north_m": 700.444,
+          "up_m": 252.638
+        },
+        "velocity": {
+          "east_m": 22.258,
+          "north_m": -0.444,
+          "up_m": 0.036
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "a64e67a2-60f4-54f8-b034-352043805cca",
+        "source_id": "rf-replay",
+        "source_seq": 20,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19.050000Z",
+        "position": {
+          "east_m": 284.04,
+          "north_m": -429.576,
+          "up_m": 114.202
+        },
+        "velocity": {
+          "east_m": -29.813,
+          "north_m": -17.888,
+          "up_m": -0.045
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "117f491a-9516-54b5-805e-f8d9bce5364b",
+        "source_id": "sponsor-replay",
+        "source_seq": 20,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19.020000Z",
+        "position": {
+          "east_m": 284.04,
+          "north_m": -429.576,
+          "up_m": 114.202
+        },
+        "velocity": {
+          "east_m": -29.813,
+          "north_m": -17.888,
+          "up_m": -0.045
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "358038a8-fb5f-5cc3-a23f-c64906dcf2fe",
+        "source_id": "trajectory-replay",
+        "source_seq": 20,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19.040000Z",
+        "position": {
+          "east_m": 284.04,
+          "north_m": -429.576,
+          "up_m": 114.202
+        },
+        "velocity": {
+          "east_m": -29.813,
+          "north_m": -17.888,
+          "up_m": -0.045
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "c10ac059-5e93-51d5-93c1-4c81bc739050",
+        "source_id": "rf-replay",
+        "source_seq": 41,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19.050000Z",
+        "position": {
+          "east_m": 304.6,
+          "north_m": 0.308,
+          "up_m": 139.752
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "0c4036cc-6d95-5082-9859-5fb0bbd8e3e8",
+        "source_id": "sponsor-replay",
+        "source_seq": 41,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19.020000Z",
+        "position": {
+          "east_m": 304.6,
+          "north_m": 0.308,
+          "up_m": 139.752
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 19.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "9c7f8788-2ad8-5adb-879f-2b79aae893d8",
+        "source_id": "trajectory-replay",
+        "source_seq": 41,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:19Z",
+        "received_at": "2026-09-08T14:00:19.040000Z",
+        "position": {
+          "east_m": 304.6,
+          "north_m": 0.308,
+          "up_m": 139.752
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=9-10"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "7bd16ae5-7e62-5fe7-90f0-963ebc692ea7",
+        "source_id": "adsb-replay",
+        "source_seq": 63,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20.030000Z",
+        "position": {
+          "east_m": 483.186,
+          "north_m": -849.386,
+          "up_m": 139.958
+        },
+        "velocity": {
+          "east_m": -34.775,
+          "north_m": 21.482,
+          "up_m": -0.018
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV099",
+          "icao_hex": "C1A099",
+          "authority": "ADSB"
+        },
+        "strength": 0.94,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-amb01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3b6bc670-c857-554e-9ee0-d985ed90d0fe",
+        "source_id": "sponsor-replay",
+        "source_seq": 63,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20.020000Z",
+        "position": {
+          "east_m": 483.186,
+          "north_m": -849.386,
+          "up_m": 139.958
+        },
+        "velocity": {
+          "east_m": -34.775,
+          "north_m": 21.482,
+          "up_m": -0.018
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE99",
+          "icao_hex": null,
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 0.91,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv#rows=8-9"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-blue01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "7b533ef6-d79c-5710-8c57-c2a7d4e0634b",
+        "source_id": "adsb-replay",
+        "source_seq": 21,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20Z",
+        "position": {
+          "east_m": 3.342,
+          "north_m": -634.817,
+          "up_m": 30.477
+        },
+        "velocity": {
+          "east_m": 0.182,
+          "north_m": -2.181,
+          "up_m": -0.021
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "BLUE",
+          "callsign": "BLUE01",
+          "icao_hex": "ABC001",
+          "authority": "SPONSOR_UDL"
+        },
+        "strength": 1.0,
+        "uncertainty_m": 15.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv#rows=10-11"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-civ412",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "ec4b8579-ed82-57bc-beb8-d687e5c2bedb",
+        "source_id": "adsb-replay",
+        "source_seq": 42,
+        "modality": "ADSB",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20Z",
+        "position": {
+          "east_m": -580.105,
+          "north_m": 700.0,
+          "up_m": 252.674
+        },
+        "velocity": {
+          "east_m": 22.258,
+          "north_m": -0.444,
+          "up_m": 0.036
+        },
+        "claimed_identity": {
+          "schema_version": "1.0",
+          "kind": "CIVILIAN",
+          "callsign": "CIV412",
+          "icao_hex": "C1A412",
+          "authority": "ADSB"
+        },
+        "strength": 0.98,
+        "uncertainty_m": 20.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv#rows=10-11"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "3a78a0bd-c4f6-5344-8f69-ae53f8221956",
+        "source_id": "rf-replay",
+        "source_seq": 21,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20.050000Z",
+        "position": {
+          "east_m": 254.226,
+          "north_m": -447.464,
+          "up_m": 114.157
+        },
+        "velocity": {
+          "east_m": -29.813,
+          "north_m": -17.888,
+          "up_m": -0.045
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=10-11"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "99e9a43d-c447-5305-9e61-689de47ba482",
+        "source_id": "sponsor-replay",
+        "source_seq": 21,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20.020000Z",
+        "position": {
+          "east_m": 254.226,
+          "north_m": -447.464,
+          "up_m": 114.157
+        },
+        "velocity": {
+          "east_m": -29.813,
+          "north_m": -17.888,
+          "up_m": -0.045
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=10-11"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-red01",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "6d8a0fb6-49b1-5632-b8e0-472be5a5c0c5",
+        "source_id": "trajectory-replay",
+        "source_seq": 21,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20.040000Z",
+        "position": {
+          "east_m": 254.226,
+          "north_m": -447.464,
+          "up_m": 114.157
+        },
+        "velocity": {
+          "east_m": -29.813,
+          "north_m": -17.888,
+          "up_m": -0.045
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv#rows=10-11"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "0d63492d-3d4c-5610-9b40-9e5fdf938071",
+        "source_id": "rf-replay",
+        "source_seq": 42,
+        "modality": "RF",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20.050000Z",
+        "position": {
+          "east_m": 295.191,
+          "north_m": -15.296,
+          "up_m": 139.852
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.92,
+        "uncertainty_m": 35.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=10-11"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "e6b3ba06-6ed9-5436-aa57-35b5dfffbbcc",
+        "source_id": "sponsor-replay",
+        "source_seq": 42,
+        "modality": "SPONSOR_SENSOR",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20.020000Z",
+        "position": {
+          "east_m": 295.191,
+          "north_m": -15.296,
+          "up_m": 139.852
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.95,
+        "uncertainty_m": 30.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=10-11"
+      }
+    },
+    {
+      "at_seconds": 20.0,
+      "stream_id": "s-red02",
+      "observation": {
+        "schema_version": "1.0",
+        "observation_id": "446140c7-ccc3-50b6-b167-caf11f0ee399",
+        "source_id": "trajectory-replay",
+        "source_seq": 42,
+        "modality": "TRAJECTORY",
+        "observed_at": "2026-09-08T14:00:20Z",
+        "received_at": "2026-09-08T14:00:20.040000Z",
+        "position": {
+          "east_m": 295.191,
+          "north_m": -15.296,
+          "up_m": 139.852
+        },
+        "velocity": {
+          "east_m": -9.41,
+          "north_m": -15.603,
+          "up_m": 0.1
+        },
+        "claimed_identity": null,
+        "strength": 0.9,
+        "uncertainty_m": 25.0,
+        "raw_ref": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv#rows=10-11"
+      }
+    }
+  ],
+  "truth": {
+    "entities": [
+      {
+        "stream_id": "s-blue01",
+        "classification": "BLUE",
+        "outcome": "PROTECTED",
+        "source_recording": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/02/0612_2020_114331_02.csv"
+      },
+      {
+        "stream_id": "s-civ412",
+        "classification": "CIVILIAN",
+        "outcome": "PROTECTED",
+        "source_recording": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/03/0612_2020_115104_03.csv"
+      },
+      {
+        "stream_id": "s-red01",
+        "classification": "HOSTILE",
+        "outcome": "ACTIVE",
+        "source_recording": "datasets/DroneFlightData/WithoutTakeoff/2020-0612/04/0612_2020_115535_04.csv"
+      },
+      {
+        "stream_id": "s-red02",
+        "classification": "HOSTILE",
+        "outcome": "ACTIVE",
+        "source_recording": "datasets/DroneFlightData/WithoutTakeoff/2002-0614/07/06142020_121333_07.csv"
+      },
+      {
+        "stream_id": "s-amb01",
+        "classification": "CONFLICTING",
+        "outcome": "UNRESOLVED",
+        "source_recording": "datasets/DroneFlightData/IncludeTakeoff/2020-0620/02/06202020_164509_02.csv"
+      }
+    ]
+  }
+}

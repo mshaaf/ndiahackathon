@@ -54,7 +54,8 @@ class ReportedStream:
                 "received_at": obs.received_at.isoformat(), "identity_kind": self.identity_kind,
                 "source_id": obs.source_id, "raw_ref": obs.raw_ref,
                 "age_observed_s": observed_age, "age_received_s": received_age,
-                "stale_threshold_s": threshold, "is_stale": stale, "explanation": explanation,
+                "stale_threshold_s": threshold, "uncertainty_m": obs.uncertainty_m,
+                "is_stale": stale, "explanation": explanation,
                 "identity_claims": [{"kind": kind, "source_id": claim.source_id,
                     "observed_at": claim.observed_at.isoformat(), "raw_ref": claim.raw_ref}
                     for kind, claim in sorted(self.claims.items())],
@@ -78,7 +79,7 @@ class ReportedDisplay:
         return [stream.feature(key, replay, health) for key, stream in sorted(self.streams.items())]
 
 
-def _route_position(points: list[ENU], fraction: float) -> ENU:
+def route_position(points: list[ENU], fraction: float) -> ENU:
     lengths = [math.dist(tuple(a.model_dump().values()), tuple(b.model_dump().values()))
                for a, b in zip(points, points[1:])]
     remaining = sum(lengths) * fraction
@@ -111,7 +112,7 @@ def route_preview(stream: ReportedStream | None, routes: dict[str, list[ENU]], o
                          for key in ENU.model_fields}) for p in points]
     areas = []
     for dt in range(0, config.PREDICTION_HORIZON_S + 1, config.PREDICTION_SLOT_S):
-        position = _route_position(points, dt / config.PREDICTION_HORIZON_S)
+        position = route_position(points, dt / config.PREDICTION_HORIZON_S)
         radius = (config.PROTECTED_BUFFER_BASE_M + (obs.uncertainty_m or 0)
                   + config.PROTECTED_BUFFER_GROWTH_MPS * dt)
         if stale:

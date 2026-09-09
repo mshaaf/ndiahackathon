@@ -178,6 +178,49 @@ class Assessment:
         self._max_received = max(self._max_received or observation.received_at, observation.received_at)
         return track_id
 
+    def import_track(self, external: AssessedTrack, received_at: datetime,
+                     origin: str | None = None) -> UUID:
+        """Reassess exported evidence while preserving each packet's root source."""
+        _utc(received_at)
+        external = AssessedTrack.model_validate({name: getattr(external, name)
+                                                 for name in AssessedTrack.model_fields})
+        track = self._tracks.get(external.track_id)
+        if track is None:
+            position = external.predicted_path[0].position if external.predicted_path else None
+            velocity = None
+            if len(external.predicted_path) > 1:
+                first, second = external.predicted_path[:2]
+                seconds = (second.at - first.at).total_seconds()
+                if seconds > 0:
+                    velocity = ENU(**{axis: (getattr(second.position, axis) - getattr(first.position, axis)) / seconds
+                                      for axis in ENU.model_fields})
+            observed = external.last_observed_at
+            received = max(received_at, observed)
+            source_id = origin or f"external:{external.track_id}"
+            source_seq = external.track_id.int % (2**53)
+            if (source_id, source_seq) in self._seen:
+                raise ValueError("external source sequence collision")
+            observation = Observation(
+                observation_id=external.track_id, source_id=source_id,
+                source_seq=source_seq, modality=Modality.TEAM_JSON, observed_at=observed, received_at=received,
+                position=position, velocity=velocity, claimed_identity=None, strength=0,
+                uncertainty_m=(external.predicted_path[0].radius_m if external.predicted_path else None),
+                raw_ref=f"external:{external.track_id}",
+            )
+            track = self._tracks[external.track_id] = _Track(observation)
+            self._ids.add(external.track_id)
+            self._seen[(observation.source_id, source_seq)] = (observation, external.track_id)
+            self._max_received = max(self._max_received or received, received)
+        roots = {packet.source_id for packet, _ in track.evidence + track.against}
+        for target, packets in ((track.evidence, external.evidence_for),
+                                (track.against, external.evidence_against)):
+            for packet in packets:
+                if packet.source_id not in roots:
+                    target.append((packet.model_copy(update={"origin_kind": OriginKind.EXTERNAL_IMPORT}),
+                                   max(received_at, packet.observed_at)))
+                    roots.add(packet.source_id)
+        return external.track_id
+
     def snapshot(self, now: datetime, source_periods: Mapping[str, float | None] | None = None) -> list[AssessedTrack]:
         """Publish detached v1 tracks using only scenario time and explicit cadence."""
         _utc(now)

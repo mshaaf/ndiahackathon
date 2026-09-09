@@ -31,6 +31,8 @@ export function App() {
     const [selected, setSelected] = useState('');
     const [preset, setPreset] = useState('Nominal');
     const [seed, setSeed] = useState('20260908');
+    const [approver, setApprover] = useState('demo-reviewer');
+    const [approvalFeedback, setApprovalFeedback] = useState<Snapshot['approval_feedback']>();
     const assessed = Object.fromEntries((snapshot?.assessed_tracks ?? []).map((track) => [track.track_id, track]));
     const snapshotRef = useRef<Snapshot | undefined>(undefined);
     snapshotRef.current = snapshot;
@@ -50,7 +52,7 @@ export function App() {
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
             const activeTag = (document.activeElement?.tagName ?? '').toLowerCase();
-            if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') {
+            if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || activeTag === 'button') {
                 return;
             }
             const current = snapshotRef.current;
@@ -161,10 +163,12 @@ export function App() {
                 if (latest && latest.binding.run_id !== incoming.binding.run_id) {
                     fittedFeatureCount = 0;
                     setSelected('');
+                    setApprovalFeedback(undefined);
                 }
                 latest = incoming;
                 setSnapshot(incoming);
                 if (incoming.command_error) setError(incoming.command_error);
+                if (incoming.approval_feedback) setApprovalFeedback(incoming.approval_feedback);
                 updateMap();
             } catch (cause) {
                 setError(cause instanceof Error ? cause.message : 'Scenario update could not be read.');
@@ -191,6 +195,11 @@ export function App() {
                 <p>Simulation time <time dateTime={snapshot?.simulation_time}>{snapshot?.simulation_time ?? 'Waiting for data'}</time></p>
                 <p>Update <strong>{snapshot?.sequence ?? '—'}</strong></p>
             </section>
+            {snapshot && <section className={`network-banner network-${snapshot.network.state.toLowerCase()}`} role="status" aria-live="polite">
+                <strong><span aria-hidden="true">{snapshot.network.state === 'NOMINAL' ? '●' : snapshot.network.state === 'DEGRADED' ? '▲' : '■'}</span>{' '}
+                    {snapshot.network.state}</strong> — {snapshot.network.reason}{' '}
+                {snapshot.network.loss_percent.toFixed(1)}% loss · {snapshot.network.stale_tracks} stale tracks · {snapshot.network.blocked_assignments} blocked checks
+            </section>}
             <section className="controls" aria-label="Replay controls">
                 <button disabled={!snapshot || snapshot.clock.complete} onClick={() => send({ action: snapshot?.clock.rate === 0 ? 'resume' : 'pause' })}>
                     {snapshot?.clock.rate === 0 ? 'Resume' : 'Pause'} <kbd className="shortcut">Space</kbd></button>
@@ -224,7 +233,21 @@ export function App() {
                     onClick={() => send({ action: 'atc', stream_id: selected, option })}>{option.replace('_', ' ')}</button>)}
                 <span>Route preview · revision {snapshot?.atc.revision ?? 0}</span>
             </section>
+            <section className="controls" aria-label="Interoperability exports">
+                <a className="button-link" href="/api/v1/export?format=json" download>Download JSON</a>
+                <a className="button-link" href="/api/v1/export?format=cot" download>Download CoT</a>
+            </section>
             {error && <p role="alert" className="error">{error}</p>}
+            {!!snapshot?.coordination.invalidated.length && <section className="invalidation" role="status" aria-live="polite">
+                <h2>Plan invalidated</h2>
+                {snapshot.coordination.invalidated.map((item) => <p key={item.coa.coa_id}>
+                    <strong>{item.coa.profile.replaceAll('_', ' ')}</strong> — {item.reason_code.replaceAll('_', ' ')}: {item.reason_text}
+                </p>)}
+                <p>Safe alternatives recomputed in {snapshot.coordination.replan_elapsed_ms?.toFixed(1)}ms.</p>
+            </section>}
+            {approvalFeedback && <p className={`approval-feedback ${approvalFeedback.status.toLowerCase()}`} role="status" aria-live="polite">
+                <strong>{approvalFeedback.status}</strong> — {approvalFeedback.message}
+            </p>}
             <section className="map-panel" aria-label="Synthetic airspace">
                 <div ref={container} className="map" aria-label="Map of simulated reported positions" />
                 {!snapshot?.features.length && <p className="empty">Waiting for scenario positions</p>}
@@ -244,14 +267,19 @@ export function App() {
                 </div>
                 {snapshot ? <>
                     <p>{snapshot.planning.explanation} Search: {snapshot.planning.method.replace('_', '-')} · {snapshot.planning.combination_count.toLocaleString()} combinations · {snapshot.planning.elapsed_ms.toFixed(1)}ms.</p>
+                    <label className="approver">Simulated approver <input value={approver} maxLength={128} required
+                        onChange={(event) => setApprover(event.target.value)} /></label>
                     <div className="plan-grid">
                         {snapshot.planning.coas.map((coa) => <article className="plan-card" key={coa.coa_id}>
                             <h3>{coa.profile.replaceAll('_', ' ')}</h3>
+                            {snapshot.network.state === 'DEGRADED' && <span className="degraded-plan">▲ DEGRADED INPUTS</span>}
                             <strong>{(coa.expected_coverage * 100).toFixed(1)}% weighted coverage</strong>
                             <span>{coa.resources_used} resource{coa.resources_used === 1 ? '' : 's'} · completes <time dateTime={coa.completion_at}>{new Date(coa.completion_at).toLocaleTimeString()}</time></span>
                             <span>ATC option {coa.atc_option.replace('_', ' ')} · rank {coa.rank}</span>
                             {coa.assignments.map((item) => <code key={`${item.resource_id}-${item.track_id}-${item.slot_index}`}>
                                 {item.resource_id} → {item.track_id.slice(0, 8)} · slot {item.slot_index}</code>)}
+                            <button disabled={!approver.trim()} onClick={() => send({ action: 'approve', coa_id: coa.coa_id,
+                                approver: approver.trim(), binding: snapshot.binding })}>Approve simulation</button>
                         </article>)}
                         {snapshot.planning.baseline && <article className="plan-card baseline">
                             <h3>Baseline comparison</h3>
@@ -292,6 +320,14 @@ export function App() {
                             ))}
                         </div>
                     </details>
+                    {!!snapshot.coordination.approvals.length && <details className="approvals">
+                        <summary>Simulated approval audit · {snapshot.coordination.approvals.length}</summary>
+                        {snapshot.coordination.approvals.map((record, index) => <p key={`${record.coa_id}-${index}`}>
+                            <strong>{record.approver}</strong> approved {record.coa_id.slice(0, 8)} at{' '}
+                            <time dateTime={record.approved_at}>{new Date(record.approved_at).toLocaleTimeString()}</time>
+                            {' '}· ATC revision {record.binding.atc_revision} · simulated only
+                        </p>)}
+                    </details>}
                 </> : <p>Waiting for assessed state.</p>}
             </section>
             <section className="track-details" aria-labelledby="tracks-heading">
@@ -321,9 +357,11 @@ export function App() {
             <section className="source-health" aria-labelledby="sources-heading">
                 <h2 id="sources-heading">Source health <span>Last 60 scenario seconds</span></h2>
                 <div className="table-scroll"><table>
-                    <thead><tr>{['Source', 'Status', 'Received', 'Dropped', 'Duplicate', 'Late', 'Rejected', 'Age', 'Period'].map((label) => <th key={label}>{label}</th>)}</tr></thead>
+                    <thead><tr>{['Source', 'Status', 'Loss', 'Received', 'Dropped', 'Duplicate', 'Late', 'Rejected', 'Age', 'Period'].map((label) => <th key={label}>{label}</th>)}</tr></thead>
                     <tbody>{Object.entries(snapshot?.health ?? {}).map(([source, health]) => <tr key={source}>
-                        <th scope="row">{source}</th><td>{health.status}</td><td>{health.received}</td><td>{health.dropped}</td>
+                        <th scope="row">{source}</th><td><span aria-hidden="true">{health.status === 'OK' ? '●' : health.status === 'STALE' ? '▲' : '■'}</span> {health.status}</td>
+                        <td>{health.received + health.dropped ? `${(100 * health.dropped / (health.received + health.dropped)).toFixed(1)}%` : '—'}</td>
+                        <td>{health.received}</td><td>{health.dropped}</td>
                         <td>{health.duplicated}</td><td>{health.late}</td><td>{health.rejected}</td>
                         <td>{health.age_s === null ? '—' : `${health.age_s.toFixed(1)}s`}</td>
                         <td>{health.observed_period_s === null ? '—' : `${health.observed_period_s.toFixed(1)}s`}</td>

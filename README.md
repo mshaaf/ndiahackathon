@@ -2,7 +2,7 @@
 
 A local, simulation-only dashboard that makes aircraft protection, uncertainty, and ATC/ADOC coordination visible while comparing abstract response plans for a synthetic Counter-UAS scenario.
 
-**Status: Phases 2 and 3 implemented and verified on the synthetic golden scenario.** Deterministic replay, assessment, protected-track filtering, prediction, hard safety geometry, distinct plan selection, the shared baseline gate, source health, and Blue ATC previews work. The browser envelope is schema 1.3; frozen Python records remain 1.0. Phase 4 plan invalidation and simulated approval are next. See the [Phase 2 handoff](docs/PHASE_2_HANDOFF.md) and [build book](docs/BUILD_BOOK.md) for measured evidence and limitations.
+**Status: Phases 1–6 implemented and verified on the synthetic golden scenario.** Degraded/blackout policy, JSON and CoT export, an independent consumer, truth-isolated scoring, and the twenty-seed comparison now join the replay, assessment, planning, and ATC invalidation path. The browser envelope is schema 1.5; frozen Python records remain 1.0. See the [Phase 5–6 handoff](docs/PHASE_5_6_HANDOFF.md) and [benchmark report](docs/evaluation/phase6_benchmark.json).
 
 ## Start here
 
@@ -25,11 +25,23 @@ uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 
 Open `http://127.0.0.1:8000`. The server receives only `artifacts/runtime/golden/runtime.json`; evaluator truth is written separately under `artifacts/evaluator/golden/` and neither artifact is committed.
 
-Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Select **BLUE01**, then **HOLD** or **TAXI CLEAR**, to preview the authored route and sampled uncertainty areas. Fault presets and the seed apply with **Apply and restart**. Safe simulated plan cards, the same-gate baseline, and a rejection drawer update from the assessed state. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
+To run the same demonstration on recorded motion instead of authored motion, regenerate the flight-derived package and point the loader at it:
+
+```sh
+uv run python -m scenario_loader.from_flight datasets/DroneFlightData fixtures/real/flight_derived/package.json
+uv run python -m scenario_loader fixtures/real/flight_derived/package.json artifacts/runtime/flight artifacts/evaluator/flight
+FRIENDLY_FILTER_SCENARIO=artifacts/runtime/flight/runtime.json uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
+```
+
+Every position in that package is interpolated from `datasets/DroneFlightData`, and each observation's `raw_ref` names the recording and the rows it came from. Roles and the truth block remain authored: the recordings carry no friendly or hostile labels, and a transformed trajectory is a motion shape, never observed hostile behaviour.
+
+Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Pause near 2.1 seconds, select **BLUE01**, choose **HOLD**, then **TAXI CLEAR**. The old plan is visibly invalidated, a safe alternative appears with measured replan time, and **Approve simulation** records a review bound to the displayed state. Fault presets and the seed apply with **Apply and restart**. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
+
+The network strip reports global state, recent loss, stale tracks, and blocked checks using words and symbols. At `DEGRADED`, safe plans remain available with a visible warning; at `BLACKOUT`, all plans are withheld. **Download JSON** and **Download CoT** export the current state. `POST /api/v1/import` validates and reassesses JSON evidence without trusting its category assertion. Read a saved JSON file independently with `uv run python -m interop_consumer export.json`.
 
 Paused and completed sessions keep their time, update number and state version fixed until something changes. Controls remain available; an invalid command returns feedback without changing the state version.
 
-The dashboard keeps source claims separate from rule-derived assessment. Only fresh `LIKELY_RED` tracks can enter the simulation planner; protected, unknown, conflicting, and stale tracks are rejected before optimization. Map route circles are illustrative ATC previews; Phase 3 safety volumes use continuous swept Shapely geometry. Nothing is an operational clearance and no actuation endpoint exists.
+The dashboard keeps source claims separate from rule-derived assessment. Only fresh `LIKELY_RED` tracks can enter the simulation planner; protected, unknown, conflicting, and stale tracks are rejected before optimization. The selected authored Blue route now drives the continuous swept safety geometry used by planning and revalidation. Nothing is an operational clearance and no actuation endpoint exists.
 
 Run the current checks with:
 
@@ -38,9 +50,15 @@ uv run pytest
 uv run coverage run --branch --source=friendly_filter.replay,friendly_filter.display,friendly_filter.assessment,friendly_filter.planning,friendly_filter.app -m pytest -q
 uv run coverage report -m --fail-under=80
 uv run python -m friendly_filter.phase3_smoke artifacts/runtime/golden/runtime.json
+uv run python -m evaluation.benchmark artifacts/runtime/golden/runtime.json artifacts/evaluator/golden/truth.json --output docs/evaluation/phase6_benchmark.json
+uv run python -m evaluation.mutation --output docs/evaluation/mutation_report.json
 npm --prefix frontend test
 npm --prefix frontend run build
 ```
+
+`evaluation.mutation` breaks each decision rule on purpose — the confidence floor, the evidence-type count, the staleness disjunction, the conflicting-target gate, the time-window check — and fails if the suite does not notice. A surviving mutant names a rule that is not actually tested. Build the frontend before running `pytest`: the offline bundle guard inspects `frontend/dist` and skips when it is absent.
+
+`scripts/demo.sh` runs the whole sequence and serves the result; pass `flight` to run the same demonstration on the recorded-motion package.
 
 ## Documentation map
 
@@ -50,8 +68,12 @@ npm --prefix frontend run build
 | [Architecture and build sequence](docs/ARCHITECTURE.md) | Modules and seams, requirement-to-phase mapping, phase prerequisites and gates, critical path |
 | [Pseudocode](docs/pseudocode/) | Module-level algorithms and TDD anchors, one file per phase |
 | [Testing](docs/TESTING.md) | Invariants, metamorphic relations, adversarial fixtures, mutation set, self-application |
+| [Acceptance matrix](docs/ACCEPTANCE.md) | Every requirement, the runnable check that verifies it, and what that check reports |
 | [Project handoff](docs/HANDOFF.md) | Verified Phase 1 baseline, current limits, setup commands, and ordered Steps 4–11 |
 | [Phase 2 handoff](docs/PHASE_2_HANDOFF.md) | Completed replay/assessment checkpoints, exact controls/API, measured checks, and remaining limits |
+| [Phase 4 handoff](docs/PHASE_4_HANDOFF.md) | Completed invalidation/approval gate, browser sequence, measured checks, and Phase 5 continuation |
+| [Phase 5–6 handoff](docs/PHASE_5_6_HANDOFF.md) | Resilience/export behavior, evaluator boundary, benchmark evidence, and remaining Phase 7–8 work |
+| [Phase 6 benchmark](docs/evaluation/phase6_benchmark.json) | Machine-readable twenty-seed metrics and hardware record |
 | [Agent instructions](AGENTS.md) | Repository rules, bounded parallel work, review, and handoffs |
 | [Build book](docs/BUILD_BOOK.md) | Current status, decisions, evidence, and owner handoffs |
 | [Data card](docs/DATA_CARD.md) | Sources, transformations, limitations, and attribution |
