@@ -108,12 +108,16 @@ def test_session_publishes_five_joined_assessments(golden_runtime):
     snapshot = session.snapshot()
     assessed = {track["track_id"]: track for track in snapshot["assessed_tracks"]}
 
-    assert snapshot["schema_version"] == "1.2"
+    assert snapshot["schema_version"] == "1.3"
     assert len(assessed) == len(snapshot["features"]) == 5
     assert all(feature["properties"]["assessed_track_id"] in assessed for feature in snapshot["features"])
     assert sorted(track["category"] for track in assessed.values()) == [
         "BLUE_PROTECTED", "CIVILIAN_PROTECTED", "CONFLICTING", "LIKELY_RED", "LIKELY_RED",
     ]
+    assert snapshot["planning"]["status"] == "OK"
+    assert snapshot["planning"]["coas"]
+    assert all({key: value for key, value in coa["bound_state"].items() if key != "schema_version"}
+               == snapshot["binding"] for coa in snapshot["planning"]["coas"])
     assert "truth" not in json.dumps(snapshot).lower()
 
 
@@ -132,4 +136,3 @@ def test_one_packet_outage_visibly_reduces_assessment(golden_runtime):
                                             "affected_sources": ["sponsor-replay"]}}))
     session.advance(0.3)
     assert category(session.snapshot()) == "UNKNOWN"
-

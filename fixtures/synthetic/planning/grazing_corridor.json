@@ -1,0 +1,58 @@
+{
+  "name": "grazing_corridor",
+  "now": "2026-09-08T12:00:00Z",
+  "expected_reason": "INTERSECTS_PROTECTED",
+  "track": {
+    "schema_version": "1.0",
+    "track_id": "10000000-0000-4000-8000-000000000001",
+    "category": "LIKELY_RED",
+    "red_probability": 0.9,
+    "evidence_for": [],
+    "evidence_against": [],
+    "last_observed_at": "2026-09-08T12:00:00Z",
+    "last_received_at": "2026-09-08T12:00:00Z",
+    "is_stale": false,
+    "predicted_path": [
+      {"at": "2026-09-08T12:00:00Z", "position": {"east_m": 1000, "north_m": 0, "up_m": 10}, "radius_m": 25},
+      {"at": "2026-09-08T12:00:30Z", "position": {"east_m": 1000, "north_m": 0, "up_m": 10}, "radius_m": 30}
+    ],
+    "explanation": "Synthetic fresh likely-red planning fixture."
+  },
+  "resource": {
+    "schema_version": "1.0",
+    "resource_id": "resource-fixture",
+    "position": {"east_m": -1000, "north_m": 0, "up_m": 0},
+    "available": true,
+    "range_m": 3000,
+    "time_to_effect_s": 5,
+    "cooldown_s": 0,
+    "capacity": 1,
+    "p_success": 0.8,
+    "safety_radius_m": 0,
+    "doctrine_rules": ["SIMULATION_ONLY", "NO_PROTECTED_ASSIGNMENTS"],
+    "last_used_at": null,
+    "last_received_at": "2026-09-08T12:00:00Z"
+  },
+  "assignment": {
+    "schema_version": "1.0",
+    "resource_id": "resource-fixture",
+    "track_id": "10000000-0000-4000-8000-000000000001",
+    "slot_index": 0,
+    "start_at": "2026-09-08T12:00:00Z",
+    "effect_at": "2026-09-08T12:00:05Z"
+  },
+  "volume": {
+    "schema_version": "1.0",
+    "entity_track_id": "20000000-0000-4000-8000-000000000002",
+    "window_start": "2026-09-08T12:00:00Z",
+    "window_end": "2026-09-08T12:00:10Z",
+    "geometry": {"coordinates": [
+      {"east_m": -10, "north_m": 74, "up_m": 20},
+      {"east_m": 10, "north_m": 74, "up_m": 20},
+      {"east_m": 10, "north_m": 76, "up_m": 20},
+      {"east_m": -10, "north_m": 76, "up_m": 20},
+      {"east_m": -10, "north_m": 74, "up_m": 20}
+    ]},
+    "reason": "BLUE_PROTECTED grazing fixture"
+  }
+}

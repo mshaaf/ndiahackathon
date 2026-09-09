@@ -32,6 +32,12 @@ export function App() {
   const [preset, setPreset] = useState('Nominal');
   const [seed, setSeed] = useState('20260908');
   const assessed = Object.fromEntries((snapshot?.assessed_tracks ?? []).map((track) => [track.track_id, track]));
+  const rejectionCounts = Object.entries((snapshot?.planning.rejections ?? []).reduce<Record<string, number>>((counts, rejection) => {
+    counts[rejection.reason_code] = (counts[rejection.reason_code] ?? 0) + 1;
+    return counts;
+  }, {}));
+  const rejectionExamples = [...new globalThis.Map((snapshot?.planning.rejections ?? [])
+    .map((rejection) => [rejection.reason_code, rejection] as const)).values()];
 
   function send(command: Command) {
     if (socketRef.current?.readyState !== WebSocket.OPEN) return;
@@ -192,6 +198,38 @@ export function App() {
           ))}
           <span>Dashed line: Blue route · shaded circles: sampled uncertainty</span>
         </div>
+      </section>
+      <section className="planning" aria-labelledby="planning-heading">
+        <div className="planning-heading">
+          <h2 id="planning-heading">Safe simulated plans <span>{snapshot?.planning.coas.length ?? 0} distinct</span></h2>
+          {snapshot && <span className={`planning-status status-${snapshot.planning.status.toLowerCase()}`}>
+            {snapshot.planning.status.replaceAll('_', ' ')}</span>}
+        </div>
+        {snapshot ? <>
+          <p>{snapshot.planning.explanation} Search: {snapshot.planning.method.replace('_', '-')} · {snapshot.planning.combination_count.toLocaleString()} combinations · {snapshot.planning.elapsed_ms.toFixed(1)}ms.</p>
+          <div className="plan-grid">
+            {snapshot.planning.coas.map((coa) => <article className="plan-card" key={coa.coa_id}>
+              <h3>{coa.profile.replaceAll('_', ' ')}</h3>
+              <strong>{(coa.expected_coverage * 100).toFixed(1)}% weighted coverage</strong>
+              <span>{coa.resources_used} resource{coa.resources_used === 1 ? '' : 's'} · completes <time dateTime={coa.completion_at}>{new Date(coa.completion_at).toLocaleTimeString()}</time></span>
+              <span>ATC option {coa.atc_option.replace('_', ' ')} · rank {coa.rank}</span>
+              {coa.assignments.map((item) => <code key={`${item.resource_id}-${item.track_id}-${item.slot_index}`}>
+                {item.resource_id} → {item.track_id.slice(0, 8)} · slot {item.slot_index}</code>)}
+            </article>)}
+            {snapshot.planning.baseline && <article className="plan-card baseline">
+              <h3>Baseline comparison</h3>
+              <strong>{(snapshot.planning.baseline.expected_coverage * 100).toFixed(1)}% weighted coverage</strong>
+              <span>{snapshot.planning.baseline.resources_used} resource{snapshot.planning.baseline.resources_used === 1 ? '' : 's'} · same hard safety gate</span>
+            </article>}
+          </div>
+          {!snapshot.planning.coas.length && <p className="no-safe">No simulated assignment passed every hard constraint.</p>}
+          <details className="rejections">
+            <summary>Candidate rejection drawer · {snapshot.planning.rejections.length} checks blocked</summary>
+            <p>{rejectionCounts.map(([reason, count]) => `${reason.replaceAll('_', ' ')}: ${count}`).join(' · ') || 'No rejected candidates.'}</p>
+            {rejectionExamples.map((rejection) => <p key={rejection.reason_code}>
+              <strong>{rejection.reason_code.replaceAll('_', ' ')}</strong> — {rejection.reason_text}</p>)}
+          </details>
+        </> : <p>Waiting for assessed state.</p>}
       </section>
       <section className="track-details" aria-labelledby="tracks-heading">
         <h2 id="tracks-heading">Reported tracks <span>{snapshot?.features.length ?? 0}</span></h2>

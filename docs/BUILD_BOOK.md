@@ -10,14 +10,14 @@ This is the shared status and handoff log. Section 4 of the original [build plan
 | Repository documentation | Complete | [Document index](../README.md#documentation-map) |
 | Phase 0 — Permission and data gate | In progress | Aerial dataset cut (D10); AI-processing permission asserted (D11). Development pathway and named owners still pending in [RIGHTS](../RIGHTS.md). Sponsor package not yet downloaded. |
 | Phase 1 — Contracts and golden scenario | Complete | Golden fixture splits truth from runtime; validated observations stream through WebSocket to a local MapLibre browser view |
-| Phase 2 — Replay and track assessment | Partial — infrastructure verified | Replay, faults, health, reported identities/freshness and Blue ATC previews implemented; full assessment gate incomplete. Resume from [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md). |
-| Phase 3 — COA engine | Not started | Depends on Phase 2 |
+| Phase 2 — Replay and track assessment | Complete | Replay/assessment gate, adversarial fixtures, browser evidence toggle, and route previews passed; see [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md). |
+| Phase 3 — COA engine | Complete | Shared hard gate, swept geometry, guarded enumeration/CP-SAT, distinct profiles, baseline, plan UI, property/fixture tests, and three-seed smoke passed. |
 | Phase 4 — ATC/ADOC coordination | Not started | Depends on Phase 3 |
 | Phase 5 — Resilience and interoperability | Not started | Depends on Phase 4 |
 | Phase 6 — Metrics and integration | Not started | Depends on Phase 5 |
 | Phase 7 — SPARC Refinement | Not started | Depends on Phase 6; cannot refine nonexistent code |
 | Phase 8 — Completion and rehearsal | Not started | Depends on Phase 7 |
-| Runtime checks and benchmarks | Phase 1 checks complete | Python tests, frontend test/build/audit, runtime truth-isolation check, and an in-app browser replay pass; later benchmarks are not run |
+| Runtime checks and benchmarks | Phase 3 smoke complete | 92 backend tests, 95% combined branch coverage, frontend test/build, real-browser Phase 2/3 gate, and three-seed smoke; twenty-seed Phase 6 benchmark remains pending. |
 
 Role labels A/B/C are stable responsibilities, not assigned individual names. Hours are relative to the future build start; no calendar deadline or organizer approval is inferred.
 
@@ -57,6 +57,11 @@ Phase 2 decisions added on 2026-09-08:
 - D23: Preserve frozen Python records at 1.0; version the browser envelope as 1.1 for clock, run binding, health, reported identity history and ATC preview. The producer (`app.py`), consumer (`stream.ts`/`App.tsx`) and contract checks change together. This entry is the shared A/B/C contract notice; no external message was sent.
 - D24: Implement generic synthetic replay and display only in this session. Exclude hostile-target scoring/prediction for counter-UAS response selection. The display is not an `AssessedTrack` producer and cannot close the full Phase 2 gate. Route circles are sampled visual uncertainty, not continuous planner safety volumes.
 - D25: Preserve fixture receipt latency before adding seeded faults. Outages apply to delivery time in half-open windows. Use explicit fixture stream IDs for display monotonicity, accepted positive arrival intervals for source cadence, and a connection-local run. Reset changes run ID but retains monotonic transport sequence.
+- D27: Supersede D24 after the project owner explicitly confirmed the synthetic, simulation-only assessment scope. Implement the complete Phase 2 assessment contract without real targeting, external integrations, actuation, or evaluator truth. The only downstream eligibility category remains fresh `LIKELY_RED`; all other categories fail the Phase 3 gate.
+- D28: Browser envelope 1.2 adds frozen `AssessedTrack` 1.0 records and display-to-assessment references; envelope 1.3 adds the Phase 3 planning result. Plan records carry frozen `StateBinding` 1.0 and must match the containing snapshot fields. Producers: `app.py`; consumer/validator: `stream.ts`; UI: `App.tsx`. Frozen Phase 1 models are unchanged.
+- D29: Treat resource status as stale at `>= 30s`, the complete planning horizon, because v1 resources have no declared cadence. Normalize multi-target expected coverage by total eligible red-probability weight so frozen `CourseOfAction.expected_coverage` remains in `[0,1]`. The current threat weight is `red_probability`; inbound proximity is already affirmative assessment evidence rather than a second hidden planner multiplier.
+- D30: Pin Shapely 2.1.2, OR-Tools 9.15.6755, and Hypothesis 6.168.0. Enumeration remains default below `10^6` resource-choice combinations. The CP-SAT path uses one worker and a fixed seed, and is cross-validated against enumeration on the golden case.
+- D31: Keep the frozen evidence weights unchanged. RF plus inbound motion peaks at 0.7525, so a track needs affirmative sponsor-sensor evidence plus at least one other positive type to reach `LIKELY_RED`. This is deliberate conservative degraded behavior, not an accidental tuning result; sponsor-feed loss therefore removes new simulated-plan eligibility.
 
 **Owner:** Coordinator, with phase/verification, architecture/contracts, and data/demo workers.
 
@@ -191,3 +196,77 @@ Owner: C — replay/session integration; implemented serially in this session.
 Coordinator review: Automated checks verify the session fix; this is not completion of the original assessment/classification gate.
 
 Browser evidence for this continuation: on port 8001, Pause held Update 45 and scenario time 4.487146s fixed. Resume/16× reached Replay complete at 20s with Update 57, which also stayed fixed. Reset and Pause then succeeded in a new run at Update 59. The continuation checkpoint is complete for this session fix only.
+
+### Phase 2 — Replay and track assessment completion — 2026-09-09
+
+State: PASSED
+
+Gate evidence: `pytest` passed 69 tests before Phase 3 landed; assessment reached 100% statement/branch coverage. MR1/MR2/MR6 and the three required adversarial fixtures passed. The final integrated suite also passes as recorded under Phase 3. In the real loopback browser, a nominal early replay showed the fixture track `s-a091d4b7` as `LIKELY_RED`; **Hide one sponsor packet** at the same early interval changed it to `UNKNOWN` with one affirmative type and removed it from eligible simulated plans. Blue, civilian, and conflicting labels remained protected/ineligible. Pause/reset and the Blue route preview remained functional.
+
+Owner: A — data and interoperability
+1. What changed: Retained deterministic replay/fault injection, health accounting, idempotency, monotonic state, scenario-clock control, and truth-isolated runtime loading under the assessment integration.
+2. How it helps the mission: Every assessment is reproducible from validated synthetic observations and fault inputs rather than wall time or hidden truth.
+3. Inputs and outputs: Split runtime 1.0 observations plus seed/profile produce accepted observations, scenario time, health, and deterministic delivery hashes.
+4. How to run and test: Use the loader, `pytest`, and coverage commands in README; MR3/MR4/MR5 and replay fault tests pass in the integrated suite.
+5. Exact demo clicks: Reset, Pause/Resume, choose a fault profile and seed, then **Apply and restart**; inspect source counts and ages.
+6. Known limitations: No sponsor/live ADS-B/UDL adapter is included; synthetic work remains independent of the incomplete Phase 0 administrative gate.
+7. Next owner and next concrete task: A supports Phase 4 scenario timing without exposing evaluator truth.
+
+Owner: B — decision engine
+1. What changed: Added gated nearest association with ambiguity retention, affirmative evidence extraction, strongest-per-type noisy-OR, explicit classification precedence, both-age staleness, constant-velocity prediction, growing uncertainty, and rule-derived explanations.
+2. How it helps the mission: Missing identity never increases hostile probability, and protected/conflicting/stale state stays explicit before planning.
+3. Inputs and outputs: Accepted `Observation` 1.0 records plus scenario time/cadence produce detached `AssessedTrack` 1.0 records. No display stream ID or truth enters association.
+4. How to run and test: `tests/test_assessment.py`; all decision branches and MR1/MR2/MR6 pass with 100% coverage.
+5. Exact demo clicks: Pause near 2.1s; inspect two `LIKELY_RED`, one Blue, one civilian, and one conflicting assessment plus evidence provenance. Apply **Hide one sponsor packet** to see the required downgrade.
+6. Known limitations: Under D31, sponsor sensor evidence plus another affirmative type is intentionally required to cross 0.80. Historical evidence remains conservative; stale qualifying evidence makes the assessed track stale rather than silently deleting history.
+7. Next owner and next concrete task: B consumes this snapshot in the Phase 3 hard gate.
+
+Owner: C — UX and integration
+1. What changed: Stream envelope 1.2 carries assessed records and display joins; the browser validates and renders category, probability, staleness, evidence, and explanations separately from reported identity.
+2. How it helps the mission: The Phase 2 evidence toggle is visible and auditable without conflating a source claim with the system assessment.
+3. Inputs and outputs: Schema 1.2 assessment snapshots over the connection-local WebSocket; schema advances again to 1.3 for Phase 3 planning.
+4. How to run and test: Five frontend parser tests and the production build pass; the loopback browser gate passed on port 8002.
+5. Exact demo clicks: See the B sequence above, then select BLUE01 and switch HOLD/TAXI CLEAR to redraw the preview.
+6. Known limitations: The route preview is sampled display geometry; planner invalidation against the selected route is Phase 4.
+7. Next owner and next concrete task: C integrates Phase 3 plan cards and rejection reasons.
+
+Contract changes: D27–D28. Frozen Python records remain 1.0. Assessment/browser envelope 1.2 producer, validator, UI, and tests changed together.
+
+Coordinator review: Accepted. Phase 2’s evidence/classification gate is visibly and automatically verified; the assessed snapshot is ready for Phase 3.
+
+### Phase 3 — Safety gate and COA engine — 2026-09-09
+
+State: PASSED
+
+Gate evidence: The integrated backend suite passed **92 tests**. Branch-enabled coverage across replay/display/assessment/planning/app was **95%**; `planning.py` was 93%. The required `prop_no_protected_assignment` Hypothesis property and `grazing_corridor`, `near_miss_corridor`, and `time_disjoint` fixtures passed. A real 844,596,301-combination scenario selected the CP-SAT path in 77 ms during the guard test; the small golden case produced the same Balanced fingerprint/coverage under enumeration and CP-SAT. Frontend tests/build passed. Browser plan cards and the rejection drawer rendered and validated. The three-seed smoke passed with zero unsafe assignments, Balanced 0.725530 weighted coverage versus baseline 0.724470 for seeds 7/17/27, and a measured p95 upper bound of **7.563 ms**.
+
+Owner: A — data and interoperability
+1. What changed: The golden scenario now supplies two assessed `LIKELY_RED` tracks and three validated abstract resources to the planner; the smoke CLI consumes only the split runtime.
+2. How it helps the mission: Phase 3 is exercised on the actual demo scenario rather than a generic planner-only fixture.
+3. Inputs and outputs: Runtime resources/observations and three seeds produce plan fingerprints, safety counts, coverage comparison, and measured latency; evaluator truth is unused.
+4. How to run and test: `uv run python -m friendly_filter.phase3_smoke artifacts/runtime/golden/runtime.json` after the loader command.
+5. Exact demo clicks: No A-only control; generate the runtime, start the app, and pause near 2.1s.
+6. Known limitations: Nominal seeds do not change a fault-free fixture, so the full twenty-scenario Phase 6 benchmark remains required.
+7. Next owner and next concrete task: A adds Phase 4 scenario event timing only as needed by invalidation.
+
+Owner: B — decision engine
+1. What changed: Added Shapely swept safety volumes and response corridors, fail-closed missing prediction, the shared hard gate, deterministic enumeration, the `10^6` CP-SAT guard, Balanced/Fastest Safe/Conserve selection with fingerprint distinctness, explicit `NO SAFE COA`, and the same-gate baseline.
+2. How it helps the mission: Protected, unknown, conflicting, stale, and unsafe candidates are rejected before optimization; the comparison cannot reward the baseline for bypassing safety.
+3. Inputs and outputs: `AssessedTrack[]`, `ResourceStatus[]`, scenario time, ATC label, and `StateBinding` produce `PlanningResult`, `CourseOfAction[]`, safety volumes, baseline, and `RejectedCandidate[]`.
+4. How to run and test: `tests/test_planning.py`, full `pytest`, decision coverage, and the smoke command above.
+5. Exact demo clicks: Pause near 2.1s and inspect Balanced/Conserve cards; open the rejection drawer to read `INTERSECTS_PROTECTED`, doctrine, classification, and missing-geometry reasons.
+6. Known limitations: The golden fixture returns two genuinely distinct optimized cards because Fastest Safe duplicates Balanced and is suppressed. Threat weighting currently uses red probability; the separate proximity factor remains represented by affirmative inbound evidence. Selected ATC route geometry is not yet a planning override.
+7. Next owner and next concrete task: B implements Phase 4 revalidation using this same gate and selected Blue route.
+
+Owner: C — UX and integration
+1. What changed: Browser envelope 1.3 adds bound Phase 3 results. The UI renders status, distinct plan cards, weighted coverage, assignments, the baseline, search method/count/latency, and an accessible rejection drawer.
+2. How it helps the mission: A reviewer can see both accepted options and exactly why alternatives were blocked without relying on color.
+3. Inputs and outputs: `app.py` binds plans to the containing run/state/config/ATC revision; `stream.ts` rejects malformed, obsolete, or ineligible plan assignments before rendering.
+4. How to run and test: Five frontend tests, TypeScript/Vite build, backend WebSocket tests, and the loopback browser check passed.
+5. Exact demo clicks: Pause near 2.1s, read the plan cards, expand **Candidate rejection drawer**, then use **Hide one sponsor packet** to see eligibility and plan count fall.
+6. Known limitations: Phase 4 approval controls and visible old-plan invalidation are not built; full keyboard/greyscale certification is deferred to Phase 7.
+7. Next owner and next concrete task: C adds plan invalidation state and simulated approval controls in Phase 4.
+
+Contract changes: D28–D30. Frozen Phase 1 records remain 1.0. Browser envelope 1.3 adds `planning`; Shapely/OR-Tools/Hypothesis are exact pins in `pyproject.toml` and `uv.lock`.
+
+Coordinator review: Accepted for the synthetic Phase 3 gate. Proceed to Phase 4; do not treat the three-seed smoke as the later twenty-scenario benchmark.

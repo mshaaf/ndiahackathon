@@ -171,7 +171,7 @@ class Replay:
         self.rng = random.Random(self.seed)
         self.health: dict[str, SourceHealth] = defaultdict(SourceHealth)
         self.seen: set[tuple[str, int]] = set()
-        self.last_applied: dict[str, tuple[datetime, str, int]] = {}
+        self.last_applied: dict[str, datetime] = {}
         self.delivered: list[RuntimeEvent] = []
         for source in self.invalid_sources:
             self.health[source].count(0, "rejected")
@@ -225,11 +225,12 @@ class Replay:
                 health.count(at, "duplicated")
                 continue
             self.seen.add((source, seq))
-            order = (event.observation.observed_at, source, seq)
-            if event.stream_id in self.last_applied and order < self.last_applied[event.stream_id]:
+            observed_at = event.observation.observed_at
+            if (event.stream_id in self.last_applied
+                    and observed_at < self.last_applied[event.stream_id]):
                 health.count(at, "late")
                 continue
-            self.last_applied[event.stream_id] = order
+            self.last_applied[event.stream_id] = observed_at
             health.accepted(at)
             self.delivered.append(event)
             accepted.append(event)
