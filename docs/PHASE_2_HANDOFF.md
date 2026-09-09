@@ -98,7 +98,23 @@ Invalid commands produce `command_error` on the next snapshot. Fault changes res
 
 ## Remaining work
 
-The infrastructure checkpoints are complete. The requested full assessment/classification gate is outside the implemented scope and must not be marked passed or handed to planning as ready. MR3 and MR5 here verify transport payload/order invariance; they do not claim classification invariance. MR6 verifies reported identity and staleness only. Spatial association, noisy-OR, hostile scoring, `AssessedTrack` production, evidence toggling and target prediction have not been implemented. The three assessment fixtures and their full decision-engine assertions are not claimed.
+**Superseded on 2026-09-08 by commit `9ec07de`.** The paragraph that stood here said spatial association, noisy-OR, hostile scoring, `AssessedTrack` production and target prediction were not implemented. All of them now are, in `backend/friendly_filter/assessment.py`, wired into `app.py` and rendered in the browser. MR1, MR2 and MR6 now assert on classification rather than transport alone, and the three adversarial fixtures run through the frozen `Observation` contract. `assessment.py` reaches 100% statement and branch coverage; 66 backend and 4 frontend tests pass.
+
+What is genuinely still open is listed under "Outstanding for Phase 2" below.
+
+## Outstanding for Phase 2
+
+| # | Item | Why it matters | Size |
+|---|---|---|---|
+| 1 | The golden fixture contains **one** `LIKELY_RED` track. D15 specifies two hostile drones. | Three plan profiles over a single target cannot be genuinely distinct, so Phase 3's distinctness guard will correctly collapse three cards to one and the "compare three options" moment disappears. This is a Phase 3 blocker found in Phase 2. | ~20 min |
+| 2 | With current weights, `RF_DETECTION` + `INBOUND_MOTION` peaks at 0.7525, below `RED_CONFIDENCE_MIN`. | No track can reach `LIKELY_RED` without sponsor sensor evidence. If the sponsor feed drops, nothing is ever actionable. That may be the conservatism we want, but it is currently an accident of three weight values rather than a recorded decision. Record it or retune. | ~10 min |
+| 3 | The gate demonstration is not recorded. | Phase 2's gate is "evidence toggles visibly change track assessments." The mechanism exists — per-source outage in the fault profile. Nobody has run it and written down the result. Killing the sponsor source should drop the `LIKELY_RED` to `UNKNOWN` on screen. | ~5 min |
+| 4 | Schema 1.1 browser envelope against frozen 1.0 Python records has no build-book contract note. | `AGENTS.md` phase discipline requires the exact change and its affected producers and consumers to be recorded. | ~5 min |
+| 5 | No clean-machine run with networking disabled. | Deferred to Phase 8 by plan, but the MapLibre version pin (D18) should be confirmed well before then. | Phase 8 |
+
+Item 1 is the one that costs real time if it waits until Phase 3 is underway.
+
+## Measured limits
 
 Other limitations: positions require an explicit fixture stream ID; streams are not fused. A positionless packet for a never-seen stream cannot be mapped. Synthetic routes are translated to the latest displayed Blue position and sampled over 30s; no navigation algorithm, continuous safety-volume union, planner or invalidation exists. Cadence is measured from distinct accepted per-source arrival times; bursts can make the median small, bounded by the five-second floor. Each browser connection runs independently. No external data adapters, export/evaluation pipeline, CI job, clean-machine offline rehearsal, or benchmark is included.
 
