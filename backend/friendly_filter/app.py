@@ -93,6 +93,12 @@ class AtcCommand(ReplayRecord):
     option: Literal["CONTINUE", "HOLD", "TAXI_CLEAR"]
 
 
+class ApproveCommand(ReplayRecord):
+    action: Literal["approve"]
+    coa_id: str
+    binding: StateBinding
+
+
 class Session:
     def __init__(self, runtime: Runtime):
         self.runtime = runtime
