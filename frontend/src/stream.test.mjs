@@ -4,7 +4,7 @@ import { parseSnapshot, shouldAcceptSnapshot } from './stream.ts';
 
 function fixture() {
     return {
-        type: 'FeatureCollection', schema_version: '1.3', scenario_id: 'golden', sequence: 1,
+        type: 'FeatureCollection', schema_version: '1.4', scenario_id: 'golden', sequence: 1,
         simulation_time: '2026-09-08T12:00:00Z', seed: 7, fault_profile: {},
         binding: {
             run_id: '00000000-0000-4000-8000-000000000001', state_version: 1,
@@ -21,6 +21,7 @@ function fixture() {
             aircraft_stream_id: 'blue-1', option: 'CONTINUE', revision: 0,
             preview: { type: 'FeatureCollection', features: [] }
         },
+        coordination: { invalidated: [], approvals: [], replan_elapsed_ms: null },
         features: [{
             type: 'Feature', geometry: { type: 'Point', coordinates: [-77, 38, 10] },
             properties: {
@@ -140,6 +141,45 @@ test('accepts command feedback with a new transport sequence and unchanged state
     assert.equal(shouldAcceptSnapshot(parsed, paused), false);
 });
 
+test('validates invalidation and simulated approval audit records', () => {
+    const value = fixture();
+    const assignment = value.planning.rejections[0].assignments[0];
+    const coa = {
+        schema_version: '1.0', coa_id: '00000000-0000-4000-8000-000000000002',
+        profile: 'BALANCED', atc_option: 'HOLD', assignments: [assignment], expected_coverage: 0.8,
+        completion_at: assignment.effect_at, resources_used: 1, rank: 1, fingerprint: 'b'.repeat(64),
+        bound_state: { schema_version: '1.0', ...value.binding }
+    };
+    const record = {
+        schema_version: '1.0', coa_id: coa.coa_id, fingerprint: coa.fingerprint,
+        approver: 'demo-reviewer', approved_at: '2026-09-08T12:00:00Z',
+        binding: { schema_version: '1.0', ...value.binding }, simulated: true
+    };
+    value.coordination = {
+        invalidated: [{
+            schema_version: '1.0', coa, reason_code: 'INTERSECTS_PROTECTED',
+            reason_text: 'Protected aircraft: BLUE01.', invalidated_at: '2026-09-08T12:00:00Z',
+            cause_option: 'TAXI_CLEAR', atc_revision: 1
+        }],
+        approvals: [record], replan_elapsed_ms: 12.5
+    };
+    value.approval_feedback = {
+        status: 'ACCEPTED', coa_id: coa.coa_id, message: 'Simulated approval recorded.', record
+    };
+    assert.equal(parseSnapshot(JSON.stringify(value)).coordination.invalidated[0].reason_code,
+        'INTERSECTS_PROTECTED');
+
+    for (const mutate of [
+        v => v.coordination.replan_elapsed_ms = -1,
+        v => v.coordination.invalidated[0].reason_code = 'IGNORE_SAFETY',
+        v => v.coordination.approvals[0].simulated = false,
+        v => v.approval_feedback.status = 'EXECUTED',
+    ]) {
+        const malformed = structuredClone(value); mutate(malformed);
+        assert.throws(() => parseSnapshot(JSON.stringify(malformed)));
+    }
+});
+
 test('parses planning result with multiple candidate rejections and assignments', () => {
     const value = fixture();
     value.planning.rejections.push({
@@ -158,4 +198,3 @@ test('parses planning result with multiple candidate rejections and assignments'
     assert.equal(parsed.planning.rejections[1].reason_code, 'INTERSECTS_PROTECTED');
     assert.equal(parsed.planning.rejections[1].assignments[0].resource_id, 'effector-2');
 });
-

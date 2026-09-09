@@ -2,7 +2,7 @@
 
 A local, simulation-only dashboard that makes aircraft protection, uncertainty, and ATC/ADOC coordination visible while comparing abstract response plans for a synthetic Counter-UAS scenario.
 
-**Status: Phases 2 and 3 implemented and verified on the synthetic golden scenario.** Deterministic replay, assessment, protected-track filtering, prediction, hard safety geometry, distinct plan selection, the shared baseline gate, source health, and Blue ATC previews work. The browser envelope is schema 1.3; frozen Python records remain 1.0. Phase 4 plan invalidation and simulated approval are next. See the [Phase 2 handoff](docs/PHASE_2_HANDOFF.md) and [build book](docs/BUILD_BOOK.md) for measured evidence and limitations.
+**Status: Phases 1–4 implemented and verified on the synthetic golden scenario.** Deterministic replay, assessment, protected-track filtering, prediction, hard safety geometry, distinct plan selection, source health, ATC-driven invalidation, safe replanning, and simulated approval work. The browser envelope is schema 1.4; frozen Python records remain 1.0. Phase 5 resilience and export are next. See the [Phase 4 handoff](docs/PHASE_4_HANDOFF.md) and [build book](docs/BUILD_BOOK.md) for measured evidence and limitations.
 
 ## Start here
 
@@ -25,11 +25,11 @@ uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 
 Open `http://127.0.0.1:8000`. The server receives only `artifacts/runtime/golden/runtime.json`; evaluator truth is written separately under `artifacts/evaluator/golden/` and neither artifact is committed.
 
-Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Select **BLUE01**, then **HOLD** or **TAXI CLEAR**, to preview the authored route and sampled uncertainty areas. Fault presets and the seed apply with **Apply and restart**. Safe simulated plan cards, the same-gate baseline, and a rejection drawer update from the assessed state. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
+Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Pause near 2.1 seconds, select **BLUE01**, choose **HOLD**, then **TAXI CLEAR**. The old plan is visibly invalidated, a safe alternative appears with measured replan time, and **Approve simulation** records a review bound to the displayed state. Fault presets and the seed apply with **Apply and restart**. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
 
 Paused and completed sessions keep their time, update number and state version fixed until something changes. Controls remain available; an invalid command returns feedback without changing the state version.
 
-The dashboard keeps source claims separate from rule-derived assessment. Only fresh `LIKELY_RED` tracks can enter the simulation planner; protected, unknown, conflicting, and stale tracks are rejected before optimization. Map route circles are illustrative ATC previews; Phase 3 safety volumes use continuous swept Shapely geometry. Nothing is an operational clearance and no actuation endpoint exists.
+The dashboard keeps source claims separate from rule-derived assessment. Only fresh `LIKELY_RED` tracks can enter the simulation planner; protected, unknown, conflicting, and stale tracks are rejected before optimization. The selected authored Blue route now drives the continuous swept safety geometry used by planning and revalidation. Nothing is an operational clearance and no actuation endpoint exists.
 
 Run the current checks with:
 
@@ -52,6 +52,7 @@ npm --prefix frontend run build
 | [Testing](docs/TESTING.md) | Invariants, metamorphic relations, adversarial fixtures, mutation set, self-application |
 | [Project handoff](docs/HANDOFF.md) | Verified Phase 1 baseline, current limits, setup commands, and ordered Steps 4–11 |
 | [Phase 2 handoff](docs/PHASE_2_HANDOFF.md) | Completed replay/assessment checkpoints, exact controls/API, measured checks, and remaining limits |
+| [Phase 4 handoff](docs/PHASE_4_HANDOFF.md) | Completed invalidation/approval gate, browser sequence, measured checks, and Phase 5 continuation |
 | [Agent instructions](AGENTS.md) | Repository rules, bounded parallel work, review, and handoffs |
 | [Build book](docs/BUILD_BOOK.md) | Current status, decisions, evidence, and owner handoffs |
 | [Data card](docs/DATA_CARD.md) | Sources, transformations, limitations, and attribution |

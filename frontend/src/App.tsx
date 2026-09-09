@@ -31,6 +31,8 @@ export function App() {
     const [selected, setSelected] = useState('');
     const [preset, setPreset] = useState('Nominal');
     const [seed, setSeed] = useState('20260908');
+    const [approver, setApprover] = useState('demo-reviewer');
+    const [approvalFeedback, setApprovalFeedback] = useState<Snapshot['approval_feedback']>();
     const assessed = Object.fromEntries((snapshot?.assessed_tracks ?? []).map((track) => [track.track_id, track]));
     const snapshotRef = useRef<Snapshot | undefined>(undefined);
     snapshotRef.current = snapshot;
@@ -50,7 +52,7 @@ export function App() {
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
             const activeTag = (document.activeElement?.tagName ?? '').toLowerCase();
-            if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') {
+            if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || activeTag === 'button') {
                 return;
             }
             const current = snapshotRef.current;
@@ -161,10 +163,12 @@ export function App() {
                 if (latest && latest.binding.run_id !== incoming.binding.run_id) {
                     fittedFeatureCount = 0;
                     setSelected('');
+                    setApprovalFeedback(undefined);
                 }
                 latest = incoming;
                 setSnapshot(incoming);
                 if (incoming.command_error) setError(incoming.command_error);
+                if (incoming.approval_feedback) setApprovalFeedback(incoming.approval_feedback);
                 updateMap();
             } catch (cause) {
                 setError(cause instanceof Error ? cause.message : 'Scenario update could not be read.');
@@ -225,6 +229,16 @@ export function App() {
                 <span>Route preview · revision {snapshot?.atc.revision ?? 0}</span>
             </section>
             {error && <p role="alert" className="error">{error}</p>}
+            {!!snapshot?.coordination.invalidated.length && <section className="invalidation" role="status" aria-live="polite">
+                <h2>Plan invalidated</h2>
+                {snapshot.coordination.invalidated.map((item) => <p key={item.coa.coa_id}>
+                    <strong>{item.coa.profile.replaceAll('_', ' ')}</strong> — {item.reason_code.replaceAll('_', ' ')}: {item.reason_text}
+                </p>)}
+                <p>Safe alternatives recomputed in {snapshot.coordination.replan_elapsed_ms?.toFixed(1)}ms.</p>
+            </section>}
+            {approvalFeedback && <p className={`approval-feedback ${approvalFeedback.status.toLowerCase()}`} role="status" aria-live="polite">
+                <strong>{approvalFeedback.status}</strong> — {approvalFeedback.message}
+            </p>}
             <section className="map-panel" aria-label="Synthetic airspace">
                 <div ref={container} className="map" aria-label="Map of simulated reported positions" />
                 {!snapshot?.features.length && <p className="empty">Waiting for scenario positions</p>}
@@ -244,6 +258,8 @@ export function App() {
                 </div>
                 {snapshot ? <>
                     <p>{snapshot.planning.explanation} Search: {snapshot.planning.method.replace('_', '-')} · {snapshot.planning.combination_count.toLocaleString()} combinations · {snapshot.planning.elapsed_ms.toFixed(1)}ms.</p>
+                    <label className="approver">Simulated approver <input value={approver} maxLength={128} required
+                        onChange={(event) => setApprover(event.target.value)} /></label>
                     <div className="plan-grid">
                         {snapshot.planning.coas.map((coa) => <article className="plan-card" key={coa.coa_id}>
                             <h3>{coa.profile.replaceAll('_', ' ')}</h3>
@@ -252,6 +268,8 @@ export function App() {
                             <span>ATC option {coa.atc_option.replace('_', ' ')} · rank {coa.rank}</span>
                             {coa.assignments.map((item) => <code key={`${item.resource_id}-${item.track_id}-${item.slot_index}`}>
                                 {item.resource_id} → {item.track_id.slice(0, 8)} · slot {item.slot_index}</code>)}
+                            <button disabled={!approver.trim()} onClick={() => send({ action: 'approve', coa_id: coa.coa_id,
+                                approver: approver.trim(), binding: snapshot.binding })}>Approve simulation</button>
                         </article>)}
                         {snapshot.planning.baseline && <article className="plan-card baseline">
                             <h3>Baseline comparison</h3>
@@ -292,6 +310,14 @@ export function App() {
                             ))}
                         </div>
                     </details>
+                    {!!snapshot.coordination.approvals.length && <details className="approvals">
+                        <summary>Simulated approval audit · {snapshot.coordination.approvals.length}</summary>
+                        {snapshot.coordination.approvals.map((record, index) => <p key={`${record.coa_id}-${index}`}>
+                            <strong>{record.approver}</strong> approved {record.coa_id.slice(0, 8)} at{' '}
+                            <time dateTime={record.approved_at}>{new Date(record.approved_at).toLocaleTimeString()}</time>
+                            {' '}· ATC revision {record.binding.atc_revision} · simulated only
+                        </p>)}
+                    </details>}
                 </> : <p>Waiting for assessed state.</p>}
             </section>
             <section className="track-details" aria-labelledby="tracks-heading">

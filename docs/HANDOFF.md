@@ -1,10 +1,10 @@
 # Project handoff
 
-**Current continuation point:** Phase 4 invalidation in Step 8 below. Phases 2 and 3 are implemented and verified on `codex/phase2-complete`; [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md) records the completed assessment gate and [BUILD_BOOK](BUILD_BOOK.md) records the Phase 3 gate and smoke benchmark. The ordered execution plan remains authoritative for later work.
+**Current continuation point:** Phase 5 resilience and export in Step 9 below. Phases 1–4 are implemented and verified; [PHASE_4_HANDOFF](PHASE_4_HANDOFF.md) records the completed invalidation/approval gate and [BUILD_BOOK](BUILD_BOOK.md) records measured evidence. The ordered execution plan remains authoritative for later work.
 
 Status snapshot: 2026-09-09
 
-Implementation branch: `codex/phase2-complete`
+Implementation branch: `work/phase4-invalidation`
 
 Repository: [mshaaf/ndiahackathon](https://github.com/mshaaf/ndiahackathon)
 
@@ -18,7 +18,8 @@ This is the starting point for the next contributor. The original [build plan](.
 | 1 — Contracts and golden scenario | Passed | Frozen v1 Pydantic records, truth split, golden demo fixture, and browser stream passed the recorded gate. |
 | 2 — Replay and assessment | Passed | 69 pre-planner backend tests, assessment coverage, frontend build, and the visible evidence-toggle gate passed. |
 | 3 — Safety gate and COA engine | Passed | Shared hard gate, geometry fixtures, property test, CP-SAT guard, plan UI, browser check, and three-seed smoke passed. |
-| 4–8 | Not started | Phase 4 invalidation and approval binding are next. |
+| 4 — ATC/ADOC coordination | Passed | Authored route coupling, shared-gate invalidation, safe replacement, browser display, and version-bound simulated approval passed. |
+| 5–8 | Not started | Phase 5 resilience and export are next. |
 
 ### What works now
 
@@ -31,12 +32,13 @@ This is the starting point for the next contributor. The original [build plan](.
 - Deterministic replay/faults, spatial association, affirmative-evidence noisy-OR, classification precedence, two-age staleness, prediction, and rule-derived explanations produce frozen `AssessedTrack` 1.0 records.
 - Shapely builds protected swept volumes and response corridors; one shared hard gate rejects protected, unknown, conflicting, stale, unavailable, out-of-range, capacity, cooldown, doctrine, and intersecting candidates.
 - Enumeration selects distinct Balanced/Fastest Safe/Conserve plans below the `10^6` ceiling; pinned OR-Tools CP-SAT handles larger spaces. The same gate constrains the baseline.
-- Schema 1.3 WebSocket snapshots bind plan cards to the displayed run/state/config/ATC revision and include an accessible rejection drawer.
+- Schema 1.4 WebSocket snapshots bind plan cards to the displayed run/state/config/ATC revision and include invalidation, replan timing, simulated approval feedback, and audit records.
+- HOLD → TAXI_CLEAR replaces the Blue planning path, invalidates old plans through the shared hard gate, and produces a safe alternative without advancing scenario time.
 
 ### What does not exist yet
 
-- Phase 4 does not yet replace the Blue prediction with the selected authored ATC route, revalidate old plans, or expose simulated approval records.
 - Export, the independent consumer, evaluator, twenty-seed benchmark, mutation/soak set, clean-machine offline package, and backup video remain later phases.
+- Simulated approvals are connection-local until Phase 5 supplies export/persistence.
 - The golden scenario currently yields two genuinely distinct optimized plans because Fastest Safe duplicates Balanced and is correctly suppressed; the UI does not fabricate a third card.
 
 ## Reproduce the current local build
@@ -57,7 +59,7 @@ npm --prefix frontend audit
 uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 ```
 
-Open `http://127.0.0.1:8000`. Pause near 2.1 scenario seconds to inspect two `LIKELY_RED` assessments, protected/conflicting tracks, safe plan cards, the same-gate baseline, and rejection reasons. Select **Hide one sponsor packet** and **Apply and restart** to see one assessment lose eligibility. The latest recorded evidence is in BUILD_BOOK rather than this command synopsis.
+Open `http://127.0.0.1:8000`. Pause near 2.1 scenario seconds, select **BLUE01**, click **HOLD**, then **TAXI CLEAR** to see the old plan invalidate and a safe replacement appear. Approve a current replacement and expand its simulated audit. Select **Hide one sponsor packet** and **Apply and restart** to see one assessment lose eligibility. The latest recorded evidence is in BUILD_BOOK rather than this command synopsis.
 
 Generated runtime and truth files live under `artifacts/` and are ignored. Regenerate them after a fresh clone. The runtime server receives only `artifacts/runtime/golden/runtime.json`; do not pass it the evaluator path.
 
@@ -136,6 +138,8 @@ Add `prop_no_protected_assignment` and the `grazing_corridor`, `near_miss_corrid
 Immediately run the three-seed smoke benchmark. Treat an optimizer loss to the baseline as a Phase 3 defect; do not postpone it to Phase 6.
 
 ### Step 8 — Invalidation
+
+Completed in Phase 4; retained here as the gate definition.
 
 Implement [phase_4_atc](pseudocode/phase_4_atc.md): reuse the shared safety gate to revalidate plans, bind plans and simulated approvals to run/state/config/ATC revision, and reject obsolete approval attempts.
 

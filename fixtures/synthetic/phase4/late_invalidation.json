@@ -1,0 +1,8 @@
+{
+  "scenario": "golden-demo-v1",
+  "aircraft_stream_id": "s-7f3a2c91",
+  "from": "HOLD",
+  "to": "TAXI_CLEAR",
+  "expected_reason": "INTERSECTS_PROTECTED",
+  "max_replan_ms": 2000
+}

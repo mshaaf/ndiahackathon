@@ -108,7 +108,7 @@ def test_session_publishes_five_joined_assessments(golden_runtime):
     snapshot = session.snapshot()
     assessed = {track["track_id"]: track for track in snapshot["assessed_tracks"]}
 
-    assert snapshot["schema_version"] == "1.3"
+    assert snapshot["schema_version"] == "1.4"
     assert len(assessed) == len(snapshot["features"]) == 5
     assert all(feature["properties"]["assessed_track_id"] in assessed for feature in snapshot["features"])
     assert sorted(track["category"] for track in assessed.values()) == [

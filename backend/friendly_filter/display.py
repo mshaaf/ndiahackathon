@@ -78,7 +78,7 @@ class ReportedDisplay:
         return [stream.feature(key, replay, health) for key, stream in sorted(self.streams.items())]
 
 
-def _route_position(points: list[ENU], fraction: float) -> ENU:
+def route_position(points: list[ENU], fraction: float) -> ENU:
     lengths = [math.dist(tuple(a.model_dump().values()), tuple(b.model_dump().values()))
                for a, b in zip(points, points[1:])]
     remaining = sum(lengths) * fraction
@@ -111,7 +111,7 @@ def route_preview(stream: ReportedStream | None, routes: dict[str, list[ENU]], o
                          for key in ENU.model_fields}) for p in points]
     areas = []
     for dt in range(0, config.PREDICTION_HORIZON_S + 1, config.PREDICTION_SLOT_S):
-        position = _route_position(points, dt / config.PREDICTION_HORIZON_S)
+        position = route_position(points, dt / config.PREDICTION_HORIZON_S)
         radius = (config.PROTECTED_BUFFER_BASE_M + (obs.uncertainty_m or 0)
                   + config.PROTECTED_BUFFER_GROWTH_MPS * dt)
         if stale:

@@ -355,6 +355,51 @@ li time {
     color: #663d00;
 }
 
+.invalidation,
+.approval-feedback {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border: 1px solid #b45f06;
+    background: #fff0d8;
+    color: #663d00;
+}
+
+.invalidation h2 {
+    margin-bottom: 5px;
+}
+
+.invalidation p + p {
+    margin-top: 5px;
+}
+
+.approval-feedback.accepted {
+    border-color: #438253;
+    background: #e3f3e7;
+    color: #245b31;
+}
+
+.approver {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-weight: 700;
+}
+
+.approvals {
+    margin-top: 14px;
+}
+
+.approvals summary {
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.approvals p {
+    margin-top: 8px;
+    font-size: 0.8125rem;
+}
+
 :focus-visible {
     outline: 3px solid #1767a6;
     outline-offset: 3px;

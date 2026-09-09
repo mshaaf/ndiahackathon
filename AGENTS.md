@@ -4,9 +4,9 @@
 
 Read [README.md](README.md), the latest [build-book entry](docs/BUILD_BOOK.md), and the active phase in section 4 of the original [build plan](ndiahackbuildplan.txt). Read that plan's architecture and public interfaces in section 3 before changing shared behavior. The plan is preserved; do not rewrite it to hide changed requirements.
 
-Phase 1 now has frozen Pydantic records, a synthetic golden fixture, truth splitting, and a local backend-to-browser stream. Later modules, safety behavior, performance targets, and benchmarks remain proposals. Do not claim a later phase passes without its evidence; Phase 0 sponsor-data permissions also remain incomplete.
+Phase 1 has frozen Pydantic records, a synthetic golden fixture, truth splitting, and a local backend-to-browser stream. Do not claim a later phase passes without its evidence; Phase 0 sponsor-data permissions also remain incomplete.
 
-Phases 2 and 3 are implemented on `codex/phase2-complete`: deterministic replay/faults, assessment, source health, protected-route previews, swept safety volumes, the shared hard gate, enumeration with a CP-SAT guard, distinct profiles, baseline, and plan/rejection UI. Read [PHASE_2_HANDOFF](docs/PHASE_2_HANDOFF.md) and the latest [BUILD_BOOK](docs/BUILD_BOOK.md) entries before continuing. The browser envelope is schema 1.3; frozen Python records remain 1.0. Phase 4 ATC-driven invalidation and simulated approval are not implemented.
+Phases 2 and 3 are implemented on `main`; Phase 4 is implemented on `work/phase4-invalidation`: deterministic replay/faults, assessment, source health, protected-route coupling, swept safety volumes, the shared hard gate, enumeration with a CP-SAT guard, distinct profiles, baseline, plan invalidation, and version-bound simulated approval. Read [PHASE_4_HANDOFF](docs/PHASE_4_HANDOFF.md) and the latest [BUILD_BOOK](docs/BUILD_BOOK.md) entries before continuing. The browser envelope is schema 1.4; frozen Python records remain 1.0. Phase 5 resilience/export is next.
 
 ## Non-negotiable project rules
 

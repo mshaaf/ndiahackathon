@@ -38,6 +38,17 @@ export type PlanningResult = {
   combination_count: number; method: 'ENUMERATION' | 'CP_SAT'; timed_out: boolean;
   elapsed_ms: number; explanation: string;
 };
+export type InvalidatedPlan = {
+  schema_version: '1.0'; coa: CourseOfAction; reason_code: string; reason_text: string;
+  invalidated_at: string; cause_option: AtcOption; atc_revision: number;
+};
+export type ApprovalRecord = {
+  schema_version: '1.0'; coa_id: string; fingerprint: string; approver: string;
+  approved_at: string; binding: StateBinding; simulated: true;
+};
+export type ApprovalFeedback = {
+  status: 'ACCEPTED' | 'REJECTED'; coa_id: string; message: string; record?: ApprovalRecord;
+};
 export type TrackProperties = {
   stream_id: string; label: string; modality: string; observed_at: string; received_at: string;
   identity_kind: 'BLUE' | 'CIVILIAN' | 'UNKNOWN' | 'CONFLICTING';
@@ -56,17 +67,21 @@ export type FaultProfile = {
   latency_jitter_s?: number; outage_windows?: [number, number][]; affected_sources?: string[] | null;
 };
 export type Snapshot = FeatureCollection<Point, TrackProperties> & {
-  schema_version: '1.3'; scenario_id: string; sequence: number; simulation_time: string;
+  schema_version: '1.4'; scenario_id: string; sequence: number; simulation_time: string;
   binding: StateBinding;
   clock: { seconds: number; rate: number; complete: boolean; duration_s: number };
   health: Record<string, Health>; seed: number; fault_profile: FaultProfile; command_error?: string;
   assessed_tracks: AssessedTrack[];
   planning: PlanningResult;
+  coordination: { invalidated: InvalidatedPlan[]; approvals: ApprovalRecord[];
+    replan_elapsed_ms: number | null };
+  approval_feedback?: ApprovalFeedback;
   atc: { aircraft_stream_id: string | null; option: AtcOption; revision: number;
     preview: FeatureCollection<LineString | Polygon, { kind: 'route' | 'uncertainty' }> };
 };
 export type Command = { action: 'pause' | 'resume' | 'reset' } | { action: 'rate'; rate: number }
   | { action: 'atc'; stream_id: string; option: AtcOption }
+  | { action: 'approve'; coa_id: string; approver: string; binding: StateBinding }
   | { action: 'faults'; seed: number; profile: FaultProfile };
 
 const options = ['CONTINUE', 'HOLD', 'TAXI_CLEAR'];
@@ -152,6 +167,26 @@ function planningResult(value: unknown): value is PlanningResult {
     && integer(planning.combination_count) && ['ENUMERATION', 'CP_SAT'].includes(planning.method)
     && typeof planning.timed_out === 'boolean' && nonnegative(planning.elapsed_ms) && text(planning.explanation);
 }
+function approvalRecord(value: unknown): value is ApprovalRecord {
+  const record = value as ApprovalRecord;
+  return !!record && record.schema_version === '1.0' && uuid.test(record.coa_id)
+    && /^[0-9a-f]{64}$/.test(record.fingerprint) && text(record.approver)
+    && isUtc(record.approved_at) && stateBinding(record.binding) && record.simulated === true;
+}
+function invalidatedPlan(value: unknown): value is InvalidatedPlan {
+  const item = value as InvalidatedPlan;
+  return !!item && item.schema_version === '1.0' && course(item.coa)
+    && rejectionReasons.includes(item.reason_code) && text(item.reason_text)
+    && isUtc(item.invalidated_at) && options.includes(item.cause_option) && integer(item.atc_revision);
+}
+function approvalFeedback(value: unknown): value is ApprovalFeedback {
+  const feedback = value as ApprovalFeedback;
+  return !!feedback && ['ACCEPTED', 'REJECTED'].includes(feedback.status)
+    && uuid.test(feedback.coa_id) && text(feedback.message)
+    && (feedback.status === 'ACCEPTED'
+      ? approvalRecord(feedback.record) && feedback.record.coa_id === feedback.coa_id
+      : feedback.record === undefined);
+}
 
 export function shouldAcceptSnapshot(previous: Snapshot | undefined, incoming: Snapshot): boolean {
   return !previous || previous.scenario_id !== incoming.scenario_id || incoming.sequence > previous.sequence;
@@ -163,7 +198,7 @@ export function parseSnapshot(message: string): Snapshot {
   const assessed = Array.isArray(value?.assessed_tracks) ? value.assessed_tracks : [];
   const assessedIds = new Set(assessed.map((track) => track?.track_id));
   const assessedById = new globalThis.Map(assessed.map((track) => [track?.track_id, track]));
-  if (!value || value.type !== 'FeatureCollection' || value.schema_version !== '1.3' ||
+  if (!value || value.type !== 'FeatureCollection' || value.schema_version !== '1.4' ||
       !text(value.scenario_id) || !integer(value.sequence) || !isUtc(value.simulation_time) ||
       !integer(value.seed) || !stateBinding(value.binding) ||
       !value.clock || !nonnegative(value.clock.seconds) || !nonnegative(value.clock.duration_s) ||
@@ -187,6 +222,13 @@ export function parseSnapshot(message: string): Snapshot {
             const target = assessedById.get(item.track_id);
             return target?.category === 'LIKELY_RED' && target.is_stale === false;
           })) ||
+      !value.coordination || !Array.isArray(value.coordination.invalidated)
+      || value.coordination.invalidated.length > 3
+      || !value.coordination.invalidated.every(invalidatedPlan)
+      || !Array.isArray(value.coordination.approvals) || value.coordination.approvals.length > 100
+      || !value.coordination.approvals.every(approvalRecord)
+      || !(value.coordination.replan_elapsed_ms === null
+        || nonnegative(value.coordination.replan_elapsed_ms)) ||
       !Array.isArray(value.features) || !value.features.every((feature) => {
         const p = feature?.properties;
         return feature?.type === 'Feature' && feature.geometry?.type === 'Point' && position(feature.geometry.coordinates)
@@ -208,7 +250,8 @@ export function parseSnapshot(message: string): Snapshot {
         : f.geometry.type === 'Polygon' && f.properties.kind === 'uncertainty' && Array.isArray(f.geometry.coordinates)
           && f.geometry.coordinates.length > 0 && f.geometry.coordinates.every((ring) => Array.isArray(ring)
             && ring.length >= 4 && ring.every(position) && JSON.stringify(ring[0]) === JSON.stringify(ring.at(-1)))
-      )) || (value.command_error !== undefined && !text(value.command_error))) {
+      )) || (value.command_error !== undefined && !text(value.command_error))
+      || (value.approval_feedback !== undefined && !approvalFeedback(value.approval_feedback))) {
     throw new Error('Invalid scenario update; showing the last valid positions.');
   }
   return value;

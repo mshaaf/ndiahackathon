@@ -12,12 +12,12 @@ This is the shared status and handoff log. Section 4 of the original [build plan
 | Phase 1 — Contracts and golden scenario | Complete | Golden fixture splits truth from runtime; validated observations stream through WebSocket to a local MapLibre browser view |
 | Phase 2 — Replay and track assessment | Complete | Replay/assessment gate, adversarial fixtures, browser evidence toggle, and route previews passed; see [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md). |
 | Phase 3 — COA engine | Complete | Shared hard gate, swept geometry, guarded enumeration/CP-SAT, distinct profiles, baseline, plan UI, property/fixture tests, and three-seed smoke passed. |
-| Phase 4 — ATC/ADOC coordination | Not started | Depends on Phase 3 |
+| Phase 4 — ATC/ADOC coordination | Complete | Authored routes drive planner safety volumes; old plans invalidate through the shared gate and current plans accept only version-bound simulated approval. |
 | Phase 5 — Resilience and interoperability | Not started | Depends on Phase 4 |
 | Phase 6 — Metrics and integration | Not started | Depends on Phase 5 |
 | Phase 7 — SPARC Refinement | Not started | Depends on Phase 6; cannot refine nonexistent code |
 | Phase 8 — Completion and rehearsal | Not started | Depends on Phase 7 |
-| Runtime checks and benchmarks | Phase 3 smoke complete | 94 backend tests, 95% combined branch coverage, frontend test/build, real-browser Phase 2/3 gate, and three-seed smoke; twenty-seed Phase 6 benchmark remains pending. |
+| Runtime checks and benchmarks | Phase 4 gate complete | 97 backend tests, 95% combined branch coverage, six frontend tests/build, zero npm vulnerabilities, real-browser Phase 4 gate, and passing three-seed smoke; twenty-seed Phase 6 benchmark remains pending. |
 
 Role labels A/B/C are stable responsibilities, not assigned individual names. Hours are relative to the future build start; no calendar deadline or organizer approval is inferred.
 
@@ -47,6 +47,7 @@ Role labels A/B/C are stable responsibilities, not assigned individual names. Ho
 | D20 | Freeze the Phase 1 Python records in `friendly_filter.models`; stream observations as GeoJSON with an ISO UTC `simulation_time`; keep scenario truth behind the separate `scenario_loader` output path. | The integrated golden scenario passed its split, model validation, WebSocket, frontend boundary, and browser-render checks. Changes now require a build-book entry and notification to A, B, and C. |
 | D21 | Pin MapLibre GL JS to 6.8.0, satisfying D18, and bundle its worker through Vite. | A fresh dependency audit found the 5.11.0 pin affected by the MapLibre expression XSS advisory. Version 6.8.0 removes the advisory and the bundled worker preserves offline rendering. |
 | D22 | Use Steps 4–11 in [HANDOFF](HANDOFF.md) as the next execution order: Replay, Assessment, early ATC routes, Planning plus immediate three-seed smoke, Invalidation, Resilience/Export, Evaluation, then Freeze/Package. | Project-owner handoff direction on 2026-09-08; it preserves the architecture's critical path and completes D15's route-rendering half during Phase 2. |
+| D31 | Browser envelope 1.4 adds invalidated plans, measured replan latency, approval feedback, and simulated approval audit records. The selected authored route replaces the Blue prediction only for planner safety geometry; invalidation and approval both call the existing `check_candidate` gate. | Closes Phase 4 without changing frozen v1 records or adding a second safety implementation. Approval changes audit state but does not change the plan binding it records, and no actuator path exists. |
 
 Unresolved data access, licensing, and organizer-pathway questions belong in [RIGHTS.md](../RIGHTS.md); they are not silently decided by these clarifications. New technical proposals must be validated against the actual sponsor schema in Phase 1.
 
@@ -270,3 +271,22 @@ Owner: C — UX and integration
 Contract changes: D28–D30. Frozen Phase 1 records remain 1.0. Browser envelope 1.3 adds `planning`; Shapely/OR-Tools/Hypothesis are exact pins in `pyproject.toml` and `uv.lock`.
 
 Coordinator review: Accepted for the synthetic Phase 3 gate. Proceed to Phase 4; do not treat the three-seed smoke as the later twenty-scenario benchmark.
+
+### Phase 4 — ATC coupling, invalidation, and simulated approval — 2026-09-09
+
+State: PASSED
+
+Gate evidence: The `late_invalidation` fixture passed. At 2.1 scenario seconds, `HOLD` → `TAXI_CLEAR` invalidated the displayed recommendation with `INTERSECTS_PROTECTED`, named BLUE01, preserved scenario time, and returned safe alternatives below the two-second limit. The real browser run measured **17.3 ms**, displayed resource-03 replacements, accepted a current approval, and showed its ATC revision in the simulated audit. Stale and invalidated approval attempts were rejected in backend tests. The complete suite passed **97 backend tests**, **95% combined branch coverage**, six frontend parser tests, TypeScript/Vite build, npm audit with zero vulnerabilities, and the three-seed Phase 3 regression smoke.
+
+Owner: Phase 4 integration
+1. What changed: Selected authored Blue routes now replace that track's planning prediction; old plans are revalidated with the shared hard gate; invalidations, latency, approval feedback, and accepted simulated audit records stream in browser envelope 1.4.
+2. How it helps the mission: An ATC movement visibly removes unsafe recommendations and replaces them before a reviewer can approve obsolete data.
+3. Inputs and outputs: Assessed tracks, authored routes, resources, scenario time, and full state binding produce a new `PlanningResult`, invalidation records, and in-memory simulated approvals. Evaluator truth remains absent.
+4. How to run and test: Run the README check block plus `uv run pytest -q tests/test_phase4.py`; use the generated golden runtime for the browser sequence.
+5. Exact demo clicks: Pause near 2.1s; select **BLUE01**; click **HOLD**, then **TAXI CLEAR**; read the invalidation and replan time; enter an approver and click **Approve simulation**; expand the approval audit.
+6. Known limitations: Audit records are connection-local and reset with the replay; persistence/export belongs to Phase 5. The fixture uses reviewed authored routes rather than A*; `REROUTE` remains cut by D16. The full accessibility, mutation, soak, and clean-machine gates remain later work.
+7. Next owner and next concrete task: A implements Phase 5 degraded/blackout policy, JSON/CoT export, and the independent consumer without changing the shared safety gate.
+
+Contract changes: D31. Browser envelope advances from 1.3 to 1.4; frozen Python records remain 1.0.
+
+Coordinator review: Accepted for the synthetic Phase 4 gate. Proceed to Phase 5; simulated approval is an audit record only.
