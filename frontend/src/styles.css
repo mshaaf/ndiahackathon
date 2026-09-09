@@ -42,6 +42,18 @@ p { margin: 0; }
 .rejections { margin-top: 14px; }
 .rejections summary { cursor: pointer; font-weight: 700; }
 .rejections p { margin-top: 8px; font-size: 0.8125rem; }
+.rejection-empty { color: #4c6272; font-style: italic; }
+.rejection-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 12px; }
+.rejection-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; background: #fff0d8; color: #663d00; border: 1px solid #f0c38a; }
+.rejection-pill .pill-count { display: inline-block; background: #fce1be; padding: 0 6px; border-radius: 10px; font-size: 0.7rem; }
+.rejection-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.rejection-item { padding: 10px 12px; background: #fafbfc; border: 1px solid #d3dde4; border-radius: 5px; font-size: 0.8125rem; }
+.rejection-item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.rejection-code { font-weight: 700; color: #925700; font-size: 0.78rem; letter-spacing: 0.02em; }
+.rejection-text { color: #334b5c; margin: 0; }
+.rejection-assignments { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
+.rejection-assignments code { font-size: 0.75rem; padding: 2px 6px; background: #e8eef2; border-radius: 3px; font-family: ui-monospace, "SFMono-Regular", monospace; }
+kbd.shortcut { display: inline-block; font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: 0.7rem; padding: 1px 5px; border-radius: 3px; background: #eef2f5; border: 1px solid #b9c7d1; color: #4c6272; margin-left: 6px; vertical-align: middle; }
 h2 { font-size: 1rem; margin: 0 0 12px; }
 h2 span { font-weight: 400; color: #4c6272; margin-left: 8px; }
 ul { list-style: none; padding: 0; margin: 0; }

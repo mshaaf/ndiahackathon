@@ -32,6 +32,8 @@ export function App() {
   const [preset, setPreset] = useState('Nominal');
   const [seed, setSeed] = useState('20260908');
   const assessed = Object.fromEntries((snapshot?.assessed_tracks ?? []).map((track) => [track.track_id, track]));
+  const snapshotRef = useRef<Snapshot | undefined>(undefined);
+  snapshotRef.current = snapshot;
   const rejectionCounts = Object.entries((snapshot?.planning.rejections ?? []).reduce<Record<string, number>>((counts, rejection) => {
     counts[rejection.reason_code] = (counts[rejection.reason_code] ?? 0) + 1;
     return counts;
@@ -44,6 +46,37 @@ export function App() {
     setError('');
     socketRef.current.send(JSON.stringify(command));
   }
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      const activeTag = (document.activeElement?.tagName ?? '').toLowerCase();
+      if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') {
+        return;
+      }
+      const current = snapshotRef.current;
+      if (!current) return;
+
+      if (event.code === 'Space') {
+        event.preventDefault();
+        if (!current.clock.complete) {
+          send({ action: current.clock.rate === 0 ? 'resume' : 'pause' });
+        }
+      } else if (event.code === 'KeyR' && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        send({ action: 'reset' });
+      } else if (event.key >= '1' && event.key <= '6') {
+        const rates = [0.5, 1, 2, 4, 8, 16];
+        const rateIndex = Number(event.key) - 1;
+        if (rates[rateIndex] !== undefined) {
+          event.preventDefault();
+          send({ action: 'rate', rate: rates[rateIndex] });
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     let source: GeoJSONSource | undefined;
@@ -156,11 +189,11 @@ export function App() {
       </section>
       <section className="controls" aria-label="Replay controls">
         <button disabled={!snapshot || snapshot.clock.complete} onClick={() => send({ action: snapshot?.clock.rate === 0 ? 'resume' : 'pause' })}>
-          {snapshot?.clock.rate === 0 ? 'Resume' : 'Pause'}</button>
-        <button disabled={!snapshot} onClick={() => send({ action: 'reset' })}>Reset replay</button>
-        <label>Speed <select aria-label="Replay speed" value={snapshot?.clock.rate || 1}
+          {snapshot?.clock.rate === 0 ? 'Resume' : 'Pause'} <kbd className="shortcut">Space</kbd></button>
+        <button disabled={!snapshot} onClick={() => send({ action: 'reset' })}>Reset replay <kbd className="shortcut">R</kbd></button>
+        <label>Speed <select aria-label="Replay speed" title="Use keys 1–6 to set speed" value={snapshot?.clock.rate || 1}
           onChange={(e) => send({ action: 'rate', rate: Number(e.target.value) })}>
-          {[0.5, 1, 2, 4, 8, 16].map((rate) => <option key={rate} value={rate}>{rate}×</option>)}
+          {[0.5, 1, 2, 4, 8, 16].map((rate, i) => <option key={rate} value={rate}>{rate}× ({i + 1})</option>)}
         </select></label>
         <span>{snapshot?.clock.seconds.toFixed(1) ?? '0.0'} / {snapshot?.clock.duration_s.toFixed(1) ?? '—'} seconds</span>
       </section>
@@ -225,9 +258,35 @@ export function App() {
           {!snapshot.planning.coas.length && <p className="no-safe">No simulated assignment passed every hard constraint.</p>}
           <details className="rejections">
             <summary>Candidate rejection drawer · {snapshot.planning.rejections.length} checks blocked</summary>
-            <p>{rejectionCounts.map(([reason, count]) => `${reason.replaceAll('_', ' ')}: ${count}`).join(' · ') || 'No rejected candidates.'}</p>
-            {rejectionExamples.map((rejection) => <p key={rejection.reason_code}>
-              <strong>{rejection.reason_code.replaceAll('_', ' ')}</strong> — {rejection.reason_text}</p>)}
+            {rejectionCounts.length > 0 ? (
+              <div className="rejection-pills" aria-label="Rejection summary badges">
+                {rejectionCounts.map(([reason, count]) => (
+                  <span className="rejection-pill" key={reason}>
+                    <span className="pill-label">{reason.replaceAll('_', ' ')}</span>
+                    <span className="pill-count">{count}</span>
+                  </span>
+                ))}
+              </div>
+            ) : <p className="rejection-empty">No rejected candidates.</p>}
+            <div className="rejection-list">
+              {rejectionExamples.map((rejection) => (
+                <div className="rejection-item" key={rejection.reason_code}>
+                  <div className="rejection-item-header">
+                    <span className="rejection-code">{rejection.reason_code.replaceAll('_', ' ')}</span>
+                  </div>
+                  <p className="rejection-text">{rejection.reason_text}</p>
+                  {rejection.assignments.length > 0 && (
+                    <div className="rejection-assignments">
+                      {rejection.assignments.map((assignment) => (
+                        <code key={`${assignment.resource_id}-${assignment.track_id}-${assignment.slot_index}`}>
+                          {assignment.resource_id} → {assignment.track_id.slice(0, 8)} (slot {assignment.slot_index})
+                        </code>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </details>
         </> : <p>Waiting for assessed state.</p>}
       </section>

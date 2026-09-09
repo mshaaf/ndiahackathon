@@ -109,3 +109,21 @@ test('accepts command feedback with a new transport sequence and unchanged state
   assert.equal(shouldAcceptSnapshot(paused, parsed), true);
   assert.equal(shouldAcceptSnapshot(parsed, paused), false);
 });
+
+test('parses planning result with multiple candidate rejections and assignments', () => {
+  const value = fixture();
+  value.planning.rejections.push({
+    schema_version: '1.0',
+    assignments: [
+      { schema_version: '1.0', resource_id: 'effector-2', track_id: '00000000-0000-4000-8000-000000000001',
+        slot_index: 1, start_at: '2026-09-08T12:00:05Z', effect_at: '2026-09-08T12:00:10Z' }
+    ],
+    reason_code: 'INTERSECTS_PROTECTED',
+    reason_text: 'Path intersects safety corridor of protected flight.',
+  });
+  const parsed = parseSnapshot(JSON.stringify(value));
+  assert.equal(parsed.planning.rejections.length, 2);
+  assert.equal(parsed.planning.rejections[1].reason_code, 'INTERSECTS_PROTECTED');
+  assert.equal(parsed.planning.rejections[1].assignments[0].resource_id, 'effector-2');
+});
+
