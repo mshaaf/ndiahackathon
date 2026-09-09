@@ -27,6 +27,8 @@ Open `http://127.0.0.1:8000`. The server receives only `artifacts/runtime/golden
 
 Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Select **BLUE01**, then **HOLD** or **TAXI CLEAR**, to preview the authored route and sampled uncertainty areas. Fault presets and the seed apply with **Apply and restart**. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
 
+Paused and completed sessions keep their time, update number and state version fixed until something changes. Controls remain available; an invalid command returns feedback without changing the state version.
+
 The dashboard reports source identity claims, including retained contradictions; it does not generate an assessed hostile category. The route areas are illustrative samples, not a continuous safety gate or an operational clearance.
 
 Run the current checks with:

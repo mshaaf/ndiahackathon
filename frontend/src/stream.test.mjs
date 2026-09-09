@@ -66,3 +66,15 @@ test('reset accepts a new run with monotonic sequence and ignores old snapshots'
   assert.equal(shouldAcceptSnapshot(reset, before), false);
   assert.equal(shouldAcceptSnapshot(reset, reset), false);
 });
+
+test('accepts command feedback with a new transport sequence and unchanged state binding', () => {
+  const paused = fixture();
+  paused.clock.rate = 0;
+  const feedback = structuredClone(paused);
+  feedback.sequence += 1;
+  feedback.command_error = 'Invalid command; replay controls were not changed.';
+  const parsed = parseSnapshot(JSON.stringify(feedback));
+  assert.deepEqual(parsed.binding, paused.binding);
+  assert.equal(shouldAcceptSnapshot(paused, parsed), true);
+  assert.equal(shouldAcceptSnapshot(parsed, paused), false);
+});

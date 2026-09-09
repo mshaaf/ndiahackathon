@@ -31,6 +31,8 @@ Phase 2 is still partial. The dashboard displays source claims and freshness; it
 
 The live check exposed snapshot churn: while paused, scenario time stayed fixed but `sequence` advanced from 2007 to 2014 in 0.65 seconds. The same polling continues after replay completion. `Session.snapshot()` increments `state_version` on every transport tick even when no state changed. Fix this in the assessment/integration branch before plans use `StateBinding`; otherwise an unchanged paused screen can make a plan appear obsolete.
 
+Continuation update, 2026-09-09: this churn is fixed in the working tree on `codex/phase2-session-stability` (baseline `d3fdfda`). Snapshot reads are stable and idle sessions await commands; transport error feedback keeps the same state binding. The fix has 32 passing backend tests and 5 passing frontend tests. See [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md) for the current checkpoint and merge status. Assessment and the full Phase 2 gate remain incomplete.
+
 The pseudocode also names tunables absent from frozen `config.py`: `AMBIGUITY_MARGIN_M`, `INBOUND_REFERENCE_MPS`, `STALE_UNCERTAINTY_MULTIPLIER`, and the planning fallback `MAX_BUFFER_M`. Agree their definitions before either branch uses them. Add them once in `config.py`, record the contract change in BUILD_BOOK, and do not inline substitute numbers in two modules.
 
 ## Work split

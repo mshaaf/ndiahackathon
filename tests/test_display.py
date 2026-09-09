@@ -74,7 +74,7 @@ def test_fresh_at_threshold_and_stale_route_expands(golden_runtime):
 
 def test_session_reset_and_invalid_command_are_atomic(golden_runtime):
     session = Session(golden_runtime)
-    first = session.snapshot()
+    first = session.publish_snapshot()
     for command in ['{', '[]', '{"action": []}', '{"action":"unknown"}',
                     '{"action":"rate","rate":-1}', '{"action":"pause","extra":1}', ' ' * 4097]:
         with pytest.raises(ValueError):
@@ -95,7 +95,7 @@ def test_session_reset_and_invalid_command_are_atomic(golden_runtime):
     session.command('{"action":"reset"}')
     session.advance(100)
     assert session.replay.delivered_hash() == expected_hash and session.run_id != old_run
-    assert session.snapshot()["sequence"] > first["sequence"]
+    assert session.publish_snapshot()["sequence"] > first["sequence"]
 
 
 def test_websocket_controls_and_independent_sessions(golden_path):
@@ -109,8 +109,12 @@ def test_websocket_controls_and_independent_sessions(golden_path):
                 if paused["clock"]["rate"] == 0:
                     break
             assert paused["clock"]["rate"] == 0
+            # Error feedback remains available while paused; there is no idle heartbeat.
+            a.send_json({"action": "unknown"})
             again = a.receive_json()
             assert again["simulation_time"] == paused["simulation_time"]
+            assert again["binding"] == paused["binding"]
+            assert "command_error" in again
             a.send_json({"action": "reset"})
             for _ in range(20):
                 reset = a.receive_json()
