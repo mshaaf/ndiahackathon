@@ -2,7 +2,7 @@
 
 import asyncio
 from copy import deepcopy
-from datetime import datetime, timedelta
+from datetime import timedelta
 import hashlib
 import json
 import os
@@ -19,6 +19,7 @@ from . import config
 from .assessment import Assessment
 from .display import ReportedDisplay, route_position, route_preview
 from .models import (
+    ApprovalRecord,
     AssessedTrack,
     AtcOption,
     CourseOfAction,
@@ -111,16 +112,6 @@ class ApproveCommand(ReplayRecord):
     coa_id: UUID
     approver: Annotated[str, Field(min_length=1, max_length=128, pattern=r".*\S.*")]
     binding: StateBinding
-
-
-class ApprovalRecord(ReplayRecord):
-    schema_version: Literal["1.0"] = "1.0"
-    coa_id: UUID
-    fingerprint: str
-    approver: str
-    approved_at: datetime
-    binding: StateBinding
-    simulated: Literal[True] = True
 
 
 class Session:

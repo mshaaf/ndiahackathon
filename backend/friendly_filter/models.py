@@ -74,6 +74,12 @@ class AtcOption(StrEnum):
     REROUTE = "REROUTE"
 
 
+class PlanStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    INVALID = "INVALID"
+    APPROVED = "APPROVED"
+
+
 class RejectionReason(StrEnum):
     PROTECTED_TARGET = "PROTECTED_TARGET"
     UNKNOWN_TARGET = "UNKNOWN_TARGET"
@@ -200,9 +206,20 @@ class CourseOfAction(VersionedRecord):
     rank: Annotated[int, Field(ge=1)]
     fingerprint: str
     bound_state: StateBinding
+    status: PlanStatus = PlanStatus.ACTIVE
+    invalid_reason: str | None = None
 
 
 class RejectedCandidate(VersionedRecord):
     assignments: list[Assignment]
     reason_code: RejectionReason
     reason_text: str
+
+
+class ApprovalRecord(VersionedRecord):
+    coa_id: UUID
+    fingerprint: str
+    approver: str
+    approved_at: AwareDatetime
+    binding: StateBinding
+    simulated: Literal[True] = True
