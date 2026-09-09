@@ -47,7 +47,7 @@ def test_runtime_metadata_and_moving_track(tmp_path):
         json.dumps(
             {
                 "scenario": scenario,
-                "atc_routes": [],
+                "atc": None,
                 "resources": [],
                 "events": [
                     {"at_seconds": 0, "stream_id": "track-1", "observation": observation},

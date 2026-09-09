@@ -1,113 +1,235 @@
-"""Phase 1 HTTP and WebSocket walking skeleton."""
+"""Local synthetic replay API and connection-scoped browser sessions."""
 
 import asyncio
+import hashlib
 import json
 import os
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Literal
+from uuid import uuid4
 
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field, model_validator
 
-from .models import IdentityKind, Observation
+from . import config
+from .display import ReportedDisplay, route_preview
+from .models import ENU, ResourceStatus
+from .replay import FaultProfile, Replay, ReplayRecord
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RUNTIME_PATH = REPOSITORY_ROOT / "artifacts/runtime/golden/runtime.json"
 FRONTEND_DIST = REPOSITORY_ROOT / "frontend/dist"
-DISPLAY_ORIGIN_LONGITUDE = 0.0
-DISPLAY_ORIGIN_LATITUDE = 0.0
-# ponytail: local display projection; use pyproj if the map leaves this notional origin.
-METERS_PER_DEGREE_AT_EQUATOR = 111_320.0
 
 
-class _RuntimeEvent(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    at_seconds: Annotated[float, Field(ge=0)]
-    stream_id: Annotated[str, Field(min_length=1, max_length=128)]
-    observation: Observation
+class Origin(ReplayRecord):
+    latitude: Annotated[float, Field(ge=-90, le=90)]
+    longitude: Annotated[float, Field(ge=-180, le=180)]
+    altitude_m: float
 
 
-def _load_runtime(path: Path) -> dict[str, Any]:
-    with path.open(encoding="utf-8") as source:
-        return json.load(source)
+class Scenario(ReplayRecord):
+    schema_version: Literal["1.0"] = "1.0"
+    scenario_id: Annotated[str, Field(min_length=1, max_length=128)]
+    name: Annotated[str, Field(min_length=1, max_length=256)]
+    seed: Annotated[int, Field(strict=True, ge=0, le=2**53 - 1)]
+    duration_seconds: Annotated[float, Field(ge=0, le=86400)] = 0
+    tick_seconds: Annotated[float, Field(gt=0)] = 1
+    origin: Origin
 
 
-def _feature(stream_id: str, observation: Observation) -> dict[str, Any]:
-    position = observation.position
-    assert position is not None
-    identity = observation.claimed_identity
-    return {
-        "type": "Feature",
-        "id": stream_id,
-        "geometry": {
-            "type": "Point",
-            "coordinates": [
-                DISPLAY_ORIGIN_LONGITUDE
-                + position.east_m / METERS_PER_DEGREE_AT_EQUATOR,
-                DISPLAY_ORIGIN_LATITUDE
-                + position.north_m / METERS_PER_DEGREE_AT_EQUATOR,
-            ],
-        },
-        "properties": {
-            "stream_id": stream_id,
-            "label": identity.callsign if identity and identity.callsign else stream_id,
-            "modality": observation.modality.value,
-            "observed_at": observation.observed_at.isoformat(),
-            "identity_kind": identity.kind.value if identity else IdentityKind.UNKNOWN.value,
-        },
-    }
+class AtcRoutes(ReplayRecord):
+    revision: Annotated[int, Field(ge=0)] = 0
+    aircraft_stream_id: Annotated[str, Field(min_length=1, max_length=128)]
+    routes: dict[Literal["HOLD", "TAXI_CLEAR"], list[ENU]]
+
+    @model_validator(mode="after")
+    def check_routes(self):
+        for points in self.routes.values():
+            if not 2 <= len(points) <= 100 or any(
+                not -config.DISPLAY_ENU_LIMIT_M <= v <= config.DISPLAY_ENU_LIMIT_M
+                for p in points for v in p.model_dump().values()
+            ):
+                raise ValueError("invalid synthetic route")
+        return self
+
+
+class Runtime(ReplayRecord):
+    scenario: Scenario
+    atc: AtcRoutes | None = None
+    resources: list[ResourceStatus]
+    events: Annotated[list[dict], Field(max_length=config.MAX_RUNTIME_EVENTS)]
+
+
+def _load_runtime(path: Path) -> Runtime:
+    with path.open("rb") as source:
+        data = source.read(config.MAX_RUNTIME_BYTES + 1)
+    if len(data) > config.MAX_RUNTIME_BYTES:
+        raise ValueError("runtime file is too large")
+    return Runtime.model_validate_json(data)
+
+
+class Pause(ReplayRecord):
+    action: Literal["pause", "resume", "reset"]
+
+
+class Rate(ReplayRecord):
+    action: Literal["rate"]
+    rate: Annotated[float, Field(gt=0, le=config.REPLAY_MAX_RATE)]
+
+
+class ResetProfile(ReplayRecord):
+    action: Literal["faults"]
+    profile: FaultProfile
+    seed: Annotated[int, Field(strict=True, ge=0, le=2**53 - 1)]
+
+
+class AtcCommand(ReplayRecord):
+    action: Literal["atc"]
+    stream_id: str
+    option: Literal["CONTINUE", "HOLD", "TAXI_CLEAR"]
+
+
+class Session:
+    def __init__(self, runtime: Runtime):
+        self.runtime = runtime
+        self.sequence = 0
+        self.profile = FaultProfile()
+        self.seed = runtime.scenario.seed
+        self.reset()
+
+    def reset(self):
+        self.replay = Replay(self.runtime.events, seed=self.seed, profile=self.profile,
+                             duration_s=self.runtime.scenario.duration_seconds)
+        self.display = ReportedDisplay()
+        self.run_id = str(uuid4())
+        self.state_version = 0
+        self.atc_revision = 0
+        self.option = "CONTINUE"
+        fingerprint_input = {"seed": self.seed, "profile": self.profile.model_dump(mode="json"),
+                             "runtime": self.runtime.model_dump(mode="json"),
+                             "config": {k: v for k, v in vars(config).items() if k.isupper()}}
+        self.fingerprint = hashlib.sha256(json.dumps(fingerprint_input, sort_keys=True,
+                                                    separators=(",", ":")).encode()).hexdigest()
+        self.advance(0)
+
+    def advance(self, elapsed_s: float):
+        self.display.apply(self.replay.advance(elapsed_s))
+
+    def command(self, data: str) -> None:
+        if len(data.encode()) > config.MAX_COMMAND_BYTES:
+            raise ValueError("command too large")
+        raw = json.loads(data)
+        if not isinstance(raw, dict) or not isinstance(raw.get("action"), str):
+            raise ValueError("command must have an action")
+        model = {"pause": Pause, "resume": Pause, "reset": Pause, "rate": Rate,
+                 "faults": ResetProfile, "atc": AtcCommand}.get(raw["action"])
+        if model is None:
+            raise ValueError("unknown replay command")
+        command = model.model_validate(raw)
+        if isinstance(command, AtcCommand):
+            atc = self.runtime.atc
+            stream = self.display.streams.get(command.stream_id)
+            if not atc or command.stream_id != atc.aircraft_stream_id or not stream or stream.identity_kind != "BLUE":
+                raise ValueError("select the fixture's Blue aircraft first")
+            if command.option != "CONTINUE" and command.option not in atc.routes:
+                raise ValueError("route unavailable")
+            if self.option != command.option:
+                self.option = command.option
+                self.atc_revision += 1
+        elif isinstance(command, ResetProfile):
+            self.profile, self.seed = command.profile, command.seed
+            self.reset()
+        elif isinstance(command, Rate):
+            self.replay.clock.set_rate(command.rate)
+        elif command.action == "reset":
+            self.reset()
+        elif command.action == "pause":
+            self.replay.clock.pause()
+        elif command.action == "resume":
+            self.replay.clock.resume()
+
+    def snapshot(self) -> dict:
+        self.sequence += 1
+        self.state_version += 1
+        health = self.replay.health_snapshot()
+        features = self.display.features(self.replay, health)
+        atc = self.runtime.atc
+        selected = next((f for f in features if atc and f["id"] == atc.aircraft_stream_id), None)
+        return {
+            "type": "FeatureCollection", "schema_version": "1.1",
+            "scenario_id": self.runtime.scenario.scenario_id, "sequence": self.sequence,
+            "simulation_time": self.replay.now.isoformat(), "features": features,
+            "binding": {"run_id": self.run_id, "state_version": self.state_version,
+                        "config_fingerprint": self.fingerprint, "atc_revision": self.atc_revision},
+            "clock": {"seconds": self.replay.clock.scenario_t, "rate": self.replay.clock.rate,
+                      "complete": self.replay.complete, "duration_s": self.replay.end_s},
+            "health": health, "seed": self.seed, "fault_profile": self.profile.model_dump(mode="json"),
+            "atc": {"aircraft_stream_id": atc.aircraft_stream_id if atc else None,
+                    "option": self.option, "revision": self.atc_revision,
+                    "preview": route_preview(self.display.streams.get(atc.aircraft_stream_id) if atc else None,
+                        atc.routes if atc else {}, self.option,
+                        selected["properties"]["is_stale"] if selected else False)},
+        }
 
 
 def create_app(runtime_path: str | Path | None = None, speed: float = 1.0) -> FastAPI:
-    scenario_path = Path(
-        runtime_path
-        or os.environ.get("FRIENDLY_FILTER_SCENARIO", DEFAULT_RUNTIME_PATH)
-    )
+    scenario_path = Path(runtime_path or os.environ.get("FRIENDLY_FILTER_SCENARIO", DEFAULT_RUNTIME_PATH))
     app = FastAPI(title="Friendly Filter Plus")
 
     @app.get("/api/v1/scenarios")
-    def scenarios() -> list[dict[str, Any]]:
-        return [_load_runtime(scenario_path)["scenario"]]
+    def scenarios() -> list[dict]:
+        try:
+            return [_load_runtime(scenario_path).scenario.model_dump(mode="json", exclude_unset=True)]
+        except (OSError, ValueError) as error:
+            raise HTTPException(503, "Runtime unavailable; run the scenario loader.") from error
 
     @app.websocket("/api/v1/stream")
     async def stream(websocket: WebSocket) -> None:
-        runtime = _load_runtime(scenario_path)
-        events = [_RuntimeEvent.model_validate(event) for event in runtime["events"]]
         await websocket.accept()
-
-        latest: dict[str, Observation] = {}
-        previous_at = 0.0
-        for sequence, event in enumerate(events, start=1):
-            if speed > 0:
-                await asyncio.sleep(max(0.0, event.at_seconds - previous_at) / speed)
-            previous_at = event.at_seconds
-
-            current = latest.get(event.stream_id)
-            if event.observation.position is not None and (
-                current is None or event.observation.observed_at >= current.observed_at
-            ):
-                latest[event.stream_id] = event.observation
-
-            await websocket.send_json(
-                {
-                    "type": "FeatureCollection",
-                    "schema_version": "1.0",
-                    "scenario_id": runtime["scenario"]["scenario_id"],
-                    "sequence": sequence,
-                    "simulation_time": event.observation.observed_at.isoformat(),
-                    "features": [
-                        _feature(stream_id, observation)
-                        for stream_id, observation in latest.items()
-                    ],
-                }
-            )
-        await websocket.close(code=1000)
+        try:
+            session = Session(_load_runtime(scenario_path))
+        except (OSError, ValueError):
+            await websocket.close(code=1011, reason="Runtime unavailable; run the scenario loader.")
+            return
+        if speed > 0:
+            session.replay.clock.set_rate(speed)
+        loop = asyncio.get_running_loop()
+        last_wall = loop.time()
+        receive = asyncio.create_task(websocket.receive())
+        try:
+            await websocket.send_json(session.snapshot())
+            while True:
+                done, _ = await asyncio.wait({receive}, timeout=config.REPLAY_TICK_S)
+                now = loop.time()
+                elapsed = now - last_wall
+                last_wall = now
+                # speed=0 is an accelerated test adapter, not pause.
+                session.advance(session.replay.end_s if speed == 0 else elapsed)
+                command_error = None
+                if done:
+                    message = receive.result()
+                    if message["type"] == "websocket.disconnect":
+                        break
+                    try:
+                        if not isinstance(message.get("text"), str):
+                            raise ValueError("commands must be JSON text")
+                        session.command(message["text"])
+                    except ValueError:
+                        command_error = "Invalid command; replay controls were not changed."
+                    receive = asyncio.create_task(websocket.receive())
+                snapshot = session.snapshot()
+                if command_error:
+                    snapshot["command_error"] = command_error
+                await websocket.send_json(snapshot)
+        except WebSocketDisconnect:
+            pass
+        finally:
+            receive.cancel()
+            await asyncio.gather(receive, return_exceptions=True)
 
     if FRONTEND_DIST.is_dir():
         app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
-
     return app
 
 

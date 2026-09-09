@@ -2,7 +2,7 @@
 
 A local, simulation-only dashboard that makes aircraft protection, uncertainty, and ATC/ADOC coordination visible while comparing abstract response plans for a synthetic Counter-UAS scenario.
 
-**Status: Phase 1 walking skeleton implemented.** The golden synthetic scenario streams to the local browser; assessment, planning, benchmarks, and later-phase safety claims remain unimplemented.
+**Status: Phase 2 infrastructure implemented; full Phase 2 gate incomplete.** Deterministic replay, seeded faults, feed health, reported identity/freshness, and synthetic Blue ATC previews work. Hostile-target scoring, threat prediction, the assessment decision engine, planning and benchmarks are not implemented. See the [Phase 2 recovery handoff](docs/PHASE_2_HANDOFF.md) for the scope, checkpoints and verification evidence.
 
 ## Start here
 
@@ -11,7 +11,7 @@ A local, simulation-only dashboard that makes aircraft protection, uncertainty, 
 3. Freeze the v1 records defined in section 3 of the [original build plan](ndiahackbuildplan.txt) during Phase 1.
 4. Build and verify one phase at a time, recording evidence and the next handoff in the [build book](docs/BUILD_BOOK.md).
 
-## Run the Phase 1 skeleton
+## Run the local simulation
 
 Requires Python 3.11–3.13, [uv](https://docs.astral.sh/uv/), and Node.js.
 
@@ -25,10 +25,16 @@ uv run uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 
 Open `http://127.0.0.1:8000`. The server receives only `artifacts/runtime/golden/runtime.json`; evaluator truth is written separately under `artifacts/evaluator/golden/` and neither artifact is committed.
 
+Use **Pause**, **Resume**, **Reset replay**, and **Speed** to control scenario time. Select **BLUE01**, then **HOLD** or **TAXI CLEAR**, to preview the authored route and sampled uncertainty areas. Fault presets and the seed apply with **Apply and restart**. The scenario finishes at 20 seconds and keeps the connection open for reset. Each browser connection has its own replay session.
+
+The dashboard reports source identity claims, including retained contradictions; it does not generate an assessed hostile category. The route areas are illustrative samples, not a continuous safety gate or an operational clearance.
+
 Run the current checks with:
 
 ```sh
 uv run pytest
+uv run coverage run --branch --source=friendly_filter.replay,friendly_filter.display,friendly_filter.app -m pytest -q
+uv run coverage report -m --fail-under=80
 npm --prefix frontend test
 npm --prefix frontend run build
 ```
@@ -42,6 +48,7 @@ npm --prefix frontend run build
 | [Pseudocode](docs/pseudocode/) | Module-level algorithms and TDD anchors, one file per phase |
 | [Testing](docs/TESTING.md) | Invariants, metamorphic relations, adversarial fixtures, mutation set, self-application |
 | [Project handoff](docs/HANDOFF.md) | Verified Phase 1 baseline, current limits, setup commands, and ordered Steps 4–11 |
+| [Phase 2 recovery handoff](docs/PHASE_2_HANDOFF.md) | Current implementation, saved checkpoints, exact controls/API, measured checks, and remaining scope |
 | [Agent instructions](AGENTS.md) | Repository rules, bounded parallel work, review, and handoffs |
 | [Build book](docs/BUILD_BOOK.md) | Current status, decisions, evidence, and owner handoffs |
 | [Data card](docs/DATA_CARD.md) | Sources, transformations, limitations, and attribution |

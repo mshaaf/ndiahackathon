@@ -1,5 +1,7 @@
 # Project handoff
 
+**Current continuation point:** [Phase 2 implementation and recovery handoff](PHASE_2_HANDOFF.md). Replay/fault infrastructure, reported identity/freshness display and early synthetic ATC previews are implemented and verified there. Full assessment and the Phase 2 gate remain incomplete. The content below preserves the earlier Phase 1 snapshot and original execution plan; its “does not exist yet” list describes that historical baseline.
+
 Status snapshot: 2026-09-08
 
 Implementation baseline: `0e0fa0b`

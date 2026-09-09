@@ -1,4 +1,4 @@
-"""Phase 1 tunables transcribed from the contract pseudocode."""
+"""Frozen Phase 1 tunables plus bounded Phase 2 replay/display defaults."""
 
 from typing import Final
 
@@ -31,3 +31,15 @@ ENUM_MAX_COMBINATIONS: Final = 1_000_000
 SEED: Final = 7
 RULE_VERSION: Final = "1.0"
 MODEL_VERSION: Final[str | None] = None
+
+# Phase 2 synthetic replay and display limits (not decision-engine thresholds).
+HEALTH_WINDOW_S: Final = 60.0
+REPLAY_TICK_S: Final = 0.1
+REPLAY_MAX_RATE: Final = 16.0
+MAX_RUNTIME_BYTES: Final = 8_388_608
+MAX_RUNTIME_EVENTS: Final = 10_000
+MAX_COMMAND_BYTES: Final = 4096
+MAX_FAULT_DELAY_S: Final = 3600.0
+DISPLAY_ENU_LIMIT_M: Final = 100_000.0
+STALE_DISPLAY_MULTIPLIER: Final = 2.0
+DISPLAY_CIRCLE_SEGMENTS: Final = 32
