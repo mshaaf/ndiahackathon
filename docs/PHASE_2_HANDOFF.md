@@ -1,6 +1,18 @@
 # Phase 2 implementation and recovery handoff
 
-Updated: 2026-09-08. Baseline: `7a53d19`. Working branch: `codex/phase-2-replay-atc`.
+Updated: 2026-09-09. Continuation baseline: `d3fdfda`. Working branch: `codex/phase2-session-stability`.
+
+## Continuation checkpoint — 2026-09-09
+
+The first infrastructure implementation was committed as `5c9ee56` and merged in PR #1. PR #2 added the parallel-work document. This continuation fixes generic replay/session behavior; the full assessment gate below remains incomplete.
+
+- [x] Fetch current branches and resume from merged main on a clean continuation branch.
+- [x] Reproduce idle snapshot/state-version churn in a regression test (four regressions failed before the fix).
+- [x] Make state inspection stable; publish a new state version only when display state changes. Suppress idle WebSocket updates while paused/completed, preserving commands and error feedback.
+- [x] Test pause, completion, resume, reset, repeated commands and independent sessions through the WebSocket boundary.
+- [x] Run targeted/backend coverage and frontend checks; verify browser pause/reset; record actual results and remaining work.
+
+If interrupted, inspect `git status` and this checklist. Do not overwrite saved changes or infer that the full assessment module exists from these infrastructure fixes.
 
 Read this file first if the session ends. Work is saved in the working tree; do not reset or replace it with the baseline. The original Phase 2 requirements remain in [Replay](pseudocode/phase_2_replay.md), [Assessment](pseudocode/phase_2_assessment.md), and [project handoff](HANDOFF.md).
 
@@ -37,7 +49,7 @@ Hostile-target scoring, threat prediction, and classification intended to feed c
 
 ## Recovery commands
 
-First inspect `git status --short --branch` and this checkpoint list. Read current diffs before editing. The changes are saved on the working branch and have not been committed or pushed by this session.
+First inspect `git status --short --branch` and this checkpoint list. Read current diffs before editing. The initial implementation was merged in PR #1. Continuation changes on `codex/phase2-session-stability` are saved in the working tree and have not been committed or pushed by this session.
 
 The current workspace has `.venv` and `frontend/node_modules` installed. `uv` was not on PATH; this session bootstrapped it into `/private/tmp/friendly-filter-tools.frk7Mw/bin/uv`. That temporary path is not a portable prerequisite. Install uv normally for a new machine, then follow README. Commands that work in the current workspace:
 
@@ -51,7 +63,7 @@ npm --prefix frontend run build
 .venv/bin/python -m uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8000
 ```
 
-The local server was started on port 8000 for browser checks; check whether it is still running before starting another. Rebuild the frontend and restart the server after code changes, then reload the browser.
+The earlier server on port 8000 is still running the prior code. This continuation started a separate loopback server on **port 8001** for current browser checks (`.venv/bin/python -m uvicorn friendly_filter.app:app --host 127.0.0.1 --port 8001`). Use 8001 for the current implementation while that process is running. Rebuild the frontend and restart the intended server after code changes, then reload the browser.
 
 ## Files and interfaces
 
@@ -79,7 +91,15 @@ WebSocket commands are JSON text. Commands affect only the connection that sent 
 
 Invalid commands produce `command_error` on the next snapshot. Fault changes restart with a new run; reset restores 1× speed, CONTINUE, empty health/identity history and the same seed/profile. `speed=0` in `create_app` is an accelerated test adapter, not the pause control.
 
+Continuation semantics: `Session.snapshot()` now reads state without incrementing anything. State changes refresh a cached display and increment `state_version` only when its content differs. `Session.publish_snapshot()` returns a frame for a changed binding or an explicit command error; otherwise it returns `None`. A published frame increments only the transport `sequence`. Error feedback can therefore carry a newer sequence with the same binding. Paused/completed sessions await commands rather than polling; repeated no-op commands produce no new frame. Running scenario time and ages still update normally. Reset creates a new run, and transport sequence continues across it.
+
 ## Verification evidence
+
+Continuation on 2026-09-09: **32 backend tests passed**, **95% branch-enabled coverage** across replay/display/app, **5 frontend tests passed**, and TypeScript/Vite build passed. The new ASGI regression verifies that idle sessions emit no unsolicited frames, and that error feedback, reset and resume still work. Existing warnings below are unchanged. No dependency, frozen-record, planner or assessment change was made.
+
+Browser verification on port 8001: Pause held Update **45** and timestamp **14:00:04.487146+00:00** fixed during subsequent work. Resume and 16× speed advanced to Replay complete at **20s**, Update **57**, which stayed fixed on later inspection. Reset then Pause succeeded after completion, reaching Update **59** in a new run. No full-phase assessment claim follows from these session checks.
+
+Previous implementation evidence (2026-09-08):
 
 - Backend: **28 tests passed**. Final coverage with branches: **95% overall** (replay 95%, display 95%, app 94%). Includes rejection of malformed JSON and binary command frames without disconnecting the session.
 - Frontend: **4 parser/ordering tests passed**; TypeScript and Vite production build passed.

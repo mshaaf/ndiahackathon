@@ -170,3 +170,24 @@ Owner: C — UX and integration (implemented serially in this session)
 Contract changes: D23–D25 above; no frozen `models.py` edit. The stream no longer closes at the last packet; it remains connected at the declared scenario end so reset is usable. A new run gets a new run ID, reset state/ATC revision, and the same seed/profile unless explicitly changed.
 
 Coordinator review: Local automated and browser checks verify only the implemented infrastructure. Full Phase 2 remains incomplete; no approval for Phase 3 readiness or benchmark claims.
+
+### Phase 2 continuation — Stable replay sessions — 2026-09-09
+
+State: replay/session fix verified; full assessment gate remains incomplete.
+
+Baseline: `d3fdfda`; branch `codex/phase2-session-stability`. The initial infrastructure is already merged in PR #1; this continuation is saved locally and has not been committed or pushed.
+
+D26: Separate snapshot reads, display-state versions and transport sequences. `snapshot()` is a stable read. Updating clock/display/control content advances `state_version` only when content changes. `publish_snapshot()` emits changed state or command-error feedback and advances `sequence` only for that frame. An error frame may have a newer sequence with an unchanged binding. Paused/completed sessions wait for input without periodic broadcasts; reset remains available. Schema stays 1.1 and frozen Python records are unchanged. Producer: `app.py`; consumer: existing frontend sequence guard, with a new regression test. This entry is the shared contract notice.
+
+Owner: C — replay/session integration; implemented serially in this session.
+1. What changed: Fixed the snapshot churn reported in PARALLEL_WORK; added stable-read, terminal-state, transport/error and idle-WebSocket regression tests. Updated the prior heartbeat-dependent test to probe explicit error feedback instead.
+2. How it helps: Pausing leaves the displayed state stable and stops redundant traffic, while commands remain responsive.
+3. Inputs and outputs: Existing runtime fixture and JSON WebSocket commands; unchanged schema 1.1 output with corrected version/publication semantics.
+4. How to run and test: README and PHASE_2_HANDOFF commands. The new regressions failed before the change. Afterward, 32 backend tests passed; replay/display/app branch-enabled coverage was 95%; 5 frontend tests and the TypeScript/Vite build passed. Existing test-client deprecation and MapLibre bundle-size warnings remain.
+5. Exact demo clicks: Open the current test server at `http://127.0.0.1:8001`; Pause freezes both Simulation time and Update. Resume advances them; at Replay complete both settle again. Reset replay starts a new run.
+6. Known limitations: No spatial association, evidence scoring, hostile-target prediction, assessment output or full Phase 2 gate is implemented. The prior port-8000 process runs older code; the current test process uses port 8001. No clean-machine offline or full accessibility certification is claimed.
+7. Next owner and next concrete task: Review the continuation diff and its handoff; preserve the explicit incomplete assessment status. Any further assessment scope must remain non-targeting.
+
+Coordinator review: Automated checks verify the session fix; this is not completion of the original assessment/classification gate.
+
+Browser evidence for this continuation: on port 8001, Pause held Update 45 and scenario time 4.487146s fixed. Resume/16× reached Replay complete at 20s with Update 57, which also stayed fixed. Reset and Pause then succeeded in a new run at Update 59. The continuation checkpoint is complete for this session fix only.

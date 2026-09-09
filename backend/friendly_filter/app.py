@@ -1,6 +1,7 @@
 """Local synthetic replay API and connection-scoped browser sessions."""
 
 import asyncio
+from copy import deepcopy
 import hashlib
 import json
 import os
@@ -94,6 +95,7 @@ class Session:
     def __init__(self, runtime: Runtime):
         self.runtime = runtime
         self.sequence = 0
+        self._published_binding: tuple[str, int] | None = None
         self.profile = FaultProfile()
         self.seed = runtime.scenario.seed
         self.reset()
@@ -104,6 +106,7 @@ class Session:
         self.display = ReportedDisplay()
         self.run_id = str(uuid4())
         self.state_version = 0
+        self._snapshot_content: dict | None = None
         self.atc_revision = 0
         self.option = "CONTINUE"
         fingerprint_input = {"seed": self.seed, "profile": self.profile.model_dump(mode="json"),
@@ -114,7 +117,11 @@ class Session:
         self.advance(0)
 
     def advance(self, elapsed_s: float):
-        self.display.apply(self.replay.advance(elapsed_s))
+        previous_time = self.replay.clock.scenario_t
+        events = self.replay.advance(elapsed_s)
+        self.display.apply(events)
+        if self._snapshot_content is None or events or previous_time != self.replay.clock.scenario_t:
+            self._refresh_state()
 
     def command(self, data: str) -> None:
         if len(data.encode()) > config.MAX_COMMAND_BYTES:
@@ -148,20 +155,18 @@ class Session:
             self.replay.clock.pause()
         elif command.action == "resume":
             self.replay.clock.resume()
+        self._refresh_state()
 
-    def snapshot(self) -> dict:
-        self.sequence += 1
-        self.state_version += 1
+    def _refresh_state(self) -> None:
+        """Version changes in displayed content, never snapshot reads or send attempts."""
         health = self.replay.health_snapshot()
         features = self.display.features(self.replay, health)
         atc = self.runtime.atc
         selected = next((f for f in features if atc and f["id"] == atc.aircraft_stream_id), None)
-        return {
+        content = {
             "type": "FeatureCollection", "schema_version": "1.1",
-            "scenario_id": self.runtime.scenario.scenario_id, "sequence": self.sequence,
+            "scenario_id": self.runtime.scenario.scenario_id,
             "simulation_time": self.replay.now.isoformat(), "features": features,
-            "binding": {"run_id": self.run_id, "state_version": self.state_version,
-                        "config_fingerprint": self.fingerprint, "atc_revision": self.atc_revision},
             "clock": {"seconds": self.replay.clock.scenario_t, "rate": self.replay.clock.rate,
                       "complete": self.replay.complete, "duration_s": self.replay.end_s},
             "health": health, "seed": self.seed, "fault_profile": self.profile.model_dump(mode="json"),
@@ -171,6 +176,30 @@ class Session:
                         atc.routes if atc else {}, self.option,
                         selected["properties"]["is_stale"] if selected else False)},
         }
+        if content != self._snapshot_content:
+            self._snapshot_content = content
+            self.state_version += 1
+
+    def snapshot(self) -> dict:
+        """Read current state without changing the binding or transport sequence."""
+        return {
+            **deepcopy(self._snapshot_content),
+            "sequence": self.sequence,
+            "binding": {"run_id": self.run_id, "state_version": self.state_version,
+                        "config_fingerprint": self.fingerprint, "atc_revision": self.atc_revision},
+        }
+
+    def publish_snapshot(self, command_error: str | None = None) -> dict | None:
+        """Produce a new transport frame only for changed state or error feedback."""
+        binding = (self.run_id, self.state_version)
+        if binding == self._published_binding and command_error is None:
+            return None
+        self.sequence += 1
+        snapshot = self.snapshot()
+        if command_error is not None:
+            snapshot["command_error"] = command_error
+        self._published_binding = binding
+        return snapshot
 
 
 def create_app(runtime_path: str | Path | None = None, speed: float = 1.0) -> FastAPI:
@@ -193,14 +222,16 @@ def create_app(runtime_path: str | Path | None = None, speed: float = 1.0) -> Fa
             await websocket.close(code=1011, reason="Runtime unavailable; run the scenario loader.")
             return
         if speed > 0:
-            session.replay.clock.set_rate(speed)
+            session.command(json.dumps({"action": "rate", "rate": speed}))
         loop = asyncio.get_running_loop()
         last_wall = loop.time()
         receive = asyncio.create_task(websocket.receive())
         try:
-            await websocket.send_json(session.snapshot())
+            await websocket.send_json(session.publish_snapshot())
             while True:
-                done, _ = await asyncio.wait({receive}, timeout=config.REPLAY_TICK_S)
+                running = session.replay.clock.rate > 0 and not session.replay.complete
+                # An idle run waits for a command/disconnect rather than polling.
+                done, _ = await asyncio.wait({receive}, timeout=config.REPLAY_TICK_S if running else None)
                 now = loop.time()
                 elapsed = now - last_wall
                 last_wall = now
@@ -218,10 +249,9 @@ def create_app(runtime_path: str | Path | None = None, speed: float = 1.0) -> Fa
                     except ValueError:
                         command_error = "Invalid command; replay controls were not changed."
                     receive = asyncio.create_task(websocket.receive())
-                snapshot = session.snapshot()
-                if command_error:
-                    snapshot["command_error"] = command_error
-                await websocket.send_json(snapshot)
+                snapshot = session.publish_snapshot(command_error=command_error)
+                if snapshot is not None:
+                    await websocket.send_json(snapshot)
         except WebSocketDisconnect:
             pass
         finally:
