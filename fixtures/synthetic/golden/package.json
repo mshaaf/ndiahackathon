@@ -252,7 +252,7 @@
       }
     },
     {
-      "at_seconds": 5.0,
+      "at_seconds": 2.0,
       "stream_id": "s-7f3a2c91",
       "observation": {
         "schema_version": "1.0",
@@ -260,8 +260,8 @@
         "source_id": "adsb-replay",
         "source_seq": 4,
         "modality": "ADSB",
-        "observed_at": "2026-09-08T14:00:05Z",
-        "received_at": "2026-09-08T14:00:05Z",
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02Z",
         "position": {"east_m": 0.0, "north_m": -600.0, "up_m": 30.0},
         "velocity": {"east_m": 0.0, "north_m": 0.0, "up_m": 0.0},
         "claimed_identity": {
@@ -277,7 +277,7 @@
       }
     },
     {
-      "at_seconds": 5.0,
+      "at_seconds": 2.0,
       "stream_id": "s-62b184de",
       "observation": {
         "schema_version": "1.0",
@@ -285,9 +285,9 @@
         "source_id": "adsb-replay",
         "source_seq": 5,
         "modality": "ADSB",
-        "observed_at": "2026-09-08T14:00:05Z",
-        "received_at": "2026-09-08T14:00:05Z",
-        "position": {"east_m": -550.0, "north_m": 700.0, "up_m": 250.0},
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02Z",
+        "position": {"east_m": -580.0, "north_m": 700.0, "up_m": 250.0},
         "velocity": {"east_m": 10.0, "north_m": 0.0, "up_m": 0.0},
         "claimed_identity": {
           "schema_version": "1.0",
@@ -302,7 +302,7 @@
       }
     },
     {
-      "at_seconds": 5.0,
+      "at_seconds": 2.0,
       "stream_id": "s-a091d4b7",
       "observation": {
         "schema_version": "1.0",
@@ -310,9 +310,9 @@
         "source_id": "trajectory-replay",
         "source_seq": 1,
         "modality": "TRAJECTORY",
-        "observed_at": "2026-09-08T14:00:05Z",
-        "received_at": "2026-09-08T14:00:05.040000Z",
-        "position": {"east_m": 900.0, "north_m": 0.0, "up_m": 100.0},
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.040000Z",
+        "position": {"east_m": 960.0, "north_m": 0.0, "up_m": 100.0},
         "velocity": {"east_m": -20.0, "north_m": 0.0, "up_m": 0.0},
         "claimed_identity": null,
         "strength": 0.96,
@@ -321,7 +321,7 @@
       }
     },
     {
-      "at_seconds": 5.0,
+      "at_seconds": 2.0,
       "stream_id": "s-c3e85f20",
       "observation": {
         "schema_version": "1.0",
@@ -329,9 +329,9 @@
         "source_id": "trajectory-replay",
         "source_seq": 2,
         "modality": "TRAJECTORY",
-        "observed_at": "2026-09-08T14:00:05Z",
-        "received_at": "2026-09-08T14:00:05.050000Z",
-        "position": {"east_m": 625.0, "north_m": 350.0, "up_m": 120.0},
+        "observed_at": "2026-09-08T14:00:02Z",
+        "received_at": "2026-09-08T14:00:02.050000Z",
+        "position": {"east_m": 670.0, "north_m": 380.0, "up_m": 120.0},
         "velocity": {"east_m": -15.0, "north_m": -10.0, "up_m": 0.0},
         "claimed_identity": null,
         "strength": 0.94,

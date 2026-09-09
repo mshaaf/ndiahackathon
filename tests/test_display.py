@@ -19,7 +19,7 @@ def test_golden_identity_conflict_and_atc_preview(golden_runtime):
     conflicting = [f for f in snapshot["features"] if f["properties"]["identity_kind"] == "CONFLICTING"]
     assert len(conflicting) == 1
     assert len(conflicting[0]["properties"]["identity_claims"]) == 2
-    assert "red_probability" not in json.dumps(snapshot)
+    assert "truth" not in json.dumps(snapshot).lower()
     session.command(json.dumps({"action": "atc", "stream_id": blue_id, "option": "HOLD"}))
     hold = session.snapshot()["atc"]
     session.command(json.dumps({"action": "atc", "stream_id": blue_id, "option": "TAXI_CLEAR"}))

@@ -8,6 +8,12 @@ MATCH_TIME_S: Final = 2.0
 RED_CONFIDENCE_MIN: Final = 0.80
 RED_MIN_EVIDENCE_TYPES: Final = 2
 
+# Synthetic assessment defaults; tune against validated scenario uncertainty.
+AMBIGUITY_MARGIN_M: Final = 25.0  # Within 10% of the default horizontal gate, withhold the match.
+RF_MIN_STRENGTH: Final = 0.5  # Below the binary sensor's midpoint, do not assert a detection.
+INBOUND_REFERENCE_MPS: Final = 30.0  # Closing speed that saturates the synthetic motion score.
+STALE_UNCERTAINTY_MULTIPLIER: Final = 2.0  # Double the prediction envelope when supporting data expires.
+
 STALE_FLOOR_S: Final = 5.0
 STALE_PERIOD_MULTIPLIER: Final = 3
 

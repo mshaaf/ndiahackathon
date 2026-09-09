@@ -13,6 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import Field, model_validator
 
 from . import config
+from .assessment import Assessment
 from .display import ReportedDisplay, route_preview
 from .models import ENU, ResourceStatus
 from .replay import FaultProfile, Replay, ReplayRecord
@@ -94,6 +95,7 @@ class Session:
     def __init__(self, runtime: Runtime):
         self.runtime = runtime
         self.sequence = 0
+        self._dirty = False
         self.profile = FaultProfile()
         self.seed = runtime.scenario.seed
         self.reset()
@@ -102,6 +104,9 @@ class Session:
         self.replay = Replay(self.runtime.events, seed=self.seed, profile=self.profile,
                              duration_s=self.runtime.scenario.duration_seconds)
         self.display = ReportedDisplay()
+        route = self.runtime.atc.routes.get("HOLD", []) if self.runtime.atc else []
+        self.assessment = Assessment(route[:1])
+        self.stream_tracks = {}
         self.run_id = str(uuid4())
         self.state_version = 0
         self.atc_revision = 0
@@ -111,10 +116,18 @@ class Session:
                              "config": {k: v for k, v in vars(config).items() if k.isupper()}}
         self.fingerprint = hashlib.sha256(json.dumps(fingerprint_input, sort_keys=True,
                                                     separators=(",", ":")).encode()).hexdigest()
+        self._dirty = True
         self.advance(0)
 
-    def advance(self, elapsed_s: float):
-        self.display.apply(self.replay.advance(elapsed_s))
+    def advance(self, elapsed_s: float) -> None:
+        before = self.replay.clock.scenario_t
+        events = self.replay.advance(elapsed_s)
+        self.display.apply(events)
+        for event in events:
+            track_id = self.assessment.apply(event.observation)
+            if track_id is not None:
+                self.stream_tracks[event.stream_id] = track_id
+        self._dirty |= self.replay.clock.scenario_t != before or bool(events)
 
     def command(self, data: str) -> None:
         if len(data.encode()) > config.MAX_COMMAND_BYTES:
@@ -127,6 +140,7 @@ class Session:
         if model is None:
             raise ValueError("unknown replay command")
         command = model.model_validate(raw)
+        changed = False
         if isinstance(command, AtcCommand):
             atc = self.runtime.atc
             stream = self.display.streams.get(command.stream_id)
@@ -137,29 +151,45 @@ class Session:
             if self.option != command.option:
                 self.option = command.option
                 self.atc_revision += 1
+                changed = True
         elif isinstance(command, ResetProfile):
             self.profile, self.seed = command.profile, command.seed
             self.reset()
+            return
         elif isinstance(command, Rate):
+            changed = self.replay.clock.rate != command.rate
             self.replay.clock.set_rate(command.rate)
         elif command.action == "reset":
             self.reset()
+            return
         elif command.action == "pause":
+            changed = self.replay.clock.rate != 0
             self.replay.clock.pause()
         elif command.action == "resume":
+            changed = self.replay.clock.rate != self.replay.clock.resume_rate
             self.replay.clock.resume()
+        self._dirty |= changed
 
     def snapshot(self) -> dict:
-        self.sequence += 1
-        self.state_version += 1
+        if self._dirty:
+            self.sequence += 1
+            self.state_version += 1
+            self._dirty = False
         health = self.replay.health_snapshot()
         features = self.display.features(self.replay, health)
+        assessed = self.assessment.snapshot(
+            self.replay.now, {source: value["observed_period_s"] for source, value in health.items()})
+        assessed_ids = {track.track_id for track in assessed}
+        for feature in features:
+            track_id = self.stream_tracks.get(feature["id"])
+            feature["properties"]["assessed_track_id"] = str(track_id) if track_id in assessed_ids else None
         atc = self.runtime.atc
         selected = next((f for f in features if atc and f["id"] == atc.aircraft_stream_id), None)
         return {
-            "type": "FeatureCollection", "schema_version": "1.1",
+            "type": "FeatureCollection", "schema_version": "1.2",
             "scenario_id": self.runtime.scenario.scenario_id, "sequence": self.sequence,
             "simulation_time": self.replay.now.isoformat(), "features": features,
+            "assessed_tracks": [track.model_dump(mode="json") for track in assessed],
             "binding": {"run_id": self.run_id, "state_version": self.state_version,
                         "config_fingerprint": self.fingerprint, "atc_revision": self.atc_revision},
             "clock": {"seconds": self.replay.clock.scenario_t, "rate": self.replay.clock.rate,
