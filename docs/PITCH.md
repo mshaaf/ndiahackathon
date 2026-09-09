@@ -16,7 +16,7 @@ Ten-minute presentation plan. Rehearse twice with networking disabled before jud
 | 2:15–3:00 | Data | A | Where the sponsor scenario, ADS-B, RF evidence, and trajectory shapes enter the pipeline. |
 | 3:00–6:30 | Main demonstration | C leads, B narrates | The swarm runs, three plans appear, ATC changes a taxi decision, the unsafe plan is rejected and replaced. |
 | 6:30–7:30 | Degraded network | A | Packet loss and a feed outage injected; stale warnings appear and assignments are blocked. |
-| 7:30–8:30 | Evidence | B | Metrics against the baseline across the seeded scenarios. |
+| 7:30–8:30 | Evidence | B | The recorded twenty-seed run: zero protected assignments, Balanced at least matched Red stops in 17/20 seeds, no more wasted actions in 20/20, 200 ms scenario-clock p95. |
 | 8:30–9:15 | Interoperability | A | Export a track and advisory; a second client consumes it. |
 | 9:15–10:00 | Close | B | Results mapped to mission impact, technical execution, usability, security, teamwork, and interoperability. |
 
@@ -45,4 +45,4 @@ Record a screen capture of the full demonstration in advance and keep it on the 
 
 ## Claims discipline
 
-Do not claim improvement over the baseline unless the seeded benchmark actually met its targets. If it did not, say what was measured and what remains unproven.
+The Phase 6 gate passed: Balanced stopped at least as many Red tracks and wasted no more actions than the baseline in **17 of 20** seeded golden-scenario runs. Both planners made zero protected assignments; measured decision latency p95 was **200 ms** on the recorded Apple arm64 run. Keep this scoped to the synthetic outcome model in D34 and the [machine-readable report](evaluation/phase6_benchmark.json).

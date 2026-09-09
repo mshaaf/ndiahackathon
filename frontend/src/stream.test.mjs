@@ -4,7 +4,7 @@ import { parseSnapshot, shouldAcceptSnapshot } from './stream.ts';
 
 function fixture() {
     return {
-        type: 'FeatureCollection', schema_version: '1.4', scenario_id: 'golden', sequence: 1,
+        type: 'FeatureCollection', schema_version: '1.5', scenario_id: 'golden', sequence: 1,
         simulation_time: '2026-09-08T12:00:00Z', seed: 7, fault_profile: {},
         binding: {
             run_id: '00000000-0000-4000-8000-000000000001', state_version: 1,
@@ -17,6 +17,8 @@ function fixture() {
                 last_received_at_s: 0, age_s: 0, observed_period_s: null, stale_threshold_s: 5, status: 'OK'
             }
         },
+        network: { state: 'NOMINAL', reason: 'All current sources are healthy.', loss_percent: 0,
+            stale_tracks: 0, blocked_assignments: 1 },
         atc: {
             aircraft_stream_id: 'blue-1', option: 'CONTINUE', revision: 0,
             preview: { type: 'FeatureCollection', features: [] }
@@ -29,6 +31,7 @@ function fixture() {
                 observed_at: '2026-09-08T12:00:00Z', received_at: '2026-09-08T12:00:00Z', identity_kind: 'BLUE',
                 source_id: 'sensor', raw_ref: 'synthetic#1', is_stale: false, explanation: 'Reported Blue identity.',
                 age_observed_s: 0, age_received_s: 0, stale_threshold_s: 5, identity_claims: [],
+                uncertainty_m: 15,
                 assessed_track_id: '00000000-0000-4000-8000-000000000001'
             }
         }],
@@ -82,7 +85,8 @@ test('rejects malformed clock, health, provenance and transport binding', () => 
     v => v.schema_version = '1.0', v => v.binding.run_id = 'bad',
     v => v.binding.state_version = 1.5, v => v.clock.seconds = -1,
     v => v.clock.rate = 17, v => v.health.sensor.received = -1,
-    v => v.health.sensor.status = 'GREAT', v => v.features[0].geometry.coordinates[1] = 100,
+    v => v.health.sensor.status = 'GREAT', v => v.network.state = 'GREAT',
+    v => v.network.loss_percent = 101, v => v.features[0].geometry.coordinates[1] = 100,
     v => v.features[0].properties.identity_kind = 'LIKELY_RED',
     v => v.features[0].properties.age_observed_s = null,
     v => v.features[0].properties.raw_ref = '', v => v.atc.option = 'REROUTE',

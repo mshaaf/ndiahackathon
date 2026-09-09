@@ -74,6 +74,33 @@ p {
     overflow-wrap: anywhere;
 }
 
+.network-banner {
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    border: 1px solid #718694;
+    border-left-width: 6px;
+    background: white;
+    font-size: 0.875rem;
+}
+
+.network-degraded,
+.network-blackout {
+    border-color: #b45f06;
+    background: #fff0d8;
+    color: #663d00;
+}
+
+.network-blackout {
+    border-color: #8b2431;
+    background: #fae6e9;
+    color: #6f1d28;
+}
+
+.degraded-plan {
+    font-weight: 700;
+    color: #663d00;
+}
+
 .map-panel {
     position: relative;
     border: 1px solid #b9c7d1;
@@ -421,13 +448,18 @@ li time {
 
 button,
 select,
-input {
+input,
+.button-link {
     font: inherit;
     color: inherit;
     padding: 7px 10px;
     border: 1px solid #718694;
     border-radius: 4px;
     background: white;
+}
+
+.button-link {
+    text-decoration: none;
 }
 
 button {

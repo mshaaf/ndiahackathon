@@ -8,7 +8,8 @@
     "origin": {
       "latitude": 38.8895,
       "longitude": -77.0353,
-      "altitude_m": 0.0
+      "altitude_m": 0.0,
+      "geoid_separation_m": -33.5
     }
   },
   "atc": {

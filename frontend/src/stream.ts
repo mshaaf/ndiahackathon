@@ -54,6 +54,7 @@ export type TrackProperties = {
   identity_kind: 'BLUE' | 'CIVILIAN' | 'UNKNOWN' | 'CONFLICTING';
   source_id: string; raw_ref: string; is_stale: boolean; explanation: string;
   age_observed_s: number; age_received_s: number; stale_threshold_s: number;
+  uncertainty_m: number | null;
   identity_claims: { kind: string; source_id: string; observed_at: string; raw_ref: string }[];
   assessed_track_id: string | null;
 };
@@ -67,10 +68,12 @@ export type FaultProfile = {
   latency_jitter_s?: number; outage_windows?: [number, number][]; affected_sources?: string[] | null;
 };
 export type Snapshot = FeatureCollection<Point, TrackProperties> & {
-  schema_version: '1.4'; scenario_id: string; sequence: number; simulation_time: string;
+  schema_version: '1.5'; scenario_id: string; sequence: number; simulation_time: string;
   binding: StateBinding;
   clock: { seconds: number; rate: number; complete: boolean; duration_s: number };
   health: Record<string, Health>; seed: number; fault_profile: FaultProfile; command_error?: string;
+  network: { state: 'NOMINAL' | 'DEGRADED' | 'BLACKOUT'; reason: string; loss_percent: number;
+    stale_tracks: number; blocked_assignments: number };
   assessed_tracks: AssessedTrack[];
   planning: PlanningResult;
   coordination: { invalidated: InvalidatedPlan[]; approvals: ApprovalRecord[];
@@ -198,7 +201,7 @@ export function parseSnapshot(message: string): Snapshot {
   const assessed = Array.isArray(value?.assessed_tracks) ? value.assessed_tracks : [];
   const assessedIds = new Set(assessed.map((track) => track?.track_id));
   const assessedById = new globalThis.Map(assessed.map((track) => [track?.track_id, track]));
-  if (!value || value.type !== 'FeatureCollection' || value.schema_version !== '1.4' ||
+  if (!value || value.type !== 'FeatureCollection' || value.schema_version !== '1.5' ||
       !text(value.scenario_id) || !integer(value.sequence) || !isUtc(value.simulation_time) ||
       !integer(value.seed) || !stateBinding(value.binding) ||
       !value.clock || !nonnegative(value.clock.seconds) || !nonnegative(value.clock.duration_s) ||
@@ -209,6 +212,10 @@ export function parseSnapshot(message: string): Snapshot {
         ['received', 'dropped', 'duplicated', 'late', 'rejected'].every((key) => integer(h[key as keyof Health])) &&
         [h.age_s, h.last_received_at_s, h.observed_period_s].every((n) => n === null || nonnegative(n)) &&
         nonnegative(h.stale_threshold_s) && ['OK', 'STALE', 'SILENT'].includes(h.status)) ||
+      !value.network || !['NOMINAL', 'DEGRADED', 'BLACKOUT'].includes(value.network.state)
+      || !text(value.network.reason) || !nonnegative(value.network.loss_percent)
+      || value.network.loss_percent > 100 || !integer(value.network.stale_tracks)
+      || !integer(value.network.blocked_assignments) ||
       !Array.isArray(value.assessed_tracks) || !value.assessed_tracks.every(assessedTrack) ||
       !planningResult(value.planning) ||
       ((value.planning.status === 'OK' || value.planning.status === 'PARTIAL') !== (value.planning.coas.length > 0)) ||
@@ -236,6 +243,7 @@ export function parseSnapshot(message: string): Snapshot {
           && ['BLUE', 'CIVILIAN', 'UNKNOWN', 'CONFLICTING'].includes(p.identity_kind)
           && typeof p.is_stale === 'boolean' && text(p.explanation) && text(p.source_id) && text(p.raw_ref)
           && [p.age_observed_s, p.age_received_s, p.stale_threshold_s].every(nonnegative)
+          && (p.uncertainty_m === null || nonnegative(p.uncertainty_m))
           && Array.isArray(p.identity_claims) && p.identity_claims.length <= 3
           && p.identity_claims.every((c) => c && ['BLUE', 'CIVILIAN'].includes(c.kind)
             && text(c.source_id) && isUtc(c.observed_at) && text(c.raw_ref))

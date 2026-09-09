@@ -11,7 +11,7 @@ from time import perf_counter
 from typing import Annotated, Literal
 from uuid import UUID, uuid4
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from pydantic import Field, model_validator
 
@@ -23,12 +23,14 @@ from .models import (
     AtcOption,
     CourseOfAction,
     ENU,
+    Observation,
     PredictedPoint,
     ResourceStatus,
     StateBinding,
 )
-from .planning import PlanningResult, check_candidate, generate_coas, position_on_path
+from .planning import PlanningResult, PlanningStatus, check_candidate, generate_coas, position_on_path
 from .replay import FaultProfile, Replay, ReplayRecord
+from .resilience import HealthState, summarize_health
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RUNTIME_PATH = REPOSITORY_ROOT / "artifacts/runtime/golden/runtime.json"
@@ -39,6 +41,7 @@ class Origin(ReplayRecord):
     latitude: Annotated[float, Field(ge=-90, le=90)]
     longitude: Annotated[float, Field(ge=-180, le=180)]
     altitude_m: float
+    geoid_separation_m: float = 0
 
 
 class Scenario(ReplayRecord):
@@ -231,6 +234,44 @@ class Session:
         ) for dt in range(0, config.PREDICTION_HORIZON_S + 1, config.PREDICTION_SLOT_S))
         return {track.track_id: path}
 
+    def import_external(self, document) -> int:
+        from .interop import import_into_assessment
+
+        if document.generated_at > self.replay.now:
+            raise ValueError("external snapshot is ahead of scenario time")
+        known = dict(self.stream_tracks)
+        for track in document.tracks:
+            if track.stream_id and track.stream_id in known and known[track.stream_id] != track.track_id:
+                raise ValueError("external stream identifier conflicts with local state")
+        imported = import_into_assessment(self.assessment, document, self.replay.now)
+        for track, track_id in zip(document.tracks, imported):
+            if not track.stream_id or track.stream_id in self.display.streams or track.position_enu is None:
+                continue
+            velocity = None
+            if len(track.predicted_path) > 1:
+                first, second = track.predicted_path[:2]
+                seconds = (second.at - first.at).total_seconds()
+                if seconds > 0:
+                    velocity = ENU(**{axis: (getattr(second.position, axis) - getattr(first.position, axis)) / seconds
+                                      for axis in ENU.model_fields})
+            observation = Observation(
+                observation_id=track_id, source_id=document.origin,
+                source_seq=track_id.int % (2**53), modality="TEAM_JSON",
+                observed_at=track.last_observed_at, received_at=self.replay.now,
+                position=track.position_enu, velocity=velocity, claimed_identity=None,
+                strength=0, uncertainty_m=(track.horizontal_1sigma_m
+                                            if track.horizontal_1sigma_m <= config.DISPLAY_ENU_LIMIT_M else None),
+                raw_ref=f"{document.origin}:{track_id}",
+            )
+            self.display.apply([RuntimeEvent(at_seconds=self.replay.clock.scenario_t,
+                                             stream_id=track.stream_id, observation=observation)])
+            self.stream_tracks[track.stream_id] = track_id
+        health = self.replay.health[document.origin]
+        health.count(self.replay.clock.scenario_t, "received")
+        health.accepted(self.replay.clock.scenario_t)
+        self._refresh_state()
+        return len(imported)
+
     def _invalidate(self, previous: PlanningResult | None) -> None:
         self.invalidated = []
         if previous is None or self.current_planning is None:
@@ -303,14 +344,17 @@ class Session:
             feature["properties"]["assessed_track_id"] = str(track_id) if track_id in assessed_ids else None
         atc = self.runtime.atc
         selected = next((f for f in features if atc and f["id"] == atc.aircraft_stream_id), None)
+        network = summarize_health(health, sum(track.is_stale for track in assessed), 0)
+        network_basis = {key: value for key, value in network.items() if key != "blocked_assignments"}
         basis = {
-            "type": "FeatureCollection", "schema_version": "1.4",
+            "type": "FeatureCollection", "schema_version": "1.5",
             "scenario_id": self.runtime.scenario.scenario_id,
             "simulation_time": self.replay.now.isoformat(), "features": features,
             "assessed_tracks": [track.model_dump(mode="json") for track in assessed],
             "clock": {"seconds": self.replay.clock.scenario_t, "rate": self.replay.clock.rate,
                       "complete": self.replay.complete, "duration_s": self.replay.end_s},
-            "health": health, "seed": self.seed, "fault_profile": self.profile.model_dump(mode="json"),
+            "health": health, "network": network_basis, "seed": self.seed,
+            "fault_profile": self.profile.model_dump(mode="json"),
             "atc": {"aircraft_stream_id": atc.aircraft_stream_id if atc else None,
                     "option": self.option, "revision": self.atc_revision,
                     "preview": route_preview(self.display.streams.get(atc.aircraft_stream_id) if atc else None,
@@ -334,12 +378,19 @@ class Session:
             binding,
             self._route_overrides(assessed),
         )
+        if network["state"] == HealthState.BLACKOUT:
+            planning = planning.model_copy(update={
+                "status": PlanningStatus.NO_SAFE_COA, "coas": (), "baseline": None,
+                "explanation": "No current sensor data. Planning is withheld during BLACKOUT.",
+            })
+        network["blocked_assignments"] = len(planning.rejections)
         self.current_assessed = tuple(assessed)
         self.current_binding = binding
         self.current_planning = planning
         self._snapshot_basis = deepcopy(basis)
         self._snapshot_content = {
             **basis,
+            "network": network,
             "planning": planning.model_dump(mode="json"),
         }
 
@@ -374,6 +425,7 @@ class Session:
 def create_app(runtime_path: str | Path | None = None, speed: float = 1.0) -> FastAPI:
     scenario_path = Path(runtime_path or os.environ.get("FRIENDLY_FILTER_SCENARIO", DEFAULT_RUNTIME_PATH))
     app = FastAPI(title="Friendly Filter Plus")
+    app.state.latest_session = None
 
     @app.get("/api/v1/scenarios")
     def scenarios() -> list[dict]:
@@ -381,6 +433,35 @@ def create_app(runtime_path: str | Path | None = None, speed: float = 1.0) -> Fa
             return [_load_runtime(scenario_path).scenario.model_dump(mode="json", exclude_unset=True)]
         except (OSError, ValueError) as error:
             raise HTTPException(503, "Runtime unavailable; run the scenario loader.") from error
+
+    @app.get("/api/v1/export")
+    def export(format: Literal["json", "cot"] = "json"):
+        from .interop import cot_xml, export_snapshot, import_document
+
+        session = app.state.latest_session
+        if session is None:
+            raise HTTPException(503, "Open the scenario stream before exporting.")
+        document = export_snapshot(session.snapshot(), session.runtime.scenario.origin)
+        if format == "cot":
+            return Response(cot_xml(import_document(document)), media_type="application/xml",
+                            headers={"Content-Disposition": "attachment; filename=tracks.cot.xml"})
+        return Response(json.dumps(document), media_type="application/json",
+                        headers={"Content-Disposition": "attachment; filename=friendly-filter.json"})
+
+    @app.post("/api/v1/import")
+    async def import_json(request: Request):
+        from .interop import import_document
+
+        session = app.state.latest_session
+        if session is None:
+            raise HTTPException(503, "Open the scenario stream before importing.")
+        body = await request.body()
+        try:
+            document = import_document(body)
+            count = session.import_external(document)
+        except (ValueError, TypeError) as error:
+            raise HTTPException(422, "Invalid or incompatible export.") from error
+        return {"status": "ACCEPTED", "tracks": count, "binding": session.snapshot()["binding"]}
 
     @app.websocket("/api/v1/stream")
     async def stream(websocket: WebSocket) -> None:
@@ -390,6 +471,7 @@ def create_app(runtime_path: str | Path | None = None, speed: float = 1.0) -> Fa
         except (OSError, ValueError):
             await websocket.close(code=1011, reason="Runtime unavailable; run the scenario loader.")
             return
+        app.state.latest_session = session
         if speed > 0:
             session.command(json.dumps({"action": "rate", "rate": speed}))
         loop = asyncio.get_running_loop()

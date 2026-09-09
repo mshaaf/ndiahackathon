@@ -13,11 +13,11 @@ This is the shared status and handoff log. Section 4 of the original [build plan
 | Phase 2 — Replay and track assessment | Complete | Replay/assessment gate, adversarial fixtures, browser evidence toggle, and route previews passed; see [PHASE_2_HANDOFF](PHASE_2_HANDOFF.md). |
 | Phase 3 — COA engine | Complete | Shared hard gate, swept geometry, guarded enumeration/CP-SAT, distinct profiles, baseline, plan UI, property/fixture tests, and three-seed smoke passed. |
 | Phase 4 — ATC/ADOC coordination | Complete | Authored routes drive planner safety volumes; old plans invalidate through the shared gate and current plans accept only version-bound simulated approval. |
-| Phase 5 — Resilience and interoperability | Not started | Depends on Phase 4 |
-| Phase 6 — Metrics and integration | Not started | Depends on Phase 5 |
+| Phase 5 — Resilience and interoperability | Complete | Degraded/blackout policy, health strip, JSON/CoT export, evidence-safe reimport, and independent saved-file consumer pass. |
+| Phase 6 — Metrics and integration | Complete | Truth isolation is enforced in tests; the recorded twenty-seed benchmark met every target. |
 | Phase 7 — SPARC Refinement | Not started | Depends on Phase 6; cannot refine nonexistent code |
 | Phase 8 — Completion and rehearsal | Not started | Depends on Phase 7 |
-| Runtime checks and benchmarks | Phase 4 gate complete | 97 backend tests, 95% combined branch coverage, six frontend tests/build, zero npm vulnerabilities, real-browser Phase 4 gate, and passing three-seed smoke; twenty-seed Phase 6 benchmark remains pending. |
+| Runtime checks and benchmarks | Phase 6 gate complete | 103 backend tests, seven frontend boundary tests/build, Phase 5 browser gate, and the recorded twenty-seed Phase 6 benchmark pass. |
 
 Role labels A/B/C are stable responsibilities, not assigned individual names. Hours are relative to the future build start; no calendar deadline or organizer approval is inferred.
 
@@ -48,6 +48,9 @@ Role labels A/B/C are stable responsibilities, not assigned individual names. Ho
 | D21 | Pin MapLibre GL JS to 6.8.0, satisfying D18, and bundle its worker through Vite. | A fresh dependency audit found the 5.11.0 pin affected by the MapLibre expression XSS advisory. Version 6.8.0 removes the advisory and the bundled worker preserves offline rendering. |
 | D22 | Use Steps 4–11 in [HANDOFF](HANDOFF.md) as the next execution order: Replay, Assessment, early ATC routes, Planning plus immediate three-seed smoke, Invalidation, Resilience/Export, Evaluation, then Freeze/Package. | Project-owner handoff direction on 2026-09-08; it preserves the architecture's critical path and completes D15's route-rendering half during Phase 2. |
 | D31 | Browser envelope 1.4 adds invalidated plans, measured replan latency, approval feedback, and simulated approval audit records. The selected authored route replaces the Blue prediction only for planner safety geometry; invalidation and approval both call the existing `check_candidate` gate. | Closes Phase 4 without changing frozen v1 records or adding a second safety implementation. Approval changes audit state but does not change the plan binding it records, and no actuator path exists. |
+| D32 | Treat every source in the synthetic runtime as critical. `BLACKOUT` means no source is current (`STALE` or `SILENT`); `DEGRADED` means at least one source is stale/silent or recent loss reaches 20%. | A source that was healthy before an outage becomes `STALE`, so requiring literal `SILENT` would retain a confident plan after all feeds stop. |
+| D33 | Export the four verified base CoT air types and omit a UAS platform suffix. Apply scenario geoid separation before writing `hae`; write the assessed uncertainty to `ce` and `le`. | Page 31 of `datasets/cursor-on-target.pdf` confirms `M-F-Q` for fixed-wing UAV, but the frozen assessed record does not establish fixed-wing versus rotary platform. Base identity is accurate without inventing platform precision. |
+| D34 | Score the frozen golden truth's `ACTIVE` hostile entities with a deterministic common seeded outcome draw against each resource's `p_success`, before the scenario end. Gate any improvement statement through the benchmark result. | The frozen truth contract has classification/outcome but no per-entity objective timestamp or sampled outcome table. This is the smallest reproducible outcome model that uses the available truth without exposing it to runtime. |
 
 Unresolved data access, licensing, and organizer-pathway questions belong in [RIGHTS.md](../RIGHTS.md); they are not silently decided by these clarifications. New technical proposals must be validated against the actual sponsor schema in Phase 1.
 
@@ -290,3 +293,19 @@ Owner: Phase 4 integration
 Contract changes: D31. Browser envelope advances from 1.3 to 1.4; frozen Python records remain 1.0.
 
 Coordinator review: Accepted for the synthetic Phase 4 gate. Proceed to Phase 5; simulated approval is an audit record only.
+
+### Phase 5 — Resilience and interoperability — 2026-09-09
+
+State: PASSED
+
+Gate evidence: The global state sequence `NOMINAL → DEGRADED → BLACKOUT → NOMINAL` passes. At deterministic 40% configured loss, the UI stays usable and recommended assignments still target only fresh `LIKELY_RED` tracks. A total outage returns `NO_SAFE_COA`, removes the baseline, and never republishes a prior plan. JSON export validates and reimports into a fresh assessment with identical categories and probabilities; ten exchanges add no root-source evidence. CoT exports all five golden categories with required `how`, ellipsoid `hae`, `ce`/`le`, and `stale > time`. The independent standard-library client reads a saved export with the backend stopped.
+
+Browser envelope 1.5 adds the word-and-symbol network strip, per-source loss, degraded plan flags, and JSON/CoT downloads. Frozen records stay at schema 1.0. The export endpoint serves the latest connection-local session.
+
+### Phase 6 — Truth-isolated evaluation — 2026-09-09
+
+State: PASSED
+
+Gate evidence: Runtime produces a decision log without a truth parameter or evaluator import. The separate evaluator is the only module that opens truth, and CI runs the AST/signature isolation assertion. The full seeds 1–20 run discarded warm-up, recorded hardware and fingerprints, assigned zero protected entities, matched or exceeded baseline Red stops in **17/20** seeds, wasted no more actions in **20/20**, measured **200 ms** scenario-clock p95, and retained evidence/rejection trails in every result. The gated claim is recorded in [PITCH](PITCH.md); machine-readable results are in [phase6_benchmark.json](evaluation/phase6_benchmark.json).
+
+Known limits: the golden truth contract supplies classification/outcome but no entity-specific objective time, so D34 uses scenario end and a common seeded draw against `p_success`. The export endpoint follows the most recently opened local session. Mutation, soak, greyscale/accessibility certification, clean-machine offline packaging, and backup video remain Phases 7–8.

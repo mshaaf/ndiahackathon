@@ -40,3 +40,9 @@ def golden_path(tmp_path):
 @pytest.fixture
 def golden_runtime(golden_path):
     return Runtime.model_validate_json(golden_path.read_text())
+
+
+@pytest.fixture
+def golden_truth(tmp_path):
+    _, truth = load_scenario(GOLDEN, tmp_path / "runtime-truth", tmp_path / "evaluator-truth")
+    return truth

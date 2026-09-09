@@ -195,6 +195,11 @@ export function App() {
                 <p>Simulation time <time dateTime={snapshot?.simulation_time}>{snapshot?.simulation_time ?? 'Waiting for data'}</time></p>
                 <p>Update <strong>{snapshot?.sequence ?? '—'}</strong></p>
             </section>
+            {snapshot && <section className={`network-banner network-${snapshot.network.state.toLowerCase()}`} role="status" aria-live="polite">
+                <strong><span aria-hidden="true">{snapshot.network.state === 'NOMINAL' ? '●' : snapshot.network.state === 'DEGRADED' ? '▲' : '■'}</span>{' '}
+                    {snapshot.network.state}</strong> — {snapshot.network.reason}{' '}
+                {snapshot.network.loss_percent.toFixed(1)}% loss · {snapshot.network.stale_tracks} stale tracks · {snapshot.network.blocked_assignments} blocked checks
+            </section>}
             <section className="controls" aria-label="Replay controls">
                 <button disabled={!snapshot || snapshot.clock.complete} onClick={() => send({ action: snapshot?.clock.rate === 0 ? 'resume' : 'pause' })}>
                     {snapshot?.clock.rate === 0 ? 'Resume' : 'Pause'} <kbd className="shortcut">Space</kbd></button>
@@ -227,6 +232,10 @@ export function App() {
                     disabled={!selected} aria-pressed={snapshot?.atc.option === option}
                     onClick={() => send({ action: 'atc', stream_id: selected, option })}>{option.replace('_', ' ')}</button>)}
                 <span>Route preview · revision {snapshot?.atc.revision ?? 0}</span>
+            </section>
+            <section className="controls" aria-label="Interoperability exports">
+                <a className="button-link" href="/api/v1/export?format=json" download>Download JSON</a>
+                <a className="button-link" href="/api/v1/export?format=cot" download>Download CoT</a>
             </section>
             {error && <p role="alert" className="error">{error}</p>}
             {!!snapshot?.coordination.invalidated.length && <section className="invalidation" role="status" aria-live="polite">
@@ -263,6 +272,7 @@ export function App() {
                     <div className="plan-grid">
                         {snapshot.planning.coas.map((coa) => <article className="plan-card" key={coa.coa_id}>
                             <h3>{coa.profile.replaceAll('_', ' ')}</h3>
+                            {snapshot.network.state === 'DEGRADED' && <span className="degraded-plan">▲ DEGRADED INPUTS</span>}
                             <strong>{(coa.expected_coverage * 100).toFixed(1)}% weighted coverage</strong>
                             <span>{coa.resources_used} resource{coa.resources_used === 1 ? '' : 's'} · completes <time dateTime={coa.completion_at}>{new Date(coa.completion_at).toLocaleTimeString()}</time></span>
                             <span>ATC option {coa.atc_option.replace('_', ' ')} · rank {coa.rank}</span>
@@ -347,9 +357,11 @@ export function App() {
             <section className="source-health" aria-labelledby="sources-heading">
                 <h2 id="sources-heading">Source health <span>Last 60 scenario seconds</span></h2>
                 <div className="table-scroll"><table>
-                    <thead><tr>{['Source', 'Status', 'Received', 'Dropped', 'Duplicate', 'Late', 'Rejected', 'Age', 'Period'].map((label) => <th key={label}>{label}</th>)}</tr></thead>
+                    <thead><tr>{['Source', 'Status', 'Loss', 'Received', 'Dropped', 'Duplicate', 'Late', 'Rejected', 'Age', 'Period'].map((label) => <th key={label}>{label}</th>)}</tr></thead>
                     <tbody>{Object.entries(snapshot?.health ?? {}).map(([source, health]) => <tr key={source}>
-                        <th scope="row">{source}</th><td>{health.status}</td><td>{health.received}</td><td>{health.dropped}</td>
+                        <th scope="row">{source}</th><td><span aria-hidden="true">{health.status === 'OK' ? '●' : health.status === 'STALE' ? '▲' : '■'}</span> {health.status}</td>
+                        <td>{health.received + health.dropped ? `${(100 * health.dropped / (health.received + health.dropped)).toFixed(1)}%` : '—'}</td>
+                        <td>{health.received}</td><td>{health.dropped}</td>
                         <td>{health.duplicated}</td><td>{health.late}</td><td>{health.rejected}</td>
                         <td>{health.age_s === null ? '—' : `${health.age_s.toFixed(1)}s`}</td>
                         <td>{health.observed_period_s === null ? '—' : `${health.observed_period_s.toFixed(1)}s`}</td>

@@ -54,7 +54,8 @@ class ReportedStream:
                 "received_at": obs.received_at.isoformat(), "identity_kind": self.identity_kind,
                 "source_id": obs.source_id, "raw_ref": obs.raw_ref,
                 "age_observed_s": observed_age, "age_received_s": received_age,
-                "stale_threshold_s": threshold, "is_stale": stale, "explanation": explanation,
+                "stale_threshold_s": threshold, "uncertainty_m": obs.uncertainty_m,
+                "is_stale": stale, "explanation": explanation,
                 "identity_claims": [{"kind": kind, "source_id": claim.source_id,
                     "observed_at": claim.observed_at.isoformat(), "raw_ref": claim.raw_ref}
                     for kind, claim in sorted(self.claims.items())],
