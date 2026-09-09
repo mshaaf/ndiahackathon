@@ -51,9 +51,14 @@ uv run coverage run --branch --source=friendly_filter.replay,friendly_filter.dis
 uv run coverage report -m --fail-under=80
 uv run python -m friendly_filter.phase3_smoke artifacts/runtime/golden/runtime.json
 uv run python -m evaluation.benchmark artifacts/runtime/golden/runtime.json artifacts/evaluator/golden/truth.json --output docs/evaluation/phase6_benchmark.json
+uv run python -m evaluation.mutation --output docs/evaluation/mutation_report.json
 npm --prefix frontend test
 npm --prefix frontend run build
 ```
+
+`evaluation.mutation` breaks each decision rule on purpose — the confidence floor, the evidence-type count, the staleness disjunction, the conflicting-target gate, the time-window check — and fails if the suite does not notice. A surviving mutant names a rule that is not actually tested. Build the frontend before running `pytest`: the offline bundle guard inspects `frontend/dist` and skips when it is absent.
+
+`scripts/demo.sh` runs the whole sequence and serves the result; pass `flight` to run the same demonstration on the recorded-motion package.
 
 ## Documentation map
 
@@ -63,6 +68,7 @@ npm --prefix frontend run build
 | [Architecture and build sequence](docs/ARCHITECTURE.md) | Modules and seams, requirement-to-phase mapping, phase prerequisites and gates, critical path |
 | [Pseudocode](docs/pseudocode/) | Module-level algorithms and TDD anchors, one file per phase |
 | [Testing](docs/TESTING.md) | Invariants, metamorphic relations, adversarial fixtures, mutation set, self-application |
+| [Acceptance matrix](docs/ACCEPTANCE.md) | Every requirement, the runnable check that verifies it, and what that check reports |
 | [Project handoff](docs/HANDOFF.md) | Verified Phase 1 baseline, current limits, setup commands, and ordered Steps 4–11 |
 | [Phase 2 handoff](docs/PHASE_2_HANDOFF.md) | Completed replay/assessment checkpoints, exact controls/API, measured checks, and remaining limits |
 | [Phase 4 handoff](docs/PHASE_4_HANDOFF.md) | Completed invalidation/approval gate, browser sequence, measured checks, and Phase 5 continuation |

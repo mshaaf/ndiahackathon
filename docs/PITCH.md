@@ -13,10 +13,10 @@ Ten-minute presentation plan. Rehearse twice with networking disabled before jud
 | 0:00–0:45 | Problem | C | One person cannot safely coordinate a fast swarm, friendly aircraft, civilian traffic, and limited resources at once. |
 | 0:45–1:30 | Solution | C | The sentence above, then the live dashboard. |
 | 1:30–2:15 | Honest differentiation | C | It does not replace Lattice or FAAD C2. It makes safety logic, uncertainty, and ATC/ADOC tradeoffs visible and testable. |
-| 2:15–3:00 | Data | A | Where the sponsor scenario, ADS-B, RF evidence, and trajectory shapes enter the pipeline. |
+| 2:15–3:00 | Data | A | Where the sponsor scenario, ADS-B, RF evidence, and trajectory shapes enter the pipeline. Say plainly that the golden scenario is authored, and why: it is built so a friendly aircraft looks hostile, two sensors disagree, and staleness crosses its threshold at a known instant. Then open a track and read its `raw_ref` — a file and row in a recorded 2020 drone flight log. The recorded-motion package runs the same demonstration on flown motion. |
 | 3:00–6:30 | Main demonstration | C leads, B narrates | The swarm runs, three plans appear, ATC changes a taxi decision, the unsafe plan is rejected and replaced. |
 | 6:30–7:30 | Degraded network | A | Packet loss and a feed outage injected; stale warnings appear and assignments are blocked. |
-| 7:30–8:30 | Evidence | B | The recorded twenty-seed run: zero protected assignments, Balanced at least matched Red stops in 17/20 seeds, no more wasted actions in 20/20, 200 ms scenario-clock p95. |
+| 7:30–8:30 | Evidence | B | The recorded twenty-seed run: zero protected assignments, Balanced at least matched Red stops in 17/20 seeds, no more wasted actions in 20/20, 200 ms scenario-clock p95. Then the mutation report: ten deliberate breaks of the safety rules, all ten caught by the suite. |
 | 8:30–9:15 | Interoperability | A | Export a track and advisory; a second client consumes it. |
 | 9:15–10:00 | Close | B | Results mapped to mission impact, technical execution, usability, security, teamwork, and interoperability. |
 
@@ -31,6 +31,8 @@ This is the moment the presentation is built around. Rehearse it until it is aut
 5. Select the Blue aircraft. Change ATC state from `HOLD` to `TAXI_CLEAR`.
 6. Its predicted path crosses the recommended plan's safety volume. The plan goes visibly invalid with a plain-English reason.
 7. A safer alternative appears in under two seconds.
+
+Measured on the recorded-motion package, for the speaker who wants to know what to expect: the clearance at scenario time 2.3 s invalidates `CONSERVE` with `INTERSECTS_PROTECTED`, `BALANCED` remains as the safe alternative, and the replan takes about 7 ms. Read the reason aloud from the drawer rather than paraphrasing it; the sentence names the protected aircraft and the window.
 8. Say what just happened: an air traffic decision and an air defense decision are coupled, and the system made that coupling visible instead of leaving it to a phone call.
 
 ## Offline fallback
