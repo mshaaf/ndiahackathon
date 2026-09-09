@@ -106,9 +106,9 @@ Continuation semantics: `Session.snapshot()` now reads state without incrementin
 
 Integrated Phase 2/3 verification on 2026-09-09:
 
-- **92 backend tests passed**. Branch-enabled coverage across replay, display, assessment, planning, and app was **95% overall**; assessment was 100% and planning 93%.
+- **94 backend tests passed**. Branch-enabled coverage across replay, display, assessment, planning, and app was **95% overall**; assessment was 100% and planning 93%.
 - **5 frontend stream/validation tests passed**; TypeScript and the Vite production build passed.
-- The three-seed Phase 3 smoke passed for seeds 7, 17, and 27. Balanced weighted coverage was 0.72553 versus baseline 0.72447 in all three, no unsafe assignment appeared, and the measured three-run p95 upper bound was **7.563 ms**.
+- The three-seed Phase 3 smoke passed for seeds 7, 17, and 27. Balanced weighted coverage was 0.72553 versus baseline 0.72447 in all three, no unsafe assignment appeared, and the measured three-run p95 upper bound was **13.983 ms**.
 - Real browser on loopback port 8002: pausing at 2.3s showed two fresh `LIKELY_RED` tracks, two genuinely distinct optimized plan cards, a same-gate baseline, 88 enumerated combinations, and readable coded rejections. At the same early interval, **Hide one sponsor packet** changed the affected track from `LIKELY_RED` to `UNKNOWN` and produced `NO SAFE COA` before later motion arrived.
 - Pause/reset stayed responsive and stable. The blank MapLibre style and bundled worker loaded with no external map request.
 - Existing FastAPI/Starlette test-client deprecation warnings and the Vite chunk-size warning remain non-failing. A clean-machine offline rehearsal is Phase 8 and has not been claimed.

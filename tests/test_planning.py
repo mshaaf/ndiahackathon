@@ -227,6 +227,17 @@ def test_three_genuinely_distinct_profile_selections(monkeypatch):
     assert result.coas[2].resources_used < result.coas[0].resources_used
 
 
+def test_single_safe_assignment_yields_one_honest_card(monkeypatch):
+    monkeypatch.setattr(config, "PREDICTION_HORIZON_S", 5)
+    result = generate_coas(
+        [track()], [resource(time_to_effect=5)], AtcOption.CONTINUE, EPOCH, binding()
+    )
+    assert result.status == PlanningStatus.OK
+    assert len(result.coas) == 1
+    assert result.coas[0].profile == CourseProfile.BALANCED
+    assert "1 genuinely distinct safe simulated plan" in result.explanation
+
+
 def _golden_plan(golden_runtime, method=None):
     replay = Replay(golden_runtime.events, seed=golden_runtime.scenario.seed,
                     duration_s=golden_runtime.scenario.duration_seconds)

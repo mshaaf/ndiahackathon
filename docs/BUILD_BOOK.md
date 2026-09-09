@@ -17,7 +17,7 @@ This is the shared status and handoff log. Section 4 of the original [build plan
 | Phase 6 — Metrics and integration | Not started | Depends on Phase 5 |
 | Phase 7 — SPARC Refinement | Not started | Depends on Phase 6; cannot refine nonexistent code |
 | Phase 8 — Completion and rehearsal | Not started | Depends on Phase 7 |
-| Runtime checks and benchmarks | Phase 3 smoke complete | 92 backend tests, 95% combined branch coverage, frontend test/build, real-browser Phase 2/3 gate, and three-seed smoke; twenty-seed Phase 6 benchmark remains pending. |
+| Runtime checks and benchmarks | Phase 3 smoke complete | 94 backend tests, 95% combined branch coverage, frontend test/build, real-browser Phase 2/3 gate, and three-seed smoke; twenty-seed Phase 6 benchmark remains pending. |
 
 Role labels A/B/C are stable responsibilities, not assigned individual names. Hours are relative to the future build start; no calendar deadline or organizer approval is inferred.
 
@@ -238,7 +238,7 @@ Coordinator review: Accepted. Phase 2’s evidence/classification gate is visibl
 
 State: PASSED
 
-Gate evidence: The integrated backend suite passed **92 tests**. Branch-enabled coverage across replay/display/assessment/planning/app was **95%**; `planning.py` was 93%. The required `prop_no_protected_assignment` Hypothesis property and `grazing_corridor`, `near_miss_corridor`, and `time_disjoint` fixtures passed. A real 844,596,301-combination scenario selected the CP-SAT path in 77 ms during the guard test; the small golden case produced the same Balanced fingerprint/coverage under enumeration and CP-SAT. Frontend tests/build passed. Browser plan cards and the rejection drawer rendered and validated. The three-seed smoke passed with zero unsafe assignments, Balanced 0.725530 weighted coverage versus baseline 0.724470 for seeds 7/17/27, and a measured p95 upper bound of **7.563 ms**.
+Gate evidence: The integrated backend suite passed **94 tests**. Branch-enabled coverage across replay/display/assessment/planning/app was **95%**; `planning.py` was 93%. The required `prop_no_protected_assignment` Hypothesis property and `grazing_corridor`, `near_miss_corridor`, and `time_disjoint` fixtures passed. A real 844,596,301-combination scenario selected the CP-SAT path in 77 ms during the guard test; the small golden case produced the same Balanced fingerprint/coverage under enumeration and CP-SAT. Frontend tests/build passed. Browser plan cards and the rejection drawer rendered and validated. The three-seed smoke passed with zero unsafe assignments, Balanced 0.725530 weighted coverage versus baseline 0.724470 for seeds 7/17/27, and a measured p95 upper bound of **13.983 ms**.
 
 Owner: A — data and interoperability
 1. What changed: The golden scenario now supplies two assessed `LIKELY_RED` tracks and three validated abstract resources to the planner; the smoke CLI consumes only the split runtime.
